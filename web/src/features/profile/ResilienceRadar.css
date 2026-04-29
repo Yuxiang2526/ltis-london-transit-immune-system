@@ -1,0 +1,88 @@
+.resilience-radar {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+}
+
+.resilience-radar-title {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  font-weight: var(--weight-medium);
+}
+
+/* Grid rings — very subtle on light bg */
+.radar-ring {
+  fill: none;
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+/* Axis spokes */
+.radar-spoke {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+/* Primary polygon — blue arm for "scenario profile" */
+.radar-area {
+  stroke-width: 1.5;
+  fill-opacity: 0.25;
+}
+
+.radar-area-primary {
+  fill: var(--palette-blue-2);
+  stroke: var(--palette-blue-1);
+}
+
+/* Baseline polygon — warm arm for contrast */
+.radar-area-baseline {
+  fill: var(--palette-red-3);
+  stroke: var(--palette-red-4);
+  fill-opacity: 0.12;
+  stroke-dasharray: 4 3;
+}
+
+.radar-vertex {
+  fill: var(--palette-blue-1);
+  stroke: var(--color-bg-elevated);
+  stroke-width: 1.5;
+}
+
+.radar-label {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  fill: var(--color-text-muted);
+  letter-spacing: 0.02em;
+}
+
+.radar-legend {
+  display: flex;
+  gap: var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.radar-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.radar-legend-item::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.radar-legend-primary::before {
+  background: var(--palette-blue-2);
+}
+
+.radar-legend-baseline::before {
+  background: var(--palette-red-3);
+  opacity: 0.5;
+}

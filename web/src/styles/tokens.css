@@ -1,0 +1,245 @@
+/* =============================================================================
+   LTIS design tokens — light editorial theme
+   -----------------------------------------------------------------------------
+   Anchored on the 10-step diverging RdBu palette adopted as the project's
+   visual identity:
+
+     deep navy (#104680) ── steel ── light ── pale ── near-white
+                                                  ↑
+     burgundy (#6D011F) ── red ── coral ── peach ── cream
+
+   The blue arm encodes "resilient / good news"; the red arm encodes
+   "vulnerable / bad news". Both arms share a near-neutral midpoint, so the
+   same palette also drives diverging delta views (baseline minus disrupted).
+
+   Components MUST consume tokens through `var(--token-*)` — any raw hex /
+   rgba inside component CSS is an anti-pattern.
+   ========================================================================== */
+
+:root {
+  /* ─── 1. PALETTE (raw, do not bind UI directly) ──────────────────────── */
+
+  /* Cool arm */
+  --palette-blue-1: #104680;   /* deepest navy */
+  --palette-blue-2: #317cb7;   /* steel */
+  --palette-blue-3: #6dadd1;   /* mid */
+  --palette-blue-4: #b6d7e8;   /* pale */
+  --palette-blue-5: #e9f1f4;   /* near-white blue */
+
+  /* Warm arm */
+  --palette-red-1: #fbe3d5;    /* cream peach */
+  --palette-red-2: #f6b293;    /* peach */
+  --palette-red-3: #dc6d57;    /* coral */
+  --palette-red-4: #b72230;    /* red */
+  --palette-red-5: #6d011f;    /* burgundy */
+
+
+  /* ─── 2. NEUTRAL SCALE (warm-cool-mixed near-whites and slates) ──────── */
+
+  --grey-0:   #ffffff;
+  --grey-50:  #fbfcfd;
+  --grey-100: #f5f7fa;
+  --grey-200: #eaeef3;
+  --grey-300: #d6dde6;
+  --grey-400: #b6c0cd;
+  --grey-500: #8c97a6;
+  --grey-600: #6e7a8c;
+  --grey-700: #4f5b6e;
+  --grey-800: #2f3a4d;
+  --grey-900: #1a2436;
+  --grey-950: #0e1a2c;
+
+
+  /* ─── 3. SEMANTIC SURFACES + TEXT ────────────────────────────────────── */
+
+  --color-bg:           var(--grey-50);
+  --color-bg-elevated:  var(--grey-0);
+  --color-surface:      var(--grey-0);
+  --color-surface-tint: var(--palette-blue-5);
+
+  --color-text:         var(--grey-950);   /* near-black with navy bias */
+  --color-text-strong:  #06101e;
+  --color-text-muted:   var(--grey-700);
+  --color-text-soft:    var(--grey-600);
+
+  --color-border:        rgba(16, 70, 128, 0.12);   /* translucent navy hairline */
+  --color-border-strong: rgba(16, 70, 128, 0.22);
+  --color-divider:       rgba(16, 70, 128, 0.08);
+
+  --color-focus-ring:   var(--palette-blue-1);
+
+
+  /* ─── 4. BRAND / ACCENT (single deep-navy primary) ───────────────────── */
+
+  --color-accent:        var(--palette-blue-1);
+  --color-accent-hover:  #0a3666;
+  --color-accent-soft:   var(--palette-blue-4);
+  --color-accent-tint:   var(--palette-blue-5);
+
+  --color-warm:          var(--palette-red-4);
+  --color-warm-soft:     var(--palette-red-2);
+  --color-warm-tint:     var(--palette-red-1);
+
+
+  /* ─── 5. CHART RAMPS — single source of truth ────────────────────────── */
+
+  /* Resilient (higher = better). Pale → deep blue. */
+  --ramp-resilient-1: var(--palette-blue-5);
+  --ramp-resilient-2: var(--palette-blue-4);
+  --ramp-resilient-3: var(--palette-blue-3);
+  --ramp-resilient-4: var(--palette-blue-2);
+  --ramp-resilient-5: var(--palette-blue-1);
+
+  /* Vulnerable (higher = worse). Pale → deep red. */
+  --ramp-vulnerable-1: var(--palette-red-1);
+  --ramp-vulnerable-2: var(--palette-red-2);
+  --ramp-vulnerable-3: var(--palette-red-3);
+  --ramp-vulnerable-4: var(--palette-red-4);
+  --ramp-vulnerable-5: var(--palette-red-5);
+
+  /* Diverging (delta). 10 stops = the full project palette. */
+  --ramp-diverging-1:  var(--palette-blue-1);
+  --ramp-diverging-2:  var(--palette-blue-2);
+  --ramp-diverging-3:  var(--palette-blue-3);
+  --ramp-diverging-4:  var(--palette-blue-4);
+  --ramp-diverging-5:  var(--palette-blue-5);
+  --ramp-diverging-6:  var(--palette-red-1);
+  --ramp-diverging-7:  var(--palette-red-2);
+  --ramp-diverging-8:  var(--palette-red-3);
+  --ramp-diverging-9:  var(--palette-red-4);
+  --ramp-diverging-10: var(--palette-red-5);
+
+  /* Categorical (≤8) — derived from the palette + neutral anchors */
+  --cat-1: var(--palette-blue-1);
+  --cat-2: var(--palette-red-4);
+  --cat-3: var(--palette-blue-3);
+  --cat-4: var(--palette-red-3);
+  --cat-5: var(--palette-blue-2);
+  --cat-6: var(--palette-red-2);
+  --cat-7: var(--grey-700);
+  --cat-8: var(--grey-500);
+
+
+  /* ─── 6. TYPOGRAPHY ──────────────────────────────────────────────────── */
+
+  --font-sans:
+    "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+  --font-serif:
+    "Newsreader", "Source Serif Pro", "Iowan Old Style", "Apple Garamond",
+    Georgia, "Times New Roman", serif;
+  --font-mono:
+    "JetBrains Mono", "IBM Plex Mono", "SFMono-Regular", "Roboto Mono",
+    Menlo, Consolas, monospace;
+
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-md:   1.125rem;
+  --text-lg:   1.25rem;
+  --text-xl:   1.563rem;
+  --text-2xl:  1.953rem;
+  --text-3xl:  2.441rem;
+  --text-4xl:  3.052rem;
+  --text-5xl:  3.815rem;
+  --text-6xl:  4.768rem;
+  --text-display: clamp(3rem, 7.5vw, 6.8rem);
+
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+  --weight-black:    800;
+
+  --leading-tight:   1.05;
+  --leading-snug:    1.25;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.65;
+  --leading-loose:   1.75;
+
+  --tracking-tight:  -0.02em;
+  --tracking-tighter: -0.04em;
+  --tracking-normal: 0;
+  --tracking-wide:   0.12em;
+
+
+  /* ─── 7. SPACING / LAYOUT / RADIUS ───────────────────────────────────── */
+
+  --space-0:  0;
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  --page-padding: clamp(1.25rem, 4vw, 4rem);
+
+  --container-narrow: 680px;
+  --container-medium: 1100px;
+  --container-wide:   1440px;
+
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.25rem;
+  --radius-pill: 999px;
+
+
+  /* ─── 8. ELEVATION (light theme — softer shadows, no glow) ───────────── */
+
+  --shadow-xs: 0 1px 2px rgba(16, 26, 44, 0.04);
+  --shadow-sm: 0 2px 6px rgba(16, 26, 44, 0.05),
+               0 1px 2px rgba(16, 26, 44, 0.04);
+  --shadow-md: 0 8px 24px rgba(16, 26, 44, 0.07),
+               0 2px 6px rgba(16, 26, 44, 0.04);
+  --shadow-lg: 0 24px 60px rgba(16, 26, 44, 0.08),
+               0 4px 12px rgba(16, 26, 44, 0.04);
+  --shadow-glow-accent: 0 0 0 1px rgba(16, 70, 128, 0.18),
+                        0 12px 32px rgba(16, 70, 128, 0.10);
+
+  --blur-panel: 8px;
+  --blur-glass: 14px;
+
+
+  /* ─── 9. MOTION ──────────────────────────────────────────────────────── */
+
+  --motion-instant:   75ms;
+  --motion-fast:      150ms;
+  --motion-base:      300ms;
+  --motion-slow:      500ms;
+  --motion-narrative: 800ms;
+
+  --ease-standard:    cubic-bezier(0.2, 0.0, 0, 1);
+  --ease-emphasized:  cubic-bezier(0.3, 0.0, 0.0, 1);
+  --ease-decelerate:  cubic-bezier(0.0, 0.0, 0.2, 1);
+  --ease-accelerate:  cubic-bezier(0.3, 0.0, 1.0, 1);
+
+
+  /* ─── 10. Z-INDEX SCALE ──────────────────────────────────────────────── */
+
+  --z-base:    1;
+  --z-sticky:  10;
+  --z-overlay: 20;
+  --z-tooltip: 30;
+  --z-modal:   40;
+  --z-toast:   50;
+}
+
+/* Honour user motion preference. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-instant:   1ms;
+    --motion-fast:      1ms;
+    --motion-base:      1ms;
+    --motion-slow:      1ms;
+    --motion-narrative: 1ms;
+  }
+}

@@ -1,0 +1,149 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "lsoa_code": "LTIS_DEMO_001",
+        "lsoa_name": "Central London Demo Area",
+        "borough": "Westminster",
+        "population": 1800,
+        "ptal_mean": 6.0,
+        "ptal_norm": 0.92,
+        "stop_supply": 0.88,
+        "mode_diversity": 0.91,
+        "micro_mobility": 0.74,
+        "baseline_ltis": 0.88,
+        "central_score": 0.72,
+        "central_retention": 0.82,
+        "central_loss": 0.16,
+        "central_exposure": 288,
+        "central_dependency": 0.18,
+        "northern_score": 0.78,
+        "northern_retention": 0.89,
+        "northern_loss": 0.10,
+        "northern_exposure": 180,
+        "northern_dependency": 0.11,
+        "jubilee_score": 0.80,
+        "jubilee_retention": 0.91,
+        "jubilee_loss": 0.08,
+        "jubilee_exposure": 144,
+        "jubilee_dependency": 0.09,
+        "vulnerability_class": "Moderate",
+        "dominant_dependency": "Central line"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-0.16, 51.51], [-0.12, 51.51], [-0.12, 51.535], [-0.16, 51.535], [-0.16, 51.51]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "lsoa_code": "LTIS_DEMO_002",
+        "lsoa_name": "Outer West Demo Area",
+        "borough": "Ealing",
+        "population": 2400,
+        "ptal_mean": 3.0,
+        "ptal_norm": 0.48,
+        "stop_supply": 0.42,
+        "mode_diversity": 0.38,
+        "micro_mobility": 0.22,
+        "baseline_ltis": 0.42,
+        "central_score": 0.18,
+        "central_retention": 0.43,
+        "central_loss": 0.24,
+        "central_exposure": 576,
+        "central_dependency": 0.57,
+        "northern_score": 0.38,
+        "northern_retention": 0.90,
+        "northern_loss": 0.04,
+        "northern_exposure": 96,
+        "northern_dependency": 0.10,
+        "jubilee_score": 0.39,
+        "jubilee_retention": 0.93,
+        "jubilee_loss": 0.03,
+        "jubilee_exposure": 72,
+        "jubilee_dependency": 0.07,
+        "vulnerability_class": "High",
+        "dominant_dependency": "Central line"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-0.35, 51.5], [-0.3, 51.5], [-0.3, 51.53], [-0.35, 51.53], [-0.35, 51.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "lsoa_code": "LTIS_DEMO_003",
+        "lsoa_name": "North London Demo Area",
+        "borough": "Barnet",
+        "population": 2100,
+        "ptal_mean": 3.5,
+        "ptal_norm": 0.55,
+        "stop_supply": 0.45,
+        "mode_diversity": 0.44,
+        "micro_mobility": 0.18,
+        "baseline_ltis": 0.48,
+        "central_score": 0.45,
+        "central_retention": 0.94,
+        "central_loss": 0.03,
+        "central_exposure": 63,
+        "central_dependency": 0.06,
+        "northern_score": 0.25,
+        "northern_retention": 0.52,
+        "northern_loss": 0.23,
+        "northern_exposure": 483,
+        "northern_dependency": 0.48,
+        "jubilee_score": 0.43,
+        "jubilee_retention": 0.90,
+        "jubilee_loss": 0.05,
+        "jubilee_exposure": 105,
+        "jubilee_dependency": 0.10,
+        "vulnerability_class": "High",
+        "dominant_dependency": "Northern line"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-0.23, 51.6], [-0.17, 51.6], [-0.17, 51.635], [-0.23, 51.635], [-0.23, 51.6]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "lsoa_code": "LTIS_DEMO_004",
+        "lsoa_name": "East London Demo Area",
+        "borough": "Newham",
+        "population": 2600,
+        "ptal_mean": 4.2,
+        "ptal_norm": 0.68,
+        "stop_supply": 0.61,
+        "mode_diversity": 0.62,
+        "micro_mobility": 0.35,
+        "baseline_ltis": 0.62,
+        "central_score": 0.50,
+        "central_retention": 0.81,
+        "central_loss": 0.12,
+        "central_exposure": 312,
+        "central_dependency": 0.19,
+        "northern_score": 0.58,
+        "northern_retention": 0.94,
+        "northern_loss": 0.04,
+        "northern_exposure": 104,
+        "northern_dependency": 0.06,
+        "jubilee_score": 0.35,
+        "jubilee_retention": 0.56,
+        "jubilee_loss": 0.27,
+        "jubilee_exposure": 702,
+        "jubilee_dependency": 0.44,
+        "vulnerability_class": "Very high",
+        "dominant_dependency": "Jubilee line"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[0.0, 51.5], [0.06, 51.5], [0.06, 51.535], [0.0, 51.535], [0.0, 51.5]]]
+      }
+    }
+  ]
+}

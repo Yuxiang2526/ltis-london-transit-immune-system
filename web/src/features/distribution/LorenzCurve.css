@@ -1,0 +1,53 @@
+.lorenz-card {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.lorenz-header h3 {
+  margin: 0 0 var(--space-1);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-strong);
+}
+
+.lorenz-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.axis-line {
+  stroke: var(--color-border-strong);
+  stroke-width: 1;
+}
+
+/* Perfect-equality diagonal — subtle dashed line */
+.equality-line {
+  stroke: var(--color-text-soft);
+  stroke-width: 1;
+  stroke-dasharray: 5 4;
+}
+
+/* Shaded area between the Lorenz curve and the equality diagonal */
+.inequality-area {
+  fill: var(--palette-red-1);
+}
+
+/* Lorenz curve — deep navy so it pops on the light peach fill */
+.lorenz-line {
+  fill: none;
+  stroke: var(--palette-blue-1);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.axis-label {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  fill: var(--color-text-muted);
+}

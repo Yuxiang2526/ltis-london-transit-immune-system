@@ -1,0 +1,89 @@
+{
+  "central": {
+    "label": "Central line disruption",
+    "description": "Scenario derived from real PTAL 2023 accessibility and proximity to Central line stations. Loss is proportional to local dependency on the disrupted line within a ~1.3 km walking catchment.",
+    "meanRetention": 0.9858,
+    "meanLoss": 0.0142,
+    "totalExposedPopulation": 120422,
+    "mostAffectedBoroughs": [
+      {
+        "borough": "Redbridge",
+        "meanLoss": 0.0473
+      },
+      {
+        "borough": "Tower Hamlets",
+        "meanLoss": 0.0468
+      },
+      {
+        "borough": "Westminster",
+        "meanLoss": 0.0395
+      },
+      {
+        "borough": "Ealing",
+        "meanLoss": 0.0391
+      },
+      {
+        "borough": "Kensington & Chelsea",
+        "meanLoss": 0.034
+      }
+    ]
+  },
+  "northern": {
+    "label": "Northern line disruption",
+    "description": "Scenario derived from real PTAL 2023 accessibility and proximity to Northern line stations. Loss is proportional to local dependency on the disrupted line within a ~1.3 km walking catchment.",
+    "meanRetention": 0.9774,
+    "meanLoss": 0.0226,
+    "totalExposedPopulation": 191955,
+    "mostAffectedBoroughs": [
+      {
+        "borough": "Camden",
+        "meanLoss": 0.1312
+      },
+      {
+        "borough": "Lambeth",
+        "meanLoss": 0.0905
+      },
+      {
+        "borough": "Islington",
+        "meanLoss": 0.0876
+      },
+      {
+        "borough": "Barnet",
+        "meanLoss": 0.0737
+      },
+      {
+        "borough": "Southwark",
+        "meanLoss": 0.0715
+      }
+    ]
+  },
+  "jubilee": {
+    "label": "Jubilee line disruption",
+    "description": "Scenario derived from real PTAL 2023 accessibility and proximity to Jubilee line stations. Loss is proportional to local dependency on the disrupted line within a ~1.3 km walking catchment.",
+    "meanRetention": 0.9859,
+    "meanLoss": 0.0141,
+    "totalExposedPopulation": 119376,
+    "mostAffectedBoroughs": [
+      {
+        "borough": "Camden",
+        "meanLoss": 0.0709
+      },
+      {
+        "borough": "Brent",
+        "meanLoss": 0.0573
+      },
+      {
+        "borough": "Southwark",
+        "meanLoss": 0.0512
+      },
+      {
+        "borough": "Tower Hamlets",
+        "meanLoss": 0.0417
+      },
+      {
+        "borough": "Newham",
+        "meanLoss": 0.0411
+      }
+    ]
+  }
+}

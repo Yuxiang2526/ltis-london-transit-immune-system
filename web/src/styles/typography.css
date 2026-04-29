@@ -1,0 +1,159 @@
+/* =============================================================================
+   Typography — applies the token scale to semantic HTML.
+   Editorial serif for display headings (NYT / Pudding convention).
+   Sans for body / UI. Mono for numbers in charts and tables.
+   ========================================================================== */
+
+html {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: var(--leading-normal);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  color: var(--color-text);
+}
+
+/* Display headings — serif, tight tracking, large. */
+.t-display,
+h1.t-display,
+.hero h1 {
+  font-family: var(--font-serif);
+  font-size: var(--text-display);
+  font-weight: var(--weight-semibold);
+  line-height: 0.92;
+  letter-spacing: var(--tracking-tight);
+}
+
+/* Section headings — sans, bold, tight. */
+h1, h2 {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  margin: 0;
+}
+
+h3, h4, h5 {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  margin: 0;
+}
+
+p {
+  line-height: var(--leading-relaxed);
+}
+
+/* Editorial eyebrow — small, accent-coloured, tracking-wide. */
+.eyebrow {
+  margin: 0 0 var(--space-3);
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-black);
+  font-family: var(--font-sans);
+}
+
+/* Numerals — monospace + tabular figures so dashboards align. */
+.num,
+.profile-metrics strong,
+.summary-card strong,
+.rank-value,
+.legend-labels span {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.num-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.text-soft {
+  color: var(--color-text-soft);
+}
+
+/* Article body — used by methodology / about pages */
+.prose {
+  max-width: var(--container-narrow);
+  font-size: var(--text-md);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-soft);
+}
+
+.prose h2 {
+  margin-top: var(--space-12);
+  margin-bottom: var(--space-4);
+  font-family: var(--font-serif);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+}
+
+.prose h3 {
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-3);
+  font-size: var(--text-xl);
+  color: var(--color-text);
+}
+
+.prose p {
+  margin: 0 0 var(--space-4);
+}
+
+.prose a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.15em 0.4em;
+  border-radius: 0.3em;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.4em;
+  line-height: var(--leading-relaxed);
+}
+
+.prose li {
+  margin-bottom: var(--space-2);
+}
+
+.references {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.references li {
+  margin-bottom: var(--space-3);
+}
+
+.references em {
+  color: var(--color-text-soft);
+}
+
+/* KaTeX block formula spacing — KaTeX ships its own .katex / .katex-display */
+.math-display {
+  display: block;
+  margin: var(--space-4) 0;
+  overflow-x: auto;
+}
+
+.math-inline {
+  display: inline-block;
+}

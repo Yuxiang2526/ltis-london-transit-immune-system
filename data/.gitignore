@@ -1,0 +1,12 @@
+# Raw data is downloaded by analysis/00_fetch_raw.ipynb on first run.
+# Do not commit it.
+raw/
+interim/
+
+# Keep the directories themselves so the pipeline can write into them.
+!raw/.gitkeep
+!interim/.gitkeep
+
+# Processed outputs (small, deterministic) ARE committed so the website can
+# build without running the pipeline. Add specific exclusions here if a
+# processed artefact grows beyond a few MB.
