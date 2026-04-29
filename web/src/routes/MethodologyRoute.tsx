@@ -3,24 +3,35 @@ import { Link } from "react-router-dom";
 import Math from "../components/ui/Math";
 
 /**
- * Methodology page rendered inside the website (rubric requirement: ~1000-word
- * methodology summary, accessible to a general audience, academically
- * rigorous, with clear referencing).
+ * Methodology page (rubric requirement: ~1000 word methodology summary,
+ * accessible to a general audience, academically rigorous, with clear
+ * referencing).
  *
- * Layout: sticky left-side TOC nav (rail-nature reference project pattern)
- * with scroll-spy active state, plus the long-form prose with KaTeX
- * formulas. The single source of truth for the prose is
- * `docs/methodology.md`; this page mirrors it.
+ * The project ships TWO complementary analytical layers, each with its own
+ * spatial unit and indicator family:
+ *
+ *   1. LTIS (Story + Explorer) — LSOA-level composite indicator built from
+ *      PTAL 2023 + Underground line dependency. Optimised for narrative
+ *      overview at city scale.
+ *
+ *   2. LTRS / Network Map — 100 m grid resilience computed via OSM
+ *      road-network Dijkstra shortest paths against 543 routes. Optimised
+ *      for forensic, route-by-route inspection.
+ *
+ * Layout: sticky left-side TOC nav (rail-nature reference pattern) with
+ * scroll-spy active state, plus the long-form prose with KaTeX formulas.
+ * Single source of truth for the prose is `docs/methodology.md`.
  */
 
 const SECTIONS: { id: string; label: string }[] = [
   { id: "research-question", label: "1. Research question" },
   { id: "framework", label: "2. Conceptual framework" },
-  { id: "ltis", label: "3. The LTIS score" },
-  { id: "scenario", label: "4. Scenario indicators" },
-  { id: "distribution", label: "5. Distribution & Gini" },
-  { id: "limitations", label: "6. Limitations" },
-  { id: "references", label: "7. References" },
+  { id: "two-layers", label: "3. Two analytical layers" },
+  { id: "ltis", label: "4. LTIS (LSOA scale)" },
+  { id: "ltrs", label: "5. LTRS (100m grid)" },
+  { id: "distribution", label: "6. Distribution & Gini" },
+  { id: "limitations", label: "7. Limitations" },
+  { id: "references", label: "8. References" },
 ];
 
 function useScrollSpy(ids: string[], offset = 120): string {
@@ -66,15 +77,18 @@ export default function MethodologyRoute() {
       <article className="methodology-panel" id="methodology">
         <div className="section-heading">
           <p className="eyebrow">Methodology</p>
-          <h2>How LTIS is constructed</h2>
+          <h2>How LTIS &amp; LTRS are constructed</h2>
           <p className="muted">
-            A complete reproducibility manifest is in the repository at{" "}
-            <code>docs/methodology.md</code> and{" "}
-            <code>docs/decisions/</code>. This page is the public-facing summary.
+            This page summarises the methods behind the project's two
+            complementary analytical layers — the LSOA-level LTIS narrative
+            and the 100 m-grid LTRS network explorer. A complete reproducibility
+            manifest is in <code>docs/methodology.md</code> and{" "}
+            <code>docs/decisions/</code>.
           </p>
         </div>
 
         <div className="prose">
+          {/* ── 1. Research question ─────────────────────────────────────── */}
           <h2 id="research-question">1. Research question</h2>
           <p>
             How unevenly is transport resilience distributed across London, and
@@ -82,6 +96,7 @@ export default function MethodologyRoute() {
             substitutability?
           </p>
 
+          {/* ── 2. Conceptual framework ──────────────────────────────────── */}
           <h2 id="framework">2. Conceptual framework</h2>
           <p>
             We adopt a <em>single-step, impact-based</em> definition of
@@ -91,66 +106,164 @@ export default function MethodologyRoute() {
             recovery (Bruneau et al., 2003; Henry &amp; Ramirez-Marquez, 2012)
             and topological robustness (Derrible &amp; Kennedy, 2010; Cats,
             2016), to a measure that is computable from open static data and
-            decomposes naturally to neighbourhoods. The "immune system" framing
-            is editorial; the technical claim is spatial vulnerability under
-            disruption.
+            decomposes naturally to neighbourhoods.
+          </p>
+          <p>
+            "Immune system" framing is editorial; the technical claim is
+            spatial vulnerability under disruption. Resilience = retained
+            mobility after disruption.
           </p>
 
-          <h2 id="ltis">3. The Local Transit Immune Score (LTIS)</h2>
+          {/* ── 3. Two analytical layers ─────────────────────────────────── */}
+          <h2 id="two-layers">3. Two analytical layers</h2>
           <p>
-            For each LSOA <Math>i</Math>, the baseline LTIS combines four
-            accessibility components with weights summing to one:
-          </p>
-          <Math display>
-            {String.raw`\text{LTIS}_{\text{baseline}}(i) = w_1 \cdot \widetilde{\text{PTAL}}(i) + w_2 \cdot \widetilde{\text{stops}}(i) + w_3 \cdot H_{\text{mode}}(i) + w_4 \cdot \mu(i)`}
-          </Math>
-          <p>
-            where <Math>{String.raw`\widetilde{\text{PTAL}}`}</Math> is the
-            area-weighted PTAL aggregate normalised to{" "}
-            <Math>{String.raw`[0, 1]`}</Math>,{" "}
-            <Math>{String.raw`\widetilde{\text{stops}}`}</Math> is log-normalised
-            NaPTAN stop density, <Math>{String.raw`H_{\text{mode}}`}</Math> is
-            the Shannon diversity over the modes serving the LSOA, and{" "}
-            <Math>{String.raw`\mu`}</Math> is a supplementary micro-mobility
-            term (cycle network density + Santander dock proximity). Initial
-            weights are equal (<Math>{String.raw`w_k = 0.25`}</Math>) and the
-            robustness of conclusions to weight choice is reported in{" "}
-            <code>analysis/04_validate_sensitivity.ipynb</code>.
+            Resilience is hard to capture with a single indicator, so the
+            project ships <strong>two independent but complementary
+            measurement layers</strong>. Both consume the same source datasets
+            (PTAL 2023, NaPTAN, OSM, ONS LSOA boundaries) but make different
+            spatial and computational trade-offs:
           </p>
 
-          <h2 id="scenario">4. Scenario indicators</h2>
+          <table className="prose-table">
+            <thead>
+              <tr>
+                <th>Aspect</th>
+                <th>LTIS (Story + Explorer)</th>
+                <th>LTRS (Network Map)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Spatial unit</td>
+                <td>2021 LSOA (4,994 polygons)</td>
+                <td>100 m grid cell (~159k cells)</td>
+              </tr>
+              <tr>
+                <td>Disruption granularity</td>
+                <td>3 Underground lines</td>
+                <td>543 routes (Tube + Overground + Elizabeth + DLR + Tramlink + buses)</td>
+              </tr>
+              <tr>
+                <td>Walking accessibility</td>
+                <td>Euclidean catchment ≈ 1.3 km</td>
+                <td>OSM Dijkstra shortest path, 4.8 km/h, 2,400 m cap</td>
+              </tr>
+              <tr>
+                <td>Optimised for</td>
+                <td>City-wide overview, narrative</td>
+                <td>Forensic single-route impact, comparison view</td>
+              </tr>
+              <tr>
+                <td>Where</td>
+                <td><Link to="/">Story</Link> · <Link to="/explore">Explorer</Link></td>
+                <td><Link to="/network">Network Map</Link></td>
+              </tr>
+            </tbody>
+          </table>
+
           <p>
-            For each scenario <Math>s</Math> (the failure of one Tube line{" "}
-            <Math>{String.raw`\ell_s`}</Math>), we recompute LTIS with the
-            stations of <Math>{String.raw`\ell_s`}</Math> removed and derive
-            four per-LSOA indicators:
-          </p>
-          <Math display>
-            {String.raw`\text{retention}(i, s) = \frac{\text{LTIS}_{\text{disrupted}}(i, s)}{\text{LTIS}_{\text{baseline}}(i)}`}
-          </Math>
-          <Math display>
-            {String.raw`\text{loss}(i, s) = \max\!\bigl(0,\ 1 - \text{retention}(i, s)\bigr)`}
-          </Math>
-          <Math display>
-            {String.raw`\text{exposure}(i, s) = \text{loss}(i, s) \cdot P(i)`}
-          </Math>
-          <p>
-            where <Math>{String.raw`P(i)`}</Math> is the LSOA's resident
-            population. Line dependency follows the impact-based definition of
-            Jenelius (2010):
-          </p>
-          <Math display>
-            {String.raw`\text{dependency}(i, s) = \frac{\text{LTIS}_{\text{baseline}}(i) - \text{LTIS}_{\text{disrupted}}(i, s)}{\text{LTIS}_{\text{baseline}}(i)}`}
-          </Math>
-          <p>
-            which approximates the share of local mobility attributable to{" "}
-            <Math>{String.raw`\ell_s`}</Math> at <Math>i</Math>.
+            The LTIS layer answers <em>"where is mobility brittle, and what is
+            the city-wide pattern?"</em>. The LTRS layer answers{" "}
+            <em>"how exactly does cancelling this specific route reshape
+            walking-time accessibility, cell by cell?"</em>. Reading them
+            together gives both the narrative and the mechanism.
           </p>
 
-          <h2 id="distribution">5. Distributional concentration</h2>
+          {/* ── 4. LTIS ─────────────────────────────────────────────────── */}
+          <h2 id="ltis">4. The Local Transit Immune Score (LTIS)</h2>
+          <p>
+            For each LSOA <Math>i</Math>, the baseline LTIS combines a
+            normalised PTAL signal with a normalised dominant PTAL band:
+          </p>
+          <Math display>
+            {String.raw`\text{LTIS}_{\text{baseline}}(i) = 0.6 \cdot \widetilde{\text{AI}}(i) + 0.4 \cdot \text{ptalNorm}(i)`}
+          </Math>
+          <p>
+            where <Math>{String.raw`\widetilde{\text{AI}}`}</Math> is the
+            min–max normalised <code>mean_AI</code> from the PTAL 2023 LSOA
+            aggregate and <Math>{String.raw`\text{ptalNorm}`}</Math> is the
+            dominant PTAL band ("0"…"6b") mapped to <Math>[0,1]</Math>.
+          </p>
+          <p>
+            For each scenario <Math>s</Math> (failure of one Tube line{" "}
+            <Math>{String.raw`\ell_s`}</Math>), we identify the stations
+            belonging to <Math>{String.raw`\ell_s`}</Math> within an
+            approximately 1.3 km Euclidean catchment of the LSOA centroid and
+            derive a dependency share:
+          </p>
+          <Math display>
+            {String.raw`\text{dependency}(i, s) = \frac{|\text{stations on }\ell_s \text{ in catchment}|}{|\text{all stations in catchment}|}`}
+          </Math>
+          <p>The disruption indicators follow:</p>
+          <Math display>
+            {String.raw`\text{loss}(i,s) = \text{LTIS}_{\text{baseline}}(i) \cdot \text{dependency}(i,s) \cdot 0.55`}
+          </Math>
+          <Math display>
+            {String.raw`\text{retention}(i,s) = \text{LTIS}_{\text{baseline}}(i) - \text{loss}(i,s)`}
+          </Math>
+          <Math display>
+            {String.raw`\text{exposure}(i,s) = \text{loss}(i,s) \cdot P(i)`}
+          </Math>
+          <p>
+            where <Math>P(i)</Math> is resident population. The 0.55 severity
+            coefficient is documented as ADR-002 — it expresses the assumption
+            that even total dependency does not zero out mobility (bus and
+            walking remain).
+          </p>
+          <p>
+            The five-dimension fallback profile rendered in the Local Profile
+            radar — <em>redundancy</em>, <em>busFallback</em>,{" "}
+            <em>cycleFallback</em>, <em>modalDiversity</em>,{" "}
+            <em>dependencyRisk</em> — is derived from the same baseline plus
+            dependency.
+          </p>
+
+          {/* ── 5. LTRS ─────────────────────────────────────────────────── */}
+          <h2 id="ltrs">5. The Local Transport Resilience Score (LTRS)</h2>
+          <p>
+            The LTRS layer (<Link to="/network">Network Map</Link>) is the
+            Network Map embed by Siyan Tao. Where LTIS approximates walking
+            accessibility with a Euclidean catchment, LTRS computes it on the
+            real OpenStreetMap road network:
+          </p>
+          <ul>
+            <li>
+              4,994 LSOAs × 27,553 stops, walking-time matrix pre-computed via
+              <strong> Dijkstra shortest path</strong> on the OSM walking
+              network.
+            </li>
+            <li>
+              Walking speed 4.8 km/h (80 m/min); maximum network walking
+              distance 2,400 m.
+            </li>
+            <li>
+              Per-stop accessibility contribution converted into the standard
+              TfL AI score, aggregated to 100 m grid cells (~159,000 cells).
+            </li>
+            <li>
+              For each of 543 routes, the AI loss when that route is removed is
+              pre-computed for every grid cell; cancelling multiple routes sums
+              their per-cell loss contributions.
+            </li>
+          </ul>
+          <p>The LTRS for grid cell <Math>g</Math> under route set <Math>R</Math> is:</p>
+          <Math display>
+            {String.raw`\text{LTRS}(g, R) = \frac{\text{AI}_{\text{disrupted}}(g, R)}{\text{AI}_{\text{baseline}}(g)}`}
+          </Math>
+          <p>
+            where <Math>{String.raw`\text{AI}_{\text{disrupted}}(g, R)`}</Math>{" "}
+            is the baseline AI minus the per-route losses for routes in <Math>R</Math>.
+            LTRS = 1 means the cell is unaffected; LTRS → 0 means total loss.
+            The compare-mode split-screen renders baseline AI on the left and
+            disruption-induced AI loss percentage on the right, with a six-step
+            white→burgundy ramp matching the project's diverging palette.
+          </p>
+
+          {/* ── 6. Distribution ─────────────────────────────────────────── */}
+          <h2 id="distribution">6. Distributional concentration</h2>
           <p>
             To answer "is loss spread evenly or concentrated?" we report the
-            Gini coefficient of the per-LSOA loss / exposure distributions:
+            Gini coefficient of the per-LSOA loss distribution:
           </p>
           <Math display>
             {String.raw`G = 1 - 2 \int_0^1 L(x)\,dx`}
@@ -159,34 +272,43 @@ export default function MethodologyRoute() {
             where <Math>{String.raw`L(x)`}</Math> is the Lorenz curve. Values
             near zero indicate even spread; values near one indicate
             concentration in a small number of LSOAs. The website renders the
-            Lorenz curve directly so the reader can see the integrand.
+            Lorenz curve directly in the Explorer so the reader can see the
+            integrand. For LTIS, the Gini ranges from 0.67 to 0.73 across the
+            three scenarios — meaning loss is highly concentrated, not diffuse.
           </p>
 
-          <h2 id="limitations">6. Limitations</h2>
+          {/* ── 7. Limitations ──────────────────────────────────────────── */}
+          <h2 id="limitations">7. Limitations</h2>
           <ul>
             <li>
-              <strong>PTAL vintage (2023)</strong> covers the Elizabeth line
-              but does not yet capture proposed extensions such as the Bakerloo
-              line; future PTAL releases would shift the baseline.
+              <strong>Static, single-step.</strong> Neither LTIS nor LTRS
+              models recovery time, cascading effects, or capacity-constrained
+              crowding on substitute lines.
             </li>
             <li>
-              <strong>Static, single-step.</strong> We do not model recovery
-              time, cascading effects, or capacity-constrained crowding on
-              substitute lines.
+              <strong>LTIS catchment is Euclidean</strong> (~1.3 km radius),
+              not network-walked. LTRS exists precisely to provide the
+              network-walked counterpart for areas where this matters.
+            </li>
+            <li>
+              <strong>LTRS line geometry</strong> for the LTIS overlay is
+              approximated by chaining each line's stations west-to-east with
+              a nearest-neighbour walk, used as a visual scaffold only.
             </li>
             <li>
               <strong>Modifiable Areal Unit Problem</strong> — LSOAs are
-              statistical, not behavioural; conclusions are sensitive to
-              boundary geometry.
+              statistical, not behavioural. The 100 m LTRS grid mitigates this
+              partially but adds its own grid-edge artifacts.
             </li>
             <li>
-              <strong>Equity weighting</strong> is reported as a secondary
-              metric (<Math>{String.raw`\text{loss} \cdot P \cdot D^{-1}`}</Math>{" "}
-              with <Math>D</Math> the IMD decile), not as the headline figure.
+              <strong>Population data</strong> currently uses a fixed per-LSOA
+              estimate; an upgrade using the live ONS mid-year estimates is
+              on the project roadmap (D5 in the analysis pipeline).
             </li>
           </ul>
 
-          <h2 id="references">7. References</h2>
+          {/* ── 8. References ───────────────────────────────────────────── */}
+          <h2 id="references">8. References</h2>
           <ol className="references">
             <li>
               Bruneau, M. et al. (2003). A framework to quantitatively assess
@@ -233,6 +355,19 @@ export default function MethodologyRoute() {
               Sharma, D., Zhong, C., &amp; Wong, H. (2024). Lockdown lifted:
               measuring spatial resilience from London's public transport
               demand recovery. <em>Regional Studies, Regional Science</em> 11.
+            </li>
+            <li>
+              Transport for London (2015–2023). <em>WebCAT / PTAL — Public
+              Transport Accessibility Level</em>. Methodology note and 2023
+              LSOA aggregate.
+            </li>
+            <li>
+              Department for Transport. <em>NaPTAN — National Public Transport
+              Access Nodes</em>. Open Government Licence v3.
+            </li>
+            <li>
+              OpenStreetMap contributors. <em>OSM walking-network extract for
+              Greater London</em> (2024). Open Database Licence (ODbL).
             </li>
           </ol>
 

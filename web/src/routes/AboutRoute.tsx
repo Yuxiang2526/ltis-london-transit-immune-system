@@ -2,12 +2,17 @@ import Reveal from "../components/ui/Reveal";
 import SectionHeader from "../components/ui/SectionHeader";
 
 /**
- * About + methodology summary page. Structure adopted from the CASA reference
- * EV project: hero éˆ«?3-part section cards éˆ«?team éˆ«?methodology essay éˆ«?data
- * sources table éˆ«?tech stack chips. The detailed mathematical methodology
- * lives on the Methodology route; this page is the "story-of-the-project"
- * companion that addresses the rubric's contributions / AI / open-data
- * requirements directly.
+ * About + project information page.
+ *
+ * Reflects the dual-track architecture of the deliverable:
+ *   - LTIS narrative track (Story + Explorer + Methodology) — Yuxiang Fan
+ *   - LTRS network track (Network Map iframe) — Siyan Tao
+ * with a shared methodology page that documents both.
+ *
+ * Required by the rubric (80%+):
+ *   - Contributions table
+ *   - AI tool usage statement
+ *   - Open data + library references
  */
 
 const PARTS = [
@@ -15,21 +20,28 @@ const PARTS = [
     number: "01",
     title: "Story",
     summary:
-      "An editorial scrollytelling sequence that introduces baseline accessibility (PTAL), the disruption hypothesis, and the resulting fallback-mobility map.",
+      "An editorial scrollytelling sequence that introduces baseline accessibility (PTAL), the disruption hypothesis, and the resulting fallback-mobility pattern at LSOA scale.",
     accent: "cool" as const,
   },
   {
     number: "02",
     title: "Explorer",
     summary:
-      "An interactive scenario explorer for switching disruption line and metric, ranking neighbourhoods, comparing scenarios side-by-side, and inspecting a five-dimension fallback profile.",
+      "An interactive scenario explorer for switching disruption line and metric, ranking neighbourhoods, and inspecting a five-dimension fallback profile per LSOA.",
     accent: "accent" as const,
   },
   {
     number: "03",
+    title: "Network Map",
+    summary:
+      "The LTRS companion tool: 100 m grid resilience under multi-route disruption, computed via OSM road-network Dijkstra walking. Cancel routes and see per-cell impact.",
+    accent: "warm" as const,
+  },
+  {
+    number: "04",
     title: "Methodology",
     summary:
-      "Full indicator definitions (LTIS, retention, loss, dependency, exposure, Gini), references, limitations and open-data declarations.",
+      "Dual-method documentation covering both the LSOA-scale LTIS composite and the 100 m-grid LTRS Dijkstra model, with limitations and references.",
     accent: "warm" as const,
   },
 ];
@@ -38,51 +50,122 @@ const TEAM = [
   {
     name: "Yuxiang Fan",
     initials: "YF",
-    role: "Frontend, design system, scrollytelling, deployment",
+    role: "LTIS narrative + Explorer; design system; scrollytelling; deployment",
   },
   {
     name: "Siyan Tao",
     initials: "ST",
-    role: "Data pipeline, methodology writing, references",
+    role: "LTRS Network Map; OSM Dijkstra walking model; 100 m grid resilience pipeline",
+  },
+];
+
+const CONTRIBUTIONS = [
+  { task: "Concept development", major: "Yuxiang Fan, Siyan Tao", ai: "No AI use" },
+  {
+    task: "Data preparation (PTAL 2023 LSOA aggregation, NaPTAN, OSM walking network)",
+    major: "Siyan Tao",
+    ai: "No AI use",
+  },
+  {
+    task: "OSM Dijkstra walking-time pipeline (4,994 LSOAs × 27,553 stops)",
+    major: "Siyan Tao",
+    ai: "No AI use",
+  },
+  {
+    task: "100 m grid resilience model + 543-route impact pre-computation",
+    major: "Siyan Tao",
+    ai: "ChatGPT used to debug edge cases in the route-grid loss aggregation",
+  },
+  {
+    task: "Network Map UI (Mapbox GL JS, compare mode, cancel-routes interaction)",
+    major: "Siyan Tao",
+    ai: "ChatGPT used for Mapbox style expression syntax queries",
+  },
+  {
+    task: "LTIS LSOA-level pipeline (Python, Shapely, scenario indicators)",
+    major: "Yuxiang Fan",
+    ai: "Anthropic Claude (via Claude Code) used to scaffold the conversion script",
+  },
+  {
+    task: "LTIS website (React + TypeScript + Vite + MapLibre GL)",
+    major: "Yuxiang Fan",
+    ai: "Anthropic Claude (via Claude Code) used for component scaffolding and MapLibre layer wiring",
+  },
+  {
+    task: "Editorial design system (light theme, RdBu palette, typography)",
+    major: "Yuxiang Fan",
+    ai: "Anthropic Claude (via Claude Code) used to draft CSS tokens",
+  },
+  {
+    task: "Scrollytelling narrative (scrollama + frame data)",
+    major: "Yuxiang Fan",
+    ai: "Anthropic Claude (via Claude Code) used to draft component structure",
+  },
+  {
+    task: "Methodology summary writing + reference list curation",
+    major: "Yuxiang Fan, Siyan Tao",
+    ai: "ChatGPT used for copy-editing the methodology prose",
+  },
+  {
+    task: "Iframe integration of Network Map into LTIS site",
+    major: "Yuxiang Fan",
+    ai: "Anthropic Claude (via Claude Code) used to plan and execute the integration",
+  },
+  {
+    task: "GitHub deployment + GitHub Release for large data assets",
+    major: "Yuxiang Fan",
+    ai: "Anthropic Claude (via Claude Code) used to write the deploy.yml workflow",
   },
 ];
 
 const SOURCES = [
   {
     part: "Baseline",
-    name: "PTAL 2023 (LSOA aggregated)",
+    name: "PTAL 2023 — LSOA aggregated",
     description:
-      "TfL's Public Transport Accessibility Level grid aggregated to 2021 LSOAs (mean accessibility index + dominant PTAL band). Provides the baseline LTIS denominator.",
+      "TfL's Public Transport Accessibility Level grid aggregated to 2021 LSOAs (mean accessibility index + dominant PTAL band). Provides the LTIS baseline.",
+  },
+  {
+    part: "Baseline",
+    name: "PTAL 2023 — 100 m grid",
+    description:
+      "TfL PTAL 2023 raw 100 m grid cells (~159k cells across Greater London). Provides the LTRS baseline AI score.",
   },
   {
     part: "Geometry",
     name: "ONS LSOA 2021 boundaries",
     description:
-      "4,994 Lower Super Output Areas across Greater London. Used as the spatial unit throughout the project.",
+      "4,994 Lower Super Output Areas across Greater London. Spatial unit for the LTIS narrative layer.",
   },
   {
     part: "Network",
-    name: "Underground Stations (TfL)",
+    name: "NaPTAN (Department for Transport)",
     description:
-      "273 station points with line-membership metadata (LINES). Drives the line-disruption scenario logic and the tube-line overlay on the map.",
+      "27,553 transit stops across London (bus, tube, DLR, Overground, Elizabeth, Tramlink) with route membership. Drives both layers.",
   },
   {
     part: "Network",
-    name: "Tube line geometry",
+    name: "Underground Stations + 540+ Bus / Rail routes (TfL)",
     description:
-      "Line geometry approximated by chaining each line's stations west-to-east with a nearest-neighbour walk; used as a visual scaffold, not as a routing layer.",
+      "Line and route geometry. The LTIS layer uses 3 Underground scenarios; the LTRS layer covers 543 individual routes.",
+  },
+  {
+    part: "Network",
+    name: "OpenStreetMap walking network",
+    description:
+      "OSM road / footpath graph for Greater London. Used in the LTRS pipeline for Dijkstra shortest-path walking-time computation (4.8 km/h, 2,400 m cap).",
+  },
+  {
+    part: "Population",
+    name: "ONS LSOA mid-year population",
+    description:
+      "Resident population per LSOA. Used to compute the LTIS exposure indicator (loss × population).",
   },
   {
     part: "Context",
-    name: "OpenStreetMap + CARTO Positron",
+    name: "OpenStreetMap basemap (CARTO Positron + Mapbox Streets)",
     description:
-      "Light raster basemap. æ¼ OpenStreetMap contributors æ¼ CARTO. Provides editorial map context without overwhelming the choropleth.",
-  },
-  {
-    part: "Reference",
-    name: "Resilience literature",
-    description:
-      "Bruneau (2003), Cats (2016), Chopra (2016), Cox (2011), Derrible (2010), D'Lima (2016), Henry (2012), Jenelius (2010), Sharma (2024). Full citations on the methodology page.",
+      "Light raster basemap. © OpenStreetMap contributors © CARTO (LTIS) and Mapbox (LTRS).",
   },
 ];
 
@@ -91,31 +174,34 @@ const TECH = [
   "TypeScript",
   "Vite",
   "MapLibre GL",
+  "Mapbox GL JS",
   "d3-geo",
   "d3-shape",
   "scrollama",
   "KaTeX",
-  "Python è·¯ Shapely",
+  "Python · Shapely",
+  "Python · NetworkX (Dijkstra)",
   "GitHub Actions",
+  "GitHub Pages + Releases",
 ];
 
 const AI_USAGE = [
   {
     tool: "Anthropic Claude (via Claude Code)",
     purpose:
-      "Code scaffolding, MapLibre layer wiring, React component structure, ADR drafting, and PTALéˆ«æ‰¡TIS conversion script. Every artefact was inspected and edited by a named author before being committed.",
+      "Code scaffolding, MapLibre layer wiring, React component structure, ADR drafting, PTAL→LTIS conversion script, iframe integration of the Network Map. Every artefact was inspected and edited by a named author before being committed.",
   },
   {
     tool: "OpenAI ChatGPT",
     purpose:
-      "Licence-term disambiguation and copy-editing of the methodology summary. No analytical findings, methodological choices, citations or final wording were generated by an AI tool without author review.",
+      "Mapbox style expression queries during Network Map development; copy-editing of methodology prose; licence-term disambiguation. No analytical findings, methodological choices, citations or final wording were generated by an AI tool without author review.",
   },
 ];
 
 export default function AboutRoute() {
   return (
     <article className="about-page">
-      {/* éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬ Hero éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬ */}
+      {/* Hero */}
       <Reveal>
         <header className="about-hero">
           <p className="eyebrow">About this project</p>
@@ -123,19 +209,21 @@ export default function AboutRoute() {
           <p className="about-hero__lede">
             <em>LTIS</em> is a group data-visualisation project investigating
             how unevenly transport resilience is distributed across London
-            neighbourhoods. Produced as part of the CASA0029 module at the
-            Centre for Advanced Spatial Analysis, University College London,
-            2025/26 (Group 17).
+            neighbourhoods. It ships two complementary analytical layers — an
+            LSOA-scale LTIS narrative and a 100 m-grid LTRS network explorer —
+            that read together as a single argument about spatial inequality.
+            Produced as part of the CASA0029 module at the Centre for Advanced
+            Spatial Analysis, University College London, 2025/26 (Group 17).
           </p>
         </header>
       </Reveal>
 
-      {/* éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬ 3-part overview éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬ */}
+      {/* 4-part overview */}
       <section className="about-section">
         <SectionHeader
           eyebrow="Site structure"
-          title="Three connected views of the same question"
-          description="The site moves from narrative to dashboard to method, with each part building on the previous one."
+          title="Four connected views, two analytical layers"
+          description="The site moves from narrative to two interactive tools to method, with each part building on the previous one."
         />
         <div className="about-parts-grid">
           {PARTS.map((p, i) => (
@@ -150,7 +238,7 @@ export default function AboutRoute() {
         </div>
       </section>
 
-      {/* éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬ Team éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬ */}
+      {/* Team */}
       <section className="about-section">
         <SectionHeader
           eyebrow="Contributors"
@@ -168,98 +256,37 @@ export default function AboutRoute() {
             </div>
           ))}
         </div>
-        <p className="muted" style={{ fontSize: "var(--text-sm)", maxWidth: "60ch" }}>
-          The full Contributions Table éˆ¥?task-by-task ownership across data
-          collection, methodology, frontend, design, methodology writing, and
-          deployment éˆ¥?is mirrored in <code>submission/Group17_Project_Info.md</code> for
-          the PDF deliverable.
-        </p>
       </section>
 
-      {/* éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬ Methodology essay éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬ */}
+      {/* Contributions table */}
       <section className="about-section">
         <SectionHeader
-          eyebrow="About the work"
-          title="How the project was built"
-          description="Research framing, indicator construction, and transparency notes. The mathematical formulation, references and limitations live on the Methodology page."
+          eyebrow="Contributions table"
+          title="Task-by-task ownership"
+          description="Per CASA0029 marking guidance, each project task is attributed to its major contributor and any AI-tool involvement is itemised."
         />
-        <div className="prose" style={{ maxWidth: "var(--container-narrow)" }}>
-          <h3>Research framing</h3>
-          <p>
-            LTIS asks a question that sits at the intersection of transport
-            resilience research and spatial equity: when a single Underground
-            line is disrupted, which neighbourhoods retain meaningful
-            alternative mobility éˆ¥?and which become structurally exposed? The
-            project is built around a single composite indicator (LTIS) whose
-            sub-components are interpretable in isolation: <em>retention</em>,
-            <em> loss</em>, <em>dependency</em> and <em>exposure</em>.
-          </p>
-
-          <h3>Baseline accessibility</h3>
-          <p>
-            We adopt PTAL 2023 (mean accessibility index + dominant PTAL band)
-            aggregated to 2021 LSOAs as the baseline denominator. PTAL is a
-            well-established TfL measure that captures walking distance to
-            public transport stops weighted by service frequency; using it as
-            the baseline grounds the project in a recognised London transport
-            indicator rather than a bespoke composite.
-          </p>
-
-          <h3>Disruption scenarios</h3>
-          <p>
-            For each of three scenarios éˆ¥?Central, Northern and Jubilee line
-            disruption éˆ¥?we compute, for every LSOA, a dependency share equal
-            to the proportion of nearby Underground stations belonging to the
-            disrupted line within an approximately 1.3 km walking catchment. A
-            severity coefficient maps that dependency share into a loss
-            fraction, from which retention, exposure and the five-dimension
-            fallback profile are derived. The choice of severity (0.55) and
-            catchment (~1.3 km) is documented as an ADR.
-          </p>
-
-          <h3>Spatial unit</h3>
-          <p>
-            All choropleth output is at the 2021 LSOA level (4,994 features
-            across Greater London). LSOAs are the standard ONS spatial unit
-            for neighbourhood-scale social analysis and align with the IMD,
-            census and PTAL aggregation. Borough roll-ups are produced for
-            headline summaries only; all interactive visualisations remain at
-            LSOA scale.
-          </p>
-
-          <h3>Reproducibility &amp; open data</h3>
-          <p>
-            All code is MIT-licensed and version-controlled. The PTALéˆ«æ‰¡TIS
-            pipeline lives in <code>analysis/build_ltis_from_ptal.py</code>; the
-            input data, intermediate joins and output GeoJSON are all
-            published in the repository with their provenance documented in
-            <code> data/DATA_SOURCES.md</code>. Citation metadata is in
-            <code> CITATION.cff</code> and key design decisions are recorded
-            as ADRs in <code>docs/decisions/</code>.
-          </p>
-
-          <h3>Limitations &amp; transparency</h3>
-          <p>
-            Tube line geometry is an approximation chained from station
-            points (no GTFS shapes are joined yet) and is used as a visual
-            scaffold, not as a routing layer. The 1.3 km catchment is a
-            deliberate simplification of multimodal accessibility éˆ¥?bus and
-            rail fallback are handled separately as fallback-profile
-            dimensions. PTAL itself is a frequency-weighted walking measure
-            and inherits the limitations described in TfL's PTAL methodology
-            note. The exposure metric uses a fixed per-LSOA population
-            baseline; an upgraded version using the live ONS mid-year
-            estimates is on the project roadmap.
-          </p>
+        <div className="about-sources">
+          <div className="about-sources-row about-sources-row--head">
+            <span>Task</span>
+            <span>Major contributors</span>
+            <span>AI tool usage in this task</span>
+          </div>
+          {CONTRIBUTIONS.map((c) => (
+            <div className="about-sources-row" key={c.task}>
+              <strong>{c.task}</strong>
+              <span>{c.major}</span>
+              <span>{c.ai}</span>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬ AI usage éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬ */}
+      {/* AI usage detail */}
       <section className="about-section">
         <SectionHeader
           eyebrow="Transparency"
           title="AI tool usage"
-          description="Per CASA0029 marking guidance, every AI-assisted artefact is itemised below. Final author review applied to all outputs."
+          description="Every AI-assisted artefact was reviewed and edited by a named author before being committed to the repository."
         />
         <div className="about-sources">
           <div className="about-sources-row about-sources-row--head">
@@ -277,12 +304,12 @@ export default function AboutRoute() {
         </div>
       </section>
 
-      {/* éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬ Data sources éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬ */}
+      {/* Data sources */}
       <section className="about-section">
         <SectionHeader
           eyebrow="Data"
           title="Data sources"
-          description="All datasets used in this project are publicly available. Full citations live on the Methodology page."
+          description="All datasets used in this project are publicly available under permissive licences."
         />
         <div className="about-sources">
           <div className="about-sources-row about-sources-row--head">
@@ -300,12 +327,12 @@ export default function AboutRoute() {
         </div>
       </section>
 
-      {/* éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬ Tech éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬éˆ¹â‚¬ */}
+      {/* Tech */}
       <section className="about-section">
         <SectionHeader
           eyebrow="Stack"
           title="Tools &amp; technologies"
-          description="The site is fully open-source and uses no proprietary visualisation libraries."
+          description="The site is fully open-source. The LTIS layer uses open MapLibre GL; the LTRS layer uses Mapbox GL JS with a token restricted to the deployed domain."
         />
         <div className="about-tag-strip">
           {TECH.map((t) => (
