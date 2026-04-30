@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouteRankings } from "../features/rankings/useRouteRankings";
 
 const NETWORK_MAP_HTML = `${import.meta.env.BASE_URL}network-map/London_PTAL_Accessibility_Map.html`;
@@ -67,6 +67,11 @@ const EMBED_CSS = `
 export default function NetworkRoute() {
   const { data } = useRouteRankings();
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  // The Mapbox engine fetches a ~13 MB route-impacts JSON + ~80 MB PTAL
+  // grid before the map is interactive — easily 5–10 s on a moderate
+  // connection. Show a loading overlay until the iframe fires `load` so
+  // the user never stares at a blank stage.
+  const [iframeLoaded, setIframeLoaded] = useState(false);
 
   // Inject embed-mode CSS into the iframe once it loads. Safe — same origin.
   useEffect(() => {
@@ -161,7 +166,9 @@ export default function NetworkRoute() {
           }
         }, 30_000);
       } catch (err) {
-        console.warn("[LTIS] Could not inject embed CSS into iframe:", err);
+        if (import.meta.env.DEV) {
+          console.warn("[LTRS] Could not inject embed CSS into iframe:", err);
+        }
       }
     };
 
@@ -226,7 +233,24 @@ export default function NetworkRoute() {
           loading="lazy"
           className="network-iframe"
           allow="fullscreen"
+          onLoad={() => setIframeLoaded(true)}
         />
+        {iframeLoaded ? null : (
+          <div
+            className="network-iframe-loader"
+            role="status"
+            aria-live="polite"
+          >
+            <div className="network-iframe-loader__spinner" aria-hidden="true" />
+            <p className="network-iframe-loader__title">
+              Loading 543-route impact data…
+            </p>
+            <p className="network-iframe-loader__sub">
+              First load fetches ~13 MB route impacts and ~80 MB PTAL grid.
+              Five to ten seconds on a moderate connection.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* ───── Action bar: replicates the iframe's hidden map-toolbar ───── */}

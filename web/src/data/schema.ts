@@ -8,7 +8,7 @@
  *      Stays flat because MapLibre paint expressions (`["get", "99_loss"]`)
  *      can only address top-level keys efficiently.
  *
- *   2. Logical layer (LSOAView, ScenarioBundle, FallbackProfile)
+ *   2. Logical layer (LSOAView, ScenarioBundle)
  *      Ergonomic nested shape used by React components. Built on demand from
  *      the flat layer via accessor helpers — never serialised back to disk.
  *
@@ -33,18 +33,6 @@ export const RESILIENCE_METRICS = [
   "dependency",
 ] as const;
 export type ResilienceMetric = (typeof RESILIENCE_METRICS)[number];
-
-/** Five-dimension fallback profile (cf. presentation slide 11). */
-export const FALLBACK_DIMENSIONS = [
-  "redundancy",
-  "busFallback",
-  "cycleFallback",
-  "modalDiversity",
-  "dependencyRisk",
-] as const;
-export type FallbackDimension = (typeof FALLBACK_DIMENSIONS)[number];
-
-export type FallbackProfile = Record<FallbackDimension, number>;
 
 /** Map metric usable in choropleth — extends ResilienceMetric with baseline. */
 export type MapMetric = "baseline_ltis" | ResilienceMetric;
@@ -80,9 +68,7 @@ export interface LSOABaseline {
  * The accessor `getScenarioBundle` turns this into a nested ScenarioBundle.
  *
  * Example (scenarioId = "99"):
- *   99_score, 99_retention, 99_loss, 99_exposure,
- *   99_dependency, 99_redundancy, 99_busFallback,
- *   99_cycleFallback, 99_modalDiversity, 99_dependencyRisk
+ *   99_score, 99_retention, 99_loss, 99_exposure, 99_dependency
  */
 export type LSOAScenarioFlatKey<S extends string, F extends string> = `${S}_${F}`;
 
@@ -95,7 +81,7 @@ export interface LSOACategorical {
 /**
  * Full storage shape. Scenario-specific fields are typed loosely as a string-
  * keyed numeric map because their key names depend on the scenario registry.
- * Use `getScenarioMetric` / `getFallbackProfile` instead of indexing directly.
+ * Use `getScenarioMetric` / `getScenarioBundle` instead of indexing directly.
  */
 export type LSOAFlatProperties = LSOAIdentity &
   LSOABaseline &
@@ -109,13 +95,12 @@ export type LSOAFlatProperties = LSOAIdentity &
 
 export interface ScenarioBundle {
   scenarioId: ScenarioId;
-  /** Disrupted LTIS score for this scenario. Optional — not all pipelines emit it. */
+  /** Disrupted absolute score for this scenario. */
   ltis: number;
   retention: number;
   loss: number;
   exposure: number;
   dependency: number;
-  profile: FallbackProfile;
 }
 
 export interface BaselineBundle {
@@ -191,19 +176,6 @@ export function getScenarioMetric(
   return num(properties[flatKey(scenario, metric)]);
 }
 
-export function getFallbackProfile(
-  properties: LSOAFlatProperties,
-  scenario: ScenarioId,
-): FallbackProfile {
-  return FALLBACK_DIMENSIONS.reduce<FallbackProfile>(
-    (acc, dim) => {
-      acc[dim] = num(properties[flatKey(scenario, dim)]);
-      return acc;
-    },
-    {} as FallbackProfile,
-  );
-}
-
 export function getScenarioBundle(
   properties: LSOAFlatProperties,
   scenario: ScenarioId,
@@ -228,7 +200,6 @@ export function getScenarioBundle(
     loss,
     exposure: getScenarioMetric(properties, scenario, "exposure"),
     dependency: getScenarioMetric(properties, scenario, "dependency"),
-    profile: getFallbackProfile(properties, scenario),
   };
 }
 

@@ -772,6 +772,64 @@
   background: #e8edf1;
 }
 
+/* Loading overlay shown until the iframe's `load` event fires. The Mapbox
+   engine inside fetches the ~13 MB route-impacts JSON and ~80 MB PTAL grid
+   before the map becomes interactive — this overlay sets expectations so
+   the user doesn't see a blank stage. */
+.network-iframe-loader {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  background: linear-gradient(
+    180deg,
+    rgba(232, 237, 241, 0.96) 0%,
+    rgba(255, 255, 255, 0.92) 100%
+  );
+  text-align: center;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.network-iframe-loader__spinner {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid rgba(16, 70, 128, 0.18);
+  border-top-color: var(--palette-blue-1);
+  animation: ltrsSpin 900ms linear infinite;
+}
+
+@keyframes ltrsSpin {
+  to { transform: rotate(360deg); }
+}
+
+.network-iframe-loader__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-strong);
+}
+
+.network-iframe-loader__sub {
+  margin: 0;
+  max-width: 420px;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: var(--leading-relaxed);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .network-iframe-loader__spinner {
+    animation: none;
+  }
+}
+
 /* Action bar — replicates the iframe's hidden map-toolbar */
 .network-route__actionbar {
   display: flex;

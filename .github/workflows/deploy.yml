@@ -47,6 +47,13 @@ jobs:
           VITE_BASE_PATH: ${{ vars.VITE_BASE_PATH || '/ltis-london-transit-immune-system/' }}
         run: npm run build
 
+      - name: Add 404.html SPA fallback
+        # GitHub Pages serves 404.html for any path that isn't a real file.
+        # By copying the built index.html to dist/404.html, deep links like
+        # /explore, /network, /methodology and /about resolve through the
+        # React Router instead of GitHub's generic Page-Not-Found.
+        run: cp dist/index.html dist/404.html
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: web/dist

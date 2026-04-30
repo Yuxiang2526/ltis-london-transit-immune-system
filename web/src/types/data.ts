@@ -1,15 +1,13 @@
 /**
  * @deprecated Re-export shim. Import from `../data/schema` instead.
- * Kept temporarily so existing components keep compiling during the D2
- * features/ reorganisation. Will be removed after D2 lands.
+ * Kept so a couple of dashboard / chart components keep compiling without
+ * a wide refactor.
  */
 export type {
   ScenarioId,
   MapMetric,
   MapMetric as MetricId,
   ResilienceMetric,
-  FallbackProfile,
-  FallbackDimension,
   LSOAFlatProperties,
   LSOAFlatProperties as LTISProperties,
   LSOAFeature,

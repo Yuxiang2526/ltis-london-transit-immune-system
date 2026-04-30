@@ -36,14 +36,18 @@ export default function StoryRoute() {
         <section className="story-cta">
           <div>
             <p className="eyebrow">Now you've seen the story</p>
-            <h2>Run your own scenarios</h2>
+            <h2>Read the LSOA evidence behind it</h2>
             <p className="muted">
-              The explorer lets you switch line, switch metric, hover any
-              neighbourhood, and inspect its 5-dimension fallback profile.
+              The Explorer is the LSOA-scale narrative dashboard: ranked
+              routes, the impact-matrix heatmap, a baseline accessibility
+              choropleth you can hover for the local profile, plus the
+              Lorenz curve and decile bars that quantify how concentrated
+              the loss is. For full route-cancel control at 100 m grid
+              resolution, the Network Map is the forensic tool.
             </p>
           </div>
           <Link to="/explore" className="hero-cta">
-            Open the explorer →
+            Open the Explorer →
           </Link>
         </section>
       </Reveal>

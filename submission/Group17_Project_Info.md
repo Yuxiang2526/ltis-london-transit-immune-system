@@ -1,10 +1,13 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 # London Transit Resilience System (LTRS)
 
 **CASA0029 · Group 17 · Centre for Advanced Spatial Analysis, UCL**
 **April 2026 · Word count: 955**
 
-> Convert this file to `Group 17 Project Info.pdf` (or `.docx`) before
-> submission. Pandoc one-liner: `pandoc Group17_Project_Info.md -o "Group 17 Project Info.pdf" --pdf-engine=xelatex`.
 
 ---
 

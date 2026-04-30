@@ -89,16 +89,19 @@ export default function LTISMap({
 
     // Diagnostic — flat keys so console doesn't collapse them into {...}.
     // The container/canvas sizes here are the single most useful signal for
-    // debugging "map initialised but renders nothing" cases.
-    console.info(
-      "[LTIS] map init  containerW=%d  containerH=%d  features=%d  scenario=%s  metric=%s  base=%s",
-      container.clientWidth,
-      container.clientHeight,
-      data?.features?.length ?? -1,
-      scenario,
-      metric,
-      import.meta.env.BASE_URL,
-    );
+    // debugging "map initialised but renders nothing" cases. Dev-only so the
+    // production console stays clean.
+    if (import.meta.env.DEV) {
+      console.info(
+        "[LTRS] map init  containerW=%d  containerH=%d  features=%d  scenario=%s  metric=%s  base=%s",
+        container.clientWidth,
+        container.clientHeight,
+        data?.features?.length ?? -1,
+        scenario,
+        metric,
+        import.meta.env.BASE_URL,
+      );
+    }
 
     const map = new maplibregl.Map({
       container,
@@ -108,8 +111,10 @@ export default function LTISMap({
     });
 
     map.on("error", (e) => {
-      // Surfaces tile / style fetch failures that otherwise stay silent.
-      console.warn("[LTIS] maplibre error", e?.error?.message ?? e);
+      // Surfaces tile / style fetch failures during development.
+      if (import.meta.env.DEV) {
+        console.warn("[LTRS] maplibre error", e?.error?.message ?? e);
+      }
     });
 
     map.addControl(
@@ -127,15 +132,17 @@ export default function LTISMap({
 
       map.resize();
       const canvas = map.getCanvas();
-      console.info(
-        "[LTIS] setupLayers  containerW=%d  containerH=%d  canvasW=%d  canvasH=%d  styleLoaded=%s  features=%d",
-        container.clientWidth,
-        container.clientHeight,
-        canvas.width,
-        canvas.height,
-        map.isStyleLoaded(),
-        data?.features?.length ?? -1,
-      );
+      if (import.meta.env.DEV) {
+        console.info(
+          "[LTRS] setupLayers  containerW=%d  containerH=%d  canvasW=%d  canvasH=%d  styleLoaded=%s  features=%d",
+          container.clientWidth,
+          container.clientHeight,
+          canvas.width,
+          canvas.height,
+          map.isStyleLoaded(),
+          data?.features?.length ?? -1,
+        );
+      }
       map.addSource(SOURCE_ID, { type: "geojson", data: data as never });
 
       map.addLayer({
@@ -275,12 +282,14 @@ export default function LTISMap({
     }
 
     // Status snapshot at +1 s — captures the post-layout truth in console.
+    // Dev-only.
     const statusTimer = window.setTimeout(() => {
       if (!mapRef.current) return;
+      if (!import.meta.env.DEV) return;
       const m = mapRef.current;
       const c = m.getCanvas();
       console.info(
-        "[LTIS] +1s  containerW=%d  containerH=%d  canvasW=%d  canvasH=%d  loaded=%s  styleLoaded=%s",
+        "[LTRS] +1s  containerW=%d  containerH=%d  canvasW=%d  canvasH=%d  loaded=%s  styleLoaded=%s",
         container.clientWidth,
         container.clientHeight,
         c.width,
