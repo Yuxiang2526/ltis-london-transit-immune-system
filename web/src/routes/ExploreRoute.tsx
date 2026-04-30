@@ -6,6 +6,8 @@ import { useLTISDataContext } from "../data/dataContext";
 import LTISMap from "../components/map/LTISMap";
 import LocalProfile from "../components/dashboard/LocalProfile";
 import LorenzCurve from "../features/distribution/LorenzCurve";
+import DistributionPanel from "../features/distribution/DistributionPanel";
+import DecileBars from "../features/distribution/DecileBars";
 import SectionHeader from "../components/ui/SectionHeader";
 import Reveal from "../components/ui/Reveal";
 
@@ -115,13 +117,23 @@ export default function ExploreRoute() {
             tone="cool"
             eyebrow="Distributional concentration"
             title="Where loss accumulates — quantified."
-            description="The Lorenz curve plots cumulative LSOA share against cumulative accessibility share. Gini = 0.34 means moderate concentration."
+            description="Three complementary views of the same accessibility distribution: a Lorenz curve, the headline shares, and decile bars. Read them together."
           />
-          <LorenzCurve
-            data={lsoaData}
-            scenario={DEFAULT_SCENARIO_ID}
-            metric="baseline_ltis"
-          />
+
+          {/* Lorenz curve + distribution stats panel side by side */}
+          <div className="distribution-grid">
+            <LorenzCurve
+              data={lsoaData}
+              scenario={DEFAULT_SCENARIO_ID}
+              metric="baseline_ltis"
+            />
+            <DistributionPanel />
+          </div>
+
+          {/* Decile bars below */}
+          <div style={{ marginTop: "var(--space-6)" }}>
+            <DecileBars />
+          </div>
         </div>
       </Reveal>
 

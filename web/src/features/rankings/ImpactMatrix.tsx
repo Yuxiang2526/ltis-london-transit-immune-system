@@ -23,16 +23,25 @@ const METRICS: Metric[] = [
   { key: "retentionRatio",      label: "Lost retention (1−ρ)", inverse: true  },
 ];
 
-/** Returns CSS color in the warm palette ramp, given t ∈ [0, 1]. */
+/**
+ * Diverging RdBu colour ramp for the impact matrix.
+ * Cool blues = low percentile (this route is mild on this metric vs
+ * city-wide), warm reds = high percentile (one of the most damaging).
+ * Uses the project's full 10-step palette so the matrix reads as a
+ * proper diverging signal rather than a single-tone gradient.
+ */
 function rampColor(t: number): string {
-  // Same warm ramp used by the choropleth — pale → burgundy.
-  // [#fbe3d5, #f6b293, #dc6d57, #b72230, #6d011f]
   const stops: [number, [number, number, number]][] = [
-    [0.0,  [251, 227, 213]],
-    [0.25, [246, 178, 147]],
-    [0.5,  [220, 109,  87]],
-    [0.75, [183,  34,  48]],
-    [1.0,  [109,   1,  31]],
+    [0.00, [ 16,  70, 128]],   // palette-blue-1   deep navy   "very low impact"
+    [0.15, [ 49, 124, 183]],   // palette-blue-2   steel
+    [0.30, [109, 173, 209]],   // palette-blue-3
+    [0.45, [182, 215, 232]],   // palette-blue-4   pale blue
+    [0.50, [233, 241, 244]],   // palette-blue-5   neutral blue-white  ← midpoint
+    [0.55, [251, 227, 213]],   // palette-red-1    cream peach
+    [0.70, [246, 178, 147]],   // palette-red-2
+    [0.85, [220, 109,  87]],   // palette-red-3    coral
+    [0.95, [183,  34,  48]],   // palette-red-4    red
+    [1.00, [109,   1,  31]],   // palette-red-5    burgundy   "very high impact"
   ];
   if (t <= 0) return `rgb(${stops[0][1].join(",")})`;
   if (t >= 1) return `rgb(${stops[stops.length - 1][1].join(",")})`;
@@ -48,6 +57,14 @@ function rampColor(t: number): string {
     }
   }
   return `rgb(${stops[0][1].join(",")})`;
+}
+
+/** Decide whether the cell text should be light or dark based on the
+ *  background luminance — works for both the cool (blue) and warm (red)
+ *  ends of the diverging ramp. */
+function textColorFor(t: number): string {
+  // Both ends of the diverging ramp are dark; the middle ~0.45–0.55 is light.
+  return t < 0.35 || t > 0.65 ? "white" : "var(--color-text-strong)";
 }
 
 export default function ImpactMatrix() {
@@ -109,7 +126,7 @@ export default function ImpactMatrix() {
                   className="impact-matrix__cell num-mono"
                   style={{
                     backgroundColor: rampColor(t),
-                    color: t > 0.55 ? "white" : "var(--color-text-strong)",
+                    color: textColorFor(t),
                   }}
                 >
                   {formatCell(rec, m)}
@@ -121,16 +138,17 @@ export default function ImpactMatrix() {
       </div>
 
       <div className="impact-matrix__legend">
-        <span className="muted">Cell colour intensity = metric percentile across all {data.generatedFromRegularRoutes} regular routes.</span>
+        <span className="muted">Diverging RdBu — cell colour = metric percentile across all {data.generatedFromRegularRoutes} regular routes.</span>
+        <span className="impact-matrix__ramp-label muted">low</span>
         <span
           className="impact-matrix__ramp"
           aria-hidden="true"
           style={{
             background:
-              "linear-gradient(90deg, rgb(251,227,213), rgb(246,178,147), rgb(220,109,87), rgb(183,34,48), rgb(109,1,31))",
+              "linear-gradient(90deg, rgb(16,70,128), rgb(49,124,183), rgb(109,173,209), rgb(182,215,232), rgb(233,241,244), rgb(251,227,213), rgb(246,178,147), rgb(220,109,87), rgb(183,34,48), rgb(109,1,31))",
           }}
         />
-        <span className="muted">low → high impact</span>
+        <span className="impact-matrix__ramp-label muted">high impact</span>
       </div>
     </div>
   );
