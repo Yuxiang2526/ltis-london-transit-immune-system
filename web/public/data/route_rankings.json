@@ -1,0 +1,149 @@
+{
+  "generatedFromRegularRoutes": 418,
+  "totalRoutesIncludingSpecial": 543,
+  "normaliseBasis": {
+    "affectedLsoa": 344,
+    "lost12minAccessLsoa": 11,
+    "worsenedClassLsoa": 18,
+    "meanDelayMin": 17.6
+  },
+  "top5": [
+    {
+      "route": "191",
+      "mode": "bus",
+      "affectedLsoa": 123,
+      "lost12minAccessLsoa": 11,
+      "worsenedClassLsoa": 17,
+      "meanDelayMin": 5.9,
+      "retentionRatio": 0.9076
+    },
+    {
+      "route": "99",
+      "mode": "bus",
+      "affectedLsoa": 157,
+      "lost12minAccessLsoa": 9,
+      "worsenedClassLsoa": 18,
+      "meanDelayMin": 6.49,
+      "retentionRatio": 0.94
+    },
+    {
+      "route": "H12",
+      "mode": "bus",
+      "affectedLsoa": 144,
+      "lost12minAccessLsoa": 9,
+      "worsenedClassLsoa": 15,
+      "meanDelayMin": 7.94,
+      "retentionRatio": 0.9333
+    },
+    {
+      "route": "51",
+      "mode": "bus",
+      "affectedLsoa": 185,
+      "lost12minAccessLsoa": 9,
+      "worsenedClassLsoa": 11,
+      "meanDelayMin": 9.17,
+      "retentionRatio": 0.9464
+    },
+    {
+      "route": "116",
+      "mode": "bus",
+      "affectedLsoa": 87,
+      "lost12minAccessLsoa": 9,
+      "worsenedClassLsoa": 9,
+      "meanDelayMin": 12.62,
+      "retentionRatio": 0.8966
+    }
+  ],
+  "top10": [
+    {
+      "route": "191",
+      "mode": "bus",
+      "affectedLsoa": 123,
+      "lost12minAccessLsoa": 11,
+      "worsenedClassLsoa": 17,
+      "meanDelayMin": 5.9,
+      "retentionRatio": 0.9076
+    },
+    {
+      "route": "99",
+      "mode": "bus",
+      "affectedLsoa": 157,
+      "lost12minAccessLsoa": 9,
+      "worsenedClassLsoa": 18,
+      "meanDelayMin": 6.49,
+      "retentionRatio": 0.94
+    },
+    {
+      "route": "H12",
+      "mode": "bus",
+      "affectedLsoa": 144,
+      "lost12minAccessLsoa": 9,
+      "worsenedClassLsoa": 15,
+      "meanDelayMin": 7.94,
+      "retentionRatio": 0.9333
+    },
+    {
+      "route": "51",
+      "mode": "bus",
+      "affectedLsoa": 185,
+      "lost12minAccessLsoa": 9,
+      "worsenedClassLsoa": 11,
+      "meanDelayMin": 9.17,
+      "retentionRatio": 0.9464
+    },
+    {
+      "route": "116",
+      "mode": "bus",
+      "affectedLsoa": 87,
+      "lost12minAccessLsoa": 9,
+      "worsenedClassLsoa": 9,
+      "meanDelayMin": 12.62,
+      "retentionRatio": 0.8966
+    },
+    {
+      "route": "131",
+      "mode": "bus",
+      "affectedLsoa": 197,
+      "lost12minAccessLsoa": 8,
+      "worsenedClassLsoa": 17,
+      "meanDelayMin": 6.83,
+      "retentionRatio": 0.9579
+    },
+    {
+      "route": "114",
+      "mode": "bus",
+      "affectedLsoa": 239,
+      "lost12minAccessLsoa": 7,
+      "worsenedClassLsoa": 13,
+      "meanDelayMin": 4.67,
+      "retentionRatio": 0.9697
+    },
+    {
+      "route": "208",
+      "mode": "bus",
+      "affectedLsoa": 202,
+      "lost12minAccessLsoa": 7,
+      "worsenedClassLsoa": 9,
+      "meanDelayMin": 8.56,
+      "retentionRatio": 0.9639
+    },
+    {
+      "route": "407",
+      "mode": "bus",
+      "affectedLsoa": 191,
+      "lost12minAccessLsoa": 7,
+      "worsenedClassLsoa": 9,
+      "meanDelayMin": 7.54,
+      "retentionRatio": 0.9628
+    },
+    {
+      "route": "221",
+      "mode": "bus",
+      "affectedLsoa": 214,
+      "lost12minAccessLsoa": 7,
+      "worsenedClassLsoa": 9,
+      "meanDelayMin": 7.19,
+      "retentionRatio": 0.9667
+    }
+  ]
+}

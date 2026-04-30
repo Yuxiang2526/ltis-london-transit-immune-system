@@ -6,27 +6,31 @@ import { useLTISDataContext } from "../data/dataContext";
 import LTISMap from "../components/map/LTISMap";
 import LocalProfile from "../components/dashboard/LocalProfile";
 import LorenzCurve from "../features/distribution/LorenzCurve";
+import SectionHeader from "../components/ui/SectionHeader";
+import Reveal from "../components/ui/Reveal";
+
+import RouteRankCards from "../features/rankings/RouteRankCards";
+import ImpactMatrix from "../features/rankings/ImpactMatrix";
 
 import type { LSOAFeature } from "../data/schema";
 import { DEFAULT_SCENARIO_ID } from "../data/scenarios";
-import SectionHeader from "../components/ui/SectionHeader";
 
 /**
  * Explorer (LSOA narrative overview)
  * ----------------------------------
- * A simplified middle layer between the Story scrollytelling and the
- * forensic LTRS Network Map. Scope is intentionally narrow:
+ * Composed of three editorial blocks:
  *
- *   - Show the baseline accessibility choropleth at LSOA scale
- *   - Let the user click any LSOA to inspect its profile and per-scenario
- *     retention against the three reference routes (99, R2, 685)
- *   - Show a Lorenz curve of the baseline distribution to make the
- *     concentration argument quantitative
- *   - Link out to /network for the full 543-route cancel-and-recompute tool
+ *   1. Findings — "Five routes that matter most" rank cards + Impact matrix
+ *      heatmap. Pulled from Siyan's resilience_summary_osm_network.json
+ *      (route_rankings.json), rendered with the project palette.
  *
- * Per the project decision (D2 2026-04-30) the explorer no longer ships a
- * scenario selector. If you want to switch scenarios live, that's exactly
- * what the Network Map at /network is for.
+ *   2. Map + LocalProfile — the LSOA-level baseline accessibility choropleth
+ *      with a side panel that updates on hover/click.
+ *
+ *   3. Distribution — Lorenz curve of the baseline distribution (one
+ *      number — the Gini — that sums up the spatial inequality argument).
+ *
+ *   4. CTA into the forensic Network Map.
  */
 export default function ExploreRoute() {
   const { lsoaData } = useLTISDataContext();
@@ -36,52 +40,93 @@ export default function ExploreRoute() {
 
   return (
     <section className="analytics-shell" id="explore">
-      <SectionHeader
-        eyebrow="LSOA narrative overview"
-        title="Explore the baseline — then go forensic"
-        description="The map shows London's baseline accessibility (AI) at LSOA scale. Hover or click any neighbourhood to inspect its local profile. For full route-by-route disruption modelling, open the Network Map."
-      />
+      {/* ───── Page heading ───── */}
+      <Reveal>
+        <SectionHeader
+          eyebrow="LSOA narrative overview"
+          title="Five routes that matter most — and why."
+          description="Across 418 regular London routes, these five strip the most neighbourhoods of their 12-minute walking access when cancelled. Notice how every winner is an outer-London route — places where alternatives are scarce."
+        />
+      </Reveal>
 
-      <div className="dashboard-grid">
-        <div className="map-card">
-          <LTISMap
+      {/* ───── Findings: rank cards ───── */}
+      <Reveal delay={0.05}>
+        <RouteRankCards />
+      </Reveal>
+
+      {/* ───── Findings: impact matrix ───── */}
+      <Reveal delay={0.08}>
+        <div style={{ marginTop: "var(--space-12)" }}>
+          <SectionHeader
+            eyebrow="Impact matrix · top 10 routes × four metrics"
+            title="One row, one route. Four ways the city loses."
+            description="Each cell is normalised across all 418 regular London routes — darker terracotta means a larger relative impact on that metric. Reading horizontally tells you a route's signature; reading vertically tells you which routes dominate that dimension."
+          />
+          <ImpactMatrix />
+        </div>
+      </Reveal>
+
+      {/* ───── Map + Local profile ───── */}
+      <Reveal delay={0.1}>
+        <div style={{ marginTop: "var(--space-16)" }}>
+          <SectionHeader
+            eyebrow="LSOA baseline accessibility"
+            title="Hover any neighbourhood, inspect its profile."
+            description="The choropleth shows the percentile rank of each LSOA's baseline accessibility. Click any LSOA to see its name, borough and baseline AI; the panel on the right unfolds the five-dimension fallback profile."
+          />
+
+          <div className="dashboard-grid">
+            <div className="map-card">
+              <LTISMap
+                data={lsoaData}
+                scenario={DEFAULT_SCENARIO_ID}
+                metric="baseline_ltis"
+                selectedFeature={selectedFeature}
+                onSelectFeature={setSelectedFeature}
+                onHoverFeature={setHoveredFeature}
+              />
+            </div>
+            <aside className="side-panel">
+              <LocalProfile feature={focusFeature} scenario={DEFAULT_SCENARIO_ID} />
+            </aside>
+          </div>
+        </div>
+      </Reveal>
+
+      {/* ───── Distribution ───── */}
+      <Reveal delay={0.12}>
+        <div style={{ marginTop: "var(--space-16)" }}>
+          <SectionHeader
+            eyebrow="Distributional concentration"
+            title="Where loss accumulates — quantified."
+            description="The Lorenz curve plots cumulative LSOA share against cumulative accessibility share. The further the curve bows from the equality diagonal, the more concentrated the distribution. Gini = 0.34 means moderate concentration."
+          />
+          <LorenzCurve
             data={lsoaData}
             scenario={DEFAULT_SCENARIO_ID}
             metric="baseline_ltis"
-            selectedFeature={selectedFeature}
-            onSelectFeature={setSelectedFeature}
-            onHoverFeature={setHoveredFeature}
           />
         </div>
+      </Reveal>
 
-        <aside className="side-panel">
-          <LocalProfile feature={focusFeature} scenario={DEFAULT_SCENARIO_ID} />
-        </aside>
-      </div>
-
-      <div style={{ marginTop: "var(--space-12)" }}>
-        <LorenzCurve
-          data={lsoaData}
-          scenario={DEFAULT_SCENARIO_ID}
-          metric="baseline_ltis"
-        />
-      </div>
-
-      <div className="story-cta" style={{ marginTop: "var(--space-12)" }}>
-        <div>
-          <p className="eyebrow">Want full control?</p>
-          <h2>Switch to the Network Map for 543 routes &amp; 100 m grids</h2>
-          <p className="muted">
-            The LTRS Network Map lets you cancel any combination of routes,
-            navigate to any borough or postcode, and inspect resilience at
-            100 m grid resolution. This Explorer is the LSOA-scale narrative
-            overview; the Network Map is the forensic tool.
-          </p>
+      {/* ───── CTA to Network Map ───── */}
+      <Reveal delay={0.14}>
+        <div className="story-cta" style={{ marginTop: "var(--space-16)" }}>
+          <div>
+            <p className="eyebrow">Want full control?</p>
+            <h2>Switch to the Network Map for 543 routes &amp; 100 m grids</h2>
+            <p className="muted">
+              The LTRS Network Map lets you cancel any combination of routes,
+              navigate to any borough or postcode, and inspect resilience at
+              100 m grid resolution. This Explorer is the LSOA-scale narrative
+              overview; the Network Map is the forensic tool.
+            </p>
+          </div>
+          <Link to="/network" className="hero-cta">
+            Open the Network Map →
+          </Link>
         </div>
-        <Link to="/network" className="hero-cta">
-          Open the Network Map →
-        </Link>
-      </div>
+      </Reveal>
     </section>
   );
 }

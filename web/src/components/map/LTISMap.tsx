@@ -32,12 +32,12 @@ const TUBE_LINES_URL = `${import.meta.env.BASE_URL}data/tube_lines.geojson`;
 
 const INITIAL_VIEW = { center: [-0.1, 51.515] as [number, number], zoom: 9.2 };
 
-// MapLibre demo style — sanity-check baseline maintained by MapLibre itself.
-// If this still produces a blank map, the issue is downstream of the basemap
-// (container sizing, WebGL context, etc.) and not the tile provider. Once the
-// blank-map root cause is confirmed, we can swap to a richer style (e.g.
-// OpenFreeMap Positron) without touching the rest of the file.
-const BASEMAP_STYLE_URL = "https://demotiles.maplibre.org/style.json";
+// OpenFreeMap Positron — free Cloudflare-hosted vector basemap, no API key,
+// no rate-limit, MIT licensed. Mimics the CARTO Positron look (light grey
+// roads, subtle place labels) which is what the LTIS palette was tuned for.
+// Confirmed pipeline works with the MapLibre demo style; swap-in is a
+// drop-in replacement.
+const BASEMAP_STYLE_URL = "https://tiles.openfreemap.org/styles/positron";
 
 export default function LTISMap({
   data,

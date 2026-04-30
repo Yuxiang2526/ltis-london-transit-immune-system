@@ -241,12 +241,23 @@ select {
 
 .concept-card {
   padding: var(--space-6);
+  transition:
+    transform var(--motion-base) var(--ease-standard),
+    box-shadow var(--motion-base) var(--ease-standard),
+    border-color var(--motion-base) var(--ease-standard);
+}
+
+.concept-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
 }
 
 .concept-index {
   color: var(--color-accent);
   font-weight: var(--weight-black);
   font-family: var(--font-mono);
+  font-size: var(--text-md);
+  letter-spacing: var(--tracking-wide);
 }
 
 .concept-card h3 {

@@ -16,6 +16,50 @@
   --header-clearance: 6rem;  /* ~96 px = header height + breathing room */
 }
 
+/* ─── Research question editorial block ─────────────────────────────────── */
+.rq-quote {
+  font-family: var(--font-serif);
+  font-size: clamp(var(--text-2xl), 4.2vw, var(--text-4xl));
+  font-weight: var(--weight-semibold);
+  line-height: 1.15;
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-text-strong);
+  margin: var(--space-3) 0 var(--space-6);
+  padding-left: var(--space-5);
+  border-left: 4px solid var(--color-accent);
+  max-width: 22ch;
+}
+
+.rq-body {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 64ch;
+  font-size: var(--text-md);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-soft);
+}
+
+.rq-body p {
+  margin: 0;
+}
+
+.rq-body strong {
+  color: var(--color-text-strong);
+  font-weight: var(--weight-bold);
+}
+
+.rq-body em {
+  color: var(--color-accent);
+  font-style: normal;
+  font-weight: var(--weight-semibold);
+  background: linear-gradient(
+    to top,
+    var(--color-accent-tint) 30%,
+    transparent 30%
+  );
+  padding: 0 0.15em;
+}
+
 /* ─── Section header ─────────────────────────────────────────────────────── */
 .section-header {
   display: grid;
@@ -48,6 +92,7 @@
 
 /* ─── Metric card ────────────────────────────────────────────────────────── */
 .metric-card {
+  position: relative;
   display: grid;
   gap: var(--space-1);
   padding: var(--space-5) var(--space-5) var(--space-4);
@@ -55,19 +100,43 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
+  overflow: hidden;
   transition:
-    border-color var(--motion-fast) var(--ease-standard),
-    transform var(--motion-fast) var(--ease-standard);
+    border-color var(--motion-base) var(--ease-standard),
+    box-shadow var(--motion-base) var(--ease-standard),
+    transform var(--motion-base) var(--ease-standard);
+}
+
+/* Subtle accent rule on the left edge picks up the diverging palette. */
+.metric-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: linear-gradient(
+    to bottom,
+    var(--palette-blue-2),
+    var(--palette-blue-1)
+  );
 }
 
 .metric-card:hover {
-  border-color: var(--color-border-strong);
-  transform: translateY(-1px);
+  border-color: var(--color-accent-soft);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .metric-card--highlight {
   background: var(--color-accent-tint);
   border-color: var(--color-accent-soft);
+}
+
+.metric-card--highlight::before {
+  background: linear-gradient(
+    to bottom,
+    var(--palette-blue-1),
+    var(--palette-blue-2)
+  );
 }
 
 .metric-card__label {
@@ -184,6 +253,16 @@
   box-shadow: var(--shadow-sm);
   position: relative;
   overflow: hidden;
+  transition:
+    transform var(--motion-base) var(--ease-standard),
+    box-shadow var(--motion-base) var(--ease-standard),
+    border-color var(--motion-base) var(--ease-standard);
+}
+
+.about-part-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-accent-soft);
+  box-shadow: var(--shadow-md);
 }
 
 .about-part-card::before {
