@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
 
 import type {
@@ -17,6 +17,24 @@ interface LTISMapProps {
   selectedFeature: LSOAFeature | null;
   onSelectFeature: (feature: LSOAFeature | null) => void;
   onHoverFeature: (feature: LSOAFeature | null) => void;
+  /**
+   * Optional camera target. When supplied, the map smoothly flyTo's to this
+   * lng/lat + zoom on every change. Used by the Story scrollytelling so each
+   * act zooms into the borough/corridor the prose is talking about, instead
+   * of all four acts staring at the same wide London view.
+   */
+  view?: { center: [number, number]; zoom: number } | null;
+  /**
+   * Optional pulsing spotlight overlay. Rendered as an absolutely-positioned
+   * ring whose centre is projected from this lng/lat each frame, so it
+   * follows the map as the user pans/zooms. Used by the Story to draw the
+   * eye to the affected corridor on Acts II–IV.
+   */
+  spotlight?: { center: [number, number]; radiusPx?: number; label?: string } | null;
+  /** Suppresses the bottom-right legend (Story page renders its own). */
+  hideLegend?: boolean;
+  /** Hides the +/- navigation control (used in story mode). */
+  disableInteraction?: boolean;
 }
 
 const SOURCE_ID = "lsoa-ltis-source";
@@ -45,10 +63,14 @@ export default function LTISMap({
   selectedFeature,
   onSelectFeature,
   onHoverFeature,
+  view = null,
+  spotlight = null,
+  hideLegend = false,
 }: LTISMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const handlersRef = useRef({ onSelectFeature, onHoverFeature });
+  const [spotlightPx, setSpotlightPx] = useState<{ x: number; y: number } | null>(null);
 
   // Keep latest handlers in a ref so the init effect can stay zero-dep.
   // Without this, recreating the map on every parent re-render becomes the
@@ -326,6 +348,58 @@ export default function LTISMap({
     map.setFilter(SELECTED_LAYER_ID, ["==", ["get", "lsoa_code"], selectedCode]);
   }, [selectedFeature]);
 
+  // -------------------------------------------------------------------------
+  // 5. Camera flyTo — used by the Story scrollytelling to zoom into each
+  //    act's affected borough. Skipped if no view supplied (Explorer/Network
+  //    pages keep the user's current pan/zoom).
+  // -------------------------------------------------------------------------
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !view) return;
+
+    // If the style hasn't loaded yet, defer the camera animation until it
+    // does — flyTo before style-load fires `move` events but doesn't always
+    // commit the transform reliably across browsers.
+    const run = () =>
+      map.flyTo({
+        center: view.center,
+        zoom: view.zoom,
+        speed: 0.8,
+        curve: 1.5,
+        essential: true,
+      });
+    if (map.isStyleLoaded()) run();
+    else map.once("load", run);
+  }, [view?.center?.[0], view?.center?.[1], view?.zoom]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // -------------------------------------------------------------------------
+  // 6. Spotlight projection — every map move recomputes the screen-space
+  //    pixel position of the spotlight lng/lat so the absolutely-positioned
+  //    ring stays anchored to the geography while the user pans.
+  // -------------------------------------------------------------------------
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) {
+      setSpotlightPx(null);
+      return;
+    }
+    if (!spotlight) {
+      setSpotlightPx(null);
+      return;
+    }
+    const project = () => {
+      const { x, y } = map.project(spotlight.center);
+      setSpotlightPx({ x, y });
+    };
+    project();
+    map.on("move", project);
+    map.on("resize", project);
+    return () => {
+      map.off("move", project);
+      map.off("resize", project);
+    };
+  }, [spotlight?.center?.[0], spotlight?.center?.[1]]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <div className="map-wrapper" style={{ minHeight: 500 }}>
       <div
@@ -335,7 +409,25 @@ export default function LTISMap({
         // CSS chain failure and prevents MapLibre from creating a 0×0 canvas.
         style={{ width: "100%", height: "100%", minHeight: 500 }}
       />
-      <MapLegend scenario={scenario} metric={metric} />
+      {spotlight && spotlightPx ? (
+        <div
+          className="map-spotlight"
+          style={{
+            left: spotlightPx.x,
+            top: spotlightPx.y,
+            // The CSS uses --r as the spotlight ring radius in px.
+            ["--r" as never]: `${spotlight.radiusPx ?? 80}px`,
+          }}
+          aria-hidden="true"
+        >
+          <span className="map-spotlight__ring map-spotlight__ring--outer" />
+          <span className="map-spotlight__ring map-spotlight__ring--inner" />
+          {spotlight.label ? (
+            <span className="map-spotlight__label">{spotlight.label}</span>
+          ) : null}
+        </div>
+      ) : null}
+      {hideLegend ? null : <MapLegend scenario={scenario} metric={metric} />}
     </div>
   );
 }

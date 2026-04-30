@@ -28,7 +28,13 @@ export default function StoryScroller({ data }: StoryScrollerProps) {
         </header>
         <h3>{frame.captionTitle}</h3>
         {frame.paragraphs.map((p, i) => (
-          <p key={i}>{p}</p>
+          <p
+            key={i}
+            // Author-controlled markup. Each paragraph may include
+            // <strong class="story-num">…</strong> highlights for key
+            // statistics, or <em>…</em> for emphasis. No user input.
+            dangerouslySetInnerHTML={{ __html: p }}
+          />
         ))}
       </article>
     ),
