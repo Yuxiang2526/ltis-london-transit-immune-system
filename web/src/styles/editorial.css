@@ -749,6 +749,47 @@
   font-size: var(--text-xs);
 }
 
+/* PTAL legend list (React-side replica of the iframe legend) */
+.network-route__panel--legend h3 {
+  font-family: var(--font-serif);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-strong);
+  margin: 0 0 var(--space-2);
+}
+
+.ptal-legend-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.ptal-legend-list li {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--color-text-soft);
+}
+
+.ptal-swatch {
+  display: inline-block;
+  width: 20px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.network-route__panel-divider {
+  height: 1px;
+  border: 0;
+  background: var(--color-divider);
+  margin: var(--space-2) 0;
+}
+
 @media (max-width: 1100px) {
   .network-route__split {
     grid-template-columns: 1fr;

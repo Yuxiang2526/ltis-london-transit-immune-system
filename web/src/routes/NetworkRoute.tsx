@@ -1,20 +1,99 @@
+import { useEffect, useRef } from "react";
 import { useRouteRankings } from "../features/rankings/useRouteRankings";
 
 const NETWORK_MAP_HTML = `${import.meta.env.BASE_URL}network-map/London_PTAL_Accessibility_Map.html`;
 
 /**
- * NetworkRoute
- * ------------
- * The forensic LTRS Network Map by Siyan Tao, embedded as an iframe.
+ * Embed-mode CSS injected into Siyan's iframe at runtime.
  *
- * Layout: 2-column grid — iframe on the left (~65 %), context sidebar on
- * the right (~35 %) with usage instructions, key statistics and the live
- * top-5 routes list. A prominent "Open full-screen" CTA at the top opens
- * Siyan's standalone HTML in a new tab so the panels inside the iframe
- * can have full-page real estate when the user wants it.
+ * Hides the brand title and legend (we render replicas in the React parent
+ * so they are not overlaying the map) and turns the Scenario Builder from
+ * an absolute overlay into a proper right-column sidebar that takes a
+ * dedicated 360 px column. The map itself fills the remaining left area.
+ *
+ * This is structural CSS only — no functional code is changed in Siyan's
+ * HTML. In standalone usage (without the LTIS wrapper) the original layout
+ * is unaffected because we only touch iframe.contentDocument at runtime.
  */
+const EMBED_CSS = `
+  /* --- Hide elements we relocate to the React parent --- */
+  body .brand { display: none !important; }
+  body .legend { display: none !important; }
+  body #info-panel { display: none !important; }
+
+  /* --- Make the map area share the body with a right-column controls panel --- */
+  body { overflow: hidden !important; }
+
+  body #map,
+  body #map-compare,
+  body #split-divider {
+    right: 360px !important;
+  }
+
+  /* --- Controls panel: full-height right column, not an overlay --- */
+  body .controls {
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 360px !important;
+    max-height: none !important;
+    height: 100vh !important;
+    border-radius: 0 !important;
+    border-left: 1px solid var(--line, #d8dee4) !important;
+    border-right: 0 !important;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+  body .controls .controls-body {
+    max-height: calc(100vh - 64px) !important;
+  }
+
+  /* --- Map toolbar: anchor inside the now-narrower map area --- */
+  body .map-toolbar {
+    right: auto !important;
+    left: 18px !important;
+    top: auto !important;
+    bottom: 18px !important;
+  }
+
+  /* Compare label adjustments so they sit above the map area, not the panel. */
+  body #compare-label-right { right: calc(360px + 18px) !important; }
+`;
+
 export default function NetworkRoute() {
   const { data } = useRouteRankings();
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+
+  // Inject embed-mode CSS into the iframe once it loads. Safe — same origin.
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+
+    const injectStyles = () => {
+      try {
+        const doc = iframe.contentDocument;
+        if (!doc) return;
+        // Don't inject twice.
+        if (doc.getElementById("ltis-embed-style")) return;
+        const style = doc.createElement("style");
+        style.id = "ltis-embed-style";
+        style.textContent = EMBED_CSS;
+        doc.head.appendChild(style);
+        doc.body.classList.add("ltis-embed-mode");
+      } catch (err) {
+        // Cross-origin or timing issue — non-fatal.
+        console.warn("[LTIS] Could not inject embed CSS into iframe:", err);
+      }
+    };
+
+    iframe.addEventListener("load", injectStyles);
+    // Try immediately too — if iframe already loaded (HMR / cache).
+    if (iframe.contentDocument?.readyState === "complete") injectStyles();
+
+    return () => iframe.removeEventListener("load", injectStyles);
+  }, []);
 
   return (
     <section className="network-route" aria-label="Detailed network resilience explorer">
@@ -22,11 +101,12 @@ export default function NetworkRoute() {
       <header className="network-route__hero">
         <div className="network-route__hero-text">
           <p className="eyebrow">LTRS · Companion tool by Siyan Tao</p>
-          <h2>Cancel any of 543 routes. Watch 159 k cells recompute.</h2>
+          <h2>London Public Transport Resilience</h2>
           <p className="network-route__hero-blurb">
             Real OSM-Dijkstra walking-time model on every 100 m grid cell in
-            Greater London. The map is interactive — but for the most
-            comfortable experience, open the full-screen version.
+            Greater London. Cancel any of 543 routes and see the impact
+            recompute live. The Scenario Builder is on the right of the map;
+            for the most comfortable experience, open the full-screen version.
           </p>
         </div>
         <a
@@ -47,6 +127,7 @@ export default function NetworkRoute() {
       <div className="network-route__split">
         <div className="network-route__frame">
           <iframe
+            ref={iframeRef}
             src={NETWORK_MAP_HTML}
             title="LTRS Network Map — interactive PTAL resilience explorer"
             loading="lazy"
@@ -55,24 +136,29 @@ export default function NetworkRoute() {
           />
         </div>
 
-        <aside className="network-route__sidebar" aria-label="How to read the Network Map">
-          <section className="network-route__panel">
-            <p className="eyebrow">How to read this</p>
-            <h3>The map's three modes</h3>
-            <ol className="network-route__steps">
-              <li>
-                <strong>Pick a 100 m grid cell</strong> by clicking anywhere on
-                the map, or jump to a borough / postcode in the right panel.
-              </li>
-              <li>
-                <strong>Cancel routes</strong> from the searchable list — pick
-                a Tube line, an Overground branch, a bus, or any combination.
-              </li>
-              <li>
-                <strong>Read the AI drop</strong> on the disrupted side
-                (right of the split). Numbers update instantly.
-              </li>
-            </ol>
+        <aside className="network-route__sidebar" aria-label="Network Map context">
+          {/* PTAL legend — replicated outside the iframe */}
+          <section className="network-route__panel network-route__panel--legend">
+            <p className="eyebrow">Map legend</p>
+            <h3>PTAL accessibility band</h3>
+            <ul className="ptal-legend-list">
+              {PTAL_BANDS.map((b) => (
+                <li key={b.label}>
+                  <span className="ptal-swatch" style={{ background: b.color }} />
+                  <span>{b.label}</span>
+                </li>
+              ))}
+            </ul>
+            <hr className="network-route__panel-divider" />
+            <p className="eyebrow">Disrupted side</p>
+            <ul className="ptal-legend-list">
+              {AI_DROP_BANDS.map((b) => (
+                <li key={b.label}>
+                  <span className="ptal-swatch" style={{ background: b.color, border: b.color === "#ffffff" ? "1px solid #ccc" : "" }} />
+                  <span>{b.label}</span>
+                </li>
+              ))}
+            </ul>
           </section>
 
           <section className="network-route__panel network-route__panel--accent">
@@ -99,9 +185,6 @@ export default function NetworkRoute() {
 
           <section className="network-route__panel">
             <p className="eyebrow">Top 5 disruptive routes</p>
-            <p className="muted" style={{ fontSize: "var(--text-xs)" }}>
-              Click any route in the iframe's "Cancel routes" list to model it.
-            </p>
             <ol className="network-route__top-list">
               {(data?.top5 ?? []).map((r, i) => (
                 <li key={r.route}>
@@ -116,8 +199,49 @@ export default function NetworkRoute() {
               ))}
             </ol>
           </section>
+
+          <section className="network-route__panel">
+            <p className="eyebrow">How to use the Scenario Builder</p>
+            <ol className="network-route__steps">
+              <li>
+                <strong>Pick a 100 m grid cell</strong> by clicking the map, or
+                jump to a borough / postcode in the right-column panel inside
+                the map.
+              </li>
+              <li>
+                <strong>Cancel routes</strong> from the searchable list — Tube
+                line, Overground branch, bus, or any combination.
+              </li>
+              <li>
+                <strong>Read the AI drop</strong> on the disrupted side
+                (right of the split divider).
+              </li>
+            </ol>
+          </section>
         </aside>
       </div>
     </section>
   );
 }
+
+/** PTAL bands — colours matched to Siyan's HTML legend. */
+const PTAL_BANDS: { label: string; color: string }[] = [
+  { label: "0 — very poor", color: "#106E80" },
+  { label: "1a",            color: "#317CB7" },
+  { label: "1b",            color: "#6DADE1" },
+  { label: "2",             color: "#B6D7E8" },
+  { label: "3",             color: "#E9F1F4" },
+  { label: "4",             color: "#FBE3D5" },
+  { label: "5",             color: "#F6B293" },
+  { label: "6a",            color: "#DC6D57" },
+  { label: "6b — excellent", color: "#B72230" },
+];
+
+const AI_DROP_BANDS: { label: string; color: string }[] = [
+  { label: "0–5 % · virtually no impact", color: "#ffffff" },
+  { label: "5–15 % · slight",             color: "#ffe5e5" },
+  { label: "15–30 % · moderate",          color: "#ffb3b3" },
+  { label: "30–50 % · significant",       color: "#ff6666" },
+  { label: "50–70 % · severe",            color: "#e63333" },
+  { label: ">70 % · critical",            color: "#b30000" },
+];
