@@ -1909,13 +1909,34 @@
             cm.resize();
         }
 
+        // Returns the bounding box of the actual map area in viewport
+        // coordinates. In standalone this is the whole window; when embedded
+        // in an iframe with a right-column controls panel, this is the
+        // narrower visible map rect. Used so the split-divider always sits
+        // centred over the map (and stays inside its bounds when dragged).
+        function getMapAreaRect() {
+            const el = document.getElementById("map");
+            if (el) {
+                const r = el.getBoundingClientRect();
+                if (r.width > 0) return { left: r.left, right: r.right, width: r.width };
+            }
+            return { left: 0, right: window.innerWidth, width: window.innerWidth };
+        }
+
+        function recentreSplitDivider() {
+            const rect = getMapAreaRect();
+            const mid = rect.left + rect.width * 0.5;
+            state.splitFraction = 0.5;
+            document.documentElement.style.setProperty("--split-x", `${mid}px`);
+        }
+
         function setupSplitDivider() {
             const divider = document.getElementById("split-divider");
             if (!divider) return;
             const setSplitFromX = (clientX) => {
-                const w = window.innerWidth;
-                const x = Math.max(80, Math.min(w - 80, clientX));
-                state.splitFraction = x / w;
+                const rect = getMapAreaRect();
+                const x = Math.max(rect.left + 80, Math.min(rect.right - 80, clientX));
+                state.splitFraction = (x - rect.left) / rect.width;
                 document.documentElement.style.setProperty("--split-x", `${x}px`);
             };
             const onPointerMove = (ev) => setSplitFromX(ev.clientX);
@@ -1930,9 +1951,8 @@
                 window.addEventListener("pointermove", onPointerMove);
                 window.addEventListener("pointerup", onPointerUp);
             });
-            // initialise to 50%
-            const w = window.innerWidth;
-            document.documentElement.style.setProperty("--split-x", `${w * 0.5}px`);
+            // initialise to the centre of the visible map area.
+            recentreSplitDivider();
         }
 
         function clearDisruptionColors() {
@@ -1979,10 +1999,33 @@
 
         function updateCompareMode() {
             const active = state.cancelledRoutes.size > 0;
+            const wasActive = document.body.classList.contains("compare-mode");
             document.body.classList.toggle("compare-mode", active);
             const dropLegend = document.getElementById("ai-drop-legend");
             if (dropLegend) dropLegend.style.display = active ? "block" : "none";
             if (active) {
+                // Force-resync compareMap to the main map's CURRENT camera and
+                // recompute its container size. Protects against the case where
+                // the user zoomed/panned BEFORE compareMap finished its async
+                // creation (it's built only after the ~13 MB route impacts JSON
+                // loads), which used to leave the right-hand side of the split
+                // showing a different geographic location than the left.
+                const cm = state.compareMap;
+                if (cm) {
+                    try {
+                        cm.resize();
+                        cm.jumpTo({
+                            center: map.getCenter(),
+                            zoom: map.getZoom(),
+                            bearing: map.getBearing(),
+                            pitch: map.getPitch()
+                        });
+                    } catch (e) { /* ignore */ }
+                }
+                // When compare mode toggles ON for the first time, snap the
+                // divider back to the centre of the visible map area. The user
+                // can drag it afterwards.
+                if (!wasActive) recentreSplitDivider();
                 applyDisruptionToCompareMap();
             } else {
                 clearDisruptionColors();
