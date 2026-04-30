@@ -1,3 +1,4 @@
+import { type ReactElement } from "react";
 import Reveal from "../ui/Reveal";
 
 interface ConceptCard {
@@ -5,7 +6,7 @@ interface ConceptCard {
   title: string;
   text: string;
   accent: "cool" | "warm";
-  icon: JSX.Element;
+  icon: ReactElement;
 }
 
 const CARDS: ConceptCard[] = [
