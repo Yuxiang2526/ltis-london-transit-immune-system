@@ -13,10 +13,18 @@ export default function MapLegend({ scenario, metric }: MapLegendProps) {
   const scenarioDef = getScenarioDefinition(scenario);
   const paint = getPaintConfig(scenario, metric);
 
+  // For baseline_ltis the scenario is irrelevant (the value doesn't depend on
+  // which route is "removed"); showing one is misleading.
+  const showScenario = metric !== "baseline_ltis";
+
   return (
     <div className="map-legend">
       <div className="legend-title">{metricDef.legendTitle}</div>
-      <div className="legend-subtitle">Scenario: {scenarioDef.shortLabel}</div>
+      {showScenario ? (
+        <div className="legend-subtitle">Scenario: {scenarioDef.shortLabel}</div>
+      ) : (
+        <div className="legend-subtitle">Across all 4,994 LSOAs</div>
+      )}
 
       <div
         className="legend-gradient"

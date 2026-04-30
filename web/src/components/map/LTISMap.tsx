@@ -32,28 +32,34 @@ const TUBE_LINES_URL = `${import.meta.env.BASE_URL}data/tube_lines.geojson`;
 
 const INITIAL_VIEW = { center: [-0.1, 51.515] as [number, number], zoom: 9.2 };
 
-// CARTO Positron — light basemap that complements the blue-red editorial palette.
+// OpenStreetMap raster basemap. Switched from CARTO Positron because CARTO's
+// CDN occasionally rate-limits or blocks third-party domain referrers, which
+// silently breaks the basemap with no console error. OSM is the universal
+// fallback: low-traffic academic use is within their usage policy and there
+// is no API key, no referrer check, no rate-limit surprise.
 const BASEMAP_STYLE: maplibregl.StyleSpecification = {
   version: 8,
   sources: {
-    "carto-light": {
+    "osm-raster": {
       type: "raster",
       tiles: [
-        "https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
-        "https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
-        "https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+        "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
       ],
       tileSize: 256,
-      attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxzoom: 19,
     },
   },
   layers: [
     {
-      id: "carto-light-layer",
+      id: "osm-raster-layer",
       type: "raster",
-      source: "carto-light",
+      source: "osm-raster",
       minzoom: 0,
-      maxzoom: 19,
+      maxzoom: 22,
     },
   ],
 };
@@ -84,11 +90,29 @@ export default function LTISMap({
     if (!containerRef.current || mapRef.current) return;
 
     const container = containerRef.current;
+
+    // Diagnostic — exposes map init context to the browser console so we can
+    // tell from a screenshot whether the container has dimensions, whether
+    // the data prop is populated, and whether MapLibre actually initialised.
+    // Safe in production; small log message at info level.
+    console.info("[LTIS] map init", {
+      containerSize: { w: container.clientWidth, h: container.clientHeight },
+      dataFeatures: data?.features?.length ?? null,
+      scenario,
+      metric,
+      basePath: import.meta.env.BASE_URL,
+    });
+
     const map = new maplibregl.Map({
       container,
       style: BASEMAP_STYLE,
       center: INITIAL_VIEW.center,
       zoom: INITIAL_VIEW.zoom,
+    });
+
+    map.on("error", (e) => {
+      // Surfaces tile / style fetch failures that otherwise stay silent.
+      console.warn("[LTIS] maplibre error", e?.error?.message ?? e);
     });
 
     map.addControl(
@@ -105,6 +129,11 @@ export default function LTISMap({
       if (map.getSource(SOURCE_ID)) return;
 
       map.resize();
+      console.info("[LTIS] setupLayers fired", {
+        containerSize: { w: container.clientWidth, h: container.clientHeight },
+        styleLoaded: map.isStyleLoaded(),
+        dataFeatures: data?.features?.length ?? null,
+      });
       map.addSource(SOURCE_ID, { type: "geojson", data: data as never });
 
       map.addLayer({

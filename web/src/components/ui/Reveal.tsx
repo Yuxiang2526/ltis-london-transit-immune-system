@@ -22,6 +22,11 @@ interface RevealProps {
  *
  * Honours `prefers-reduced-motion`: visible immediately when reduced motion
  * is requested.
+ *
+ * `will-change: transform` is dropped after the reveal animation completes —
+ * keeping it forever pins a GPU compositor layer per Reveal element and
+ * silently creates a stacking context that interferes with `position: sticky`
+ * descendants. We only need the optimisation for the brief animation window.
  */
 export default function Reveal({
   children,
@@ -33,6 +38,7 @@ export default function Reveal({
 }: RevealProps) {
   const ref = useRef<HTMLElement | null>(null);
   const [visible, setVisible] = useState(false);
+  const [animationFinished, setAnimationFinished] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
@@ -40,6 +46,7 @@ export default function Reveal({
     const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     if (reduce) {
       setVisible(true);
+      setAnimationFinished(true);
       return;
     }
     const obs = new IntersectionObserver(
@@ -55,11 +62,20 @@ export default function Reveal({
     return () => obs.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (!visible || animationFinished) return;
+    const totalMs = (delay + duration + 0.05) * 1000;
+    const t = window.setTimeout(() => setAnimationFinished(true), totalMs);
+    return () => window.clearTimeout(t);
+  }, [visible, animationFinished, delay, duration]);
+
   const style: CSSProperties = {
     opacity: visible ? 1 : 0,
     transform: visible ? "none" : `translateY(${y}px)`,
     transition: `opacity ${duration}s ease-out ${delay}s, transform ${duration}s ease-out ${delay}s`,
-    willChange: "opacity, transform",
+    // Drop will-change once the animation has finished so we don't keep a
+    // permanent GPU layer (and stacking context) on every Reveal in the page.
+    willChange: animationFinished ? "auto" : "opacity, transform",
   };
 
   return (
