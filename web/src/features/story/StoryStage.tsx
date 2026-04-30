@@ -9,12 +9,13 @@ interface StoryStageProps {
 
 /**
  * The sticky visual that the scrolling narrative drives. It is the same
- * underlying map for all acts — what changes is the scenario, metric,
- * highlighted feature, and (eventually) overlay layers like the disrupted
- * Tube line and call-out annotations.
+ * underlying map for all acts — what changes is the scenario, metric, and
+ * (eventually) overlay layers.
  *
- * Future overlays (TubeLineLayer, AnnotationLayer, SmallMultiplesLayer) will
- * be slotted in here, conditionally rendered by `frame.overlays`.
+ * Caption duplication note: this component used to render a small caption box
+ * over the bottom-left of the map, but the right-column scroll panel already
+ * carries the same text. The duplication created visual clutter and
+ * (worse) competed with the choropleth signal. Caption is now scroll-only.
  */
 export default function StoryStage({ data, frame }: StoryStageProps) {
   return (
@@ -27,12 +28,6 @@ export default function StoryStage({ data, frame }: StoryStageProps) {
         onSelectFeature={() => {}}
         onHoverFeature={() => {}}
       />
-
-      <div className="story-stage-caption" data-tone={frame.tone}>
-        <span className="step-eyebrow">Act · {frame.actLabel}</span>
-        <h4>{frame.captionTitle}</h4>
-        <p>{frame.captionBody}</p>
-      </div>
     </div>
   );
 }

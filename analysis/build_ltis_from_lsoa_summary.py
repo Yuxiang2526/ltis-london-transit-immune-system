@@ -91,6 +91,21 @@ def main():
     bmin, bmax = min(bvals), max(bvals)
     print(f"  baseline AI range: {bmin:.2f} .. {bmax:.2f}")
 
+    # Percentile-rank normalisation. Min-max produced a heavily skewed [0,1]
+    # distribution (93% of LSOAs landed below 0.4) because mean_AI is
+    # log-normal with a long tail in the City. Ranking gives a uniform
+    # distribution that fills the colour ramp evenly: an LSOA at the median
+    # gets exactly 0.5 on the colour scale. The narrative meaning is now
+    # "where this neighbourhood ranks vs. all of London" — which is exactly
+    # what the choropleth needs to convey.
+    sorted_pairs = sorted(lsoa_baseline_ai.items(), key=lambda x: x[1])
+    n_lsoa = len(sorted_pairs)
+    lsoa_baseline_rank = {
+        lsoa: (i + 0.5) / n_lsoa  # rank-based percentile in (0, 1)
+        for i, (lsoa, _) in enumerate(sorted_pairs)
+    }
+    print(f"  rank-normalised: every LSOA mapped to its city-wide percentile")
+
     # For each scenario, aggregate loss by LSOA.
     print("Aggregating route-loss per LSOA per scenario...")
     scenario_lsoa_loss: dict[str, dict[str, float]] = {}
@@ -127,9 +142,13 @@ def main():
         lsoa_name = props.get("LSOA21NM", "")
         borough = props.get("borough", "")
 
-        # baseline (real, from Siyan)
+        # baseline (real, from Siyan). Two values are stored per LSOA:
+        #   baseline_ai      — the raw mean AI (absolute, comparable to PTAL)
+        #   baseline_ltis    — the percentile rank in (0, 1), for choropleth
+        # The choropleth uses baseline_ltis for visual evenness; tooltips
+        # surface baseline_ai for the absolute reference.
         base_ai = lsoa_baseline_ai.get(lsoa_code, 0.0)
-        base_norm = (base_ai - bmin) / (bmax - bmin) if bmax > bmin else 0.0
+        base_norm = lsoa_baseline_rank.get(lsoa_code, 0.0)
         baseline_ltis = round(base_norm, 4)
 
         # geometry — Shapely 2.0.5 has a known bug constructing MultiPolygon

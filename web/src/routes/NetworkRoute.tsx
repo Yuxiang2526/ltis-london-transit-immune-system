@@ -25,15 +25,8 @@ export default function NetworkRoute() {
   return (
     <section className="network-route" aria-label="Detailed network resilience explorer">
       <header className="network-route__intro">
-        <p className="eyebrow">Companion tool</p>
-        <h2>LTRS — 100 m grid network resilience explorer</h2>
-        <p className="muted" style={{ maxWidth: "62ch" }}>
-          A high-resolution counterpart to the LSOA-level LTIS view. Cancel one or
-          more transport routes (Underground, Overground, Elizabeth, DLR, Tramlink
-          and 540+ bus routes) and see how the AI score changes per 100 m grid
-          cell. Walking accessibility is computed on the OSM road network with
-          Dijkstra shortest paths, capped at 2,400 m. By Siyan Tao.
-        </p>
+        <p className="eyebrow">LTRS — Companion tool by Siyan Tao</p>
+        <h2>Cancel any of 543 routes. Watch 159 k cells recompute.</h2>
       </header>
 
       <div className="network-route__frame">

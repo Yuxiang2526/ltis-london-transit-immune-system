@@ -195,9 +195,15 @@ select {
 
 .concept-section,
 .research-question,
-.analytics-shell,
 .methodology-panel {
   padding: var(--space-20) var(--page-padding);
+}
+
+/* Explore route — needs explicit clearance from the fixed header. */
+.analytics-shell {
+  padding: var(--header-clearance, 6rem) var(--page-padding) var(--space-20);
+  max-width: var(--container-wide);
+  margin: 0 auto;
 }
 
 .section-heading {
