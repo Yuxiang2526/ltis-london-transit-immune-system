@@ -29,6 +29,7 @@ const TUBE_LAYER_ID = "ltis-tube-lines-fill";
 const TUBE_DISRUPTED_LAYER_ID = "ltis-tube-line-disrupted";
 
 const TUBE_LINES_URL = `${import.meta.env.BASE_URL}data/tube_lines.geojson`;
+const RAIL_LINES_URL = `${import.meta.env.BASE_URL}data/rail_lines.geojson`;
 
 const INITIAL_VIEW = { center: [-0.1, 51.515] as [number, number], zoom: 9.2 };
 
@@ -127,13 +128,27 @@ export default function LTISMap({
         },
       });
 
+      // LSOA hairlines — zoom-responsive so they fade in as the user zooms in,
+      // giving the choropleth more visible structure without making it noisy
+      // at low zoom.
       map.addLayer({
         id: LINE_LAYER_ID,
         type: "line",
         source: SOURCE_ID,
         paint: {
-          "line-color": "rgba(16, 70, 128, 0.18)",
-          "line-width": 0.7,
+          "line-color": "rgba(16, 70, 128, 0.22)",
+          "line-width": [
+            "interpolate", ["linear"], ["zoom"],
+            8,  0.3,
+            10, 0.55,
+            12, 0.9,
+            15, 1.2,
+          ],
+          "line-opacity": [
+            "interpolate", ["linear"], ["zoom"],
+            8,  0.4,
+            12, 0.85,
+          ],
         },
       });
 
@@ -161,37 +176,62 @@ export default function LTISMap({
         if (feature) handlersRef.current.onSelectFeature(feature);
       });
 
-      // Tube lines overlay (rough centroid-chained geometry).
-      fetch(TUBE_LINES_URL)
+      // Rail lines overlay — real geometry from Siyan's route_lines.geojson,
+      // filtered to the 15 rail / Tube / DLR / Overground / Tramlink lines
+      // (buses are too dense to look good as a background overlay). Each
+      // feature carries its own TfL line colour.
+      fetch(RAIL_LINES_URL)
         .then((r) => (r.ok ? r.json() : null))
         .then((geo) => {
           if (!geo || !mapRef.current) return;
           if (!map.getSource(TUBE_SOURCE_ID)) {
             map.addSource(TUBE_SOURCE_ID, { type: "geojson", data: geo });
+            // Subtle white halo so coloured lines pop on the LSOA fill.
+            map.addLayer({
+              id: TUBE_LAYER_ID + "-halo",
+              type: "line",
+              source: TUBE_SOURCE_ID,
+              paint: {
+                "line-color": "rgba(255, 255, 255, 0.85)",
+                "line-width": [
+                  "interpolate", ["linear"], ["zoom"],
+                  8, 2.0,
+                  12, 4.0,
+                  15, 7.0,
+                ],
+              },
+            });
             map.addLayer({
               id: TUBE_LAYER_ID,
               type: "line",
               source: TUBE_SOURCE_ID,
               paint: {
-                "line-color": "rgba(16, 70, 128, 0.55)",
-                "line-width": 1.4,
+                // TfL official colour per line, from the data
+                "line-color": ["coalesce", ["get", "color"], "#104680"],
+                "line-width": [
+                  "interpolate", ["linear"], ["zoom"],
+                  8, 1.0,
+                  12, 2.4,
+                  15, 4.0,
+                ],
+                "line-opacity": 0.92,
               },
             });
             map.addLayer({
               id: TUBE_DISRUPTED_LAYER_ID,
               type: "line",
               source: TUBE_SOURCE_ID,
-              filter: ["==", ["get", "line"], "__none__"],
+              filter: ["==", ["get", "route"], "__none__"],
               paint: {
                 "line-color": "#b72230",
-                "line-width": 3,
+                "line-width": 3.5,
                 "line-dasharray": [1.6, 1.4],
               },
             });
           }
         })
         .catch(() => {
-          // Non-fatal: map still works without tube line overlay.
+          // Non-fatal: map still works without the rail overlay.
         });
     };
 
@@ -269,14 +309,13 @@ export default function LTISMap({
   }, [scenario, metric]);
 
   // -------------------------------------------------------------------------
-  // 3b. Disrupted tube line filter — highlight the line for current scenario.
-  // -------------------------------------------------------------------------
+  // 3b. Disrupted route highlight. Our scenarios are bus routes (99, R2, 685)
+  // which aren't in the rail-only overlay, so the dashed-red highlight stays
+  // empty for these — the choropleth conveys the disruption visually instead.
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !map.getLayer(TUBE_DISRUPTED_LAYER_ID)) return;
-    const def = SCENARIO_REGISTRY[scenario];
-    const lineName = def?.shortLabel ?? "__none__";
-    map.setFilter(TUBE_DISRUPTED_LAYER_ID, ["==", ["get", "line"], lineName]);
+    map.setFilter(TUBE_DISRUPTED_LAYER_ID, ["==", ["get", "route"], scenario]);
   }, [scenario]);
 
   // -------------------------------------------------------------------------

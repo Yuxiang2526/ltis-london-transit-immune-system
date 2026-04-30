@@ -123,8 +123,13 @@ export default function LocalProfile({
 
       <div className="profile-metrics">
         <div>
-          <span>Baseline LTIS</span>
+          <span>Baseline LTIS rank</span>
           <strong>{formatScore(p.baseline_ltis)}</strong>
+        </div>
+
+        <div>
+          <span>Baseline AI (absolute)</span>
+          <strong>{formatScore(p.baseline_ai as number | null | undefined)}</strong>
         </div>
 
         <div>
@@ -145,11 +150,6 @@ export default function LocalProfile({
         <div>
           <span>Line dependency</span>
           <strong>{formatPercent(dependency)}</strong>
-        </div>
-
-        <div>
-          <span>Mode diversity</span>
-          <strong>{formatScore(p.mode_diversity)}</strong>
         </div>
       </div>
 
