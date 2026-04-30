@@ -199,6 +199,73 @@ select {
   padding: var(--space-20) var(--page-padding);
 }
 
+/* Reproducibility callout in the Methodology page — sits between
+   §3.3 and §4 to surface the GitHub pipeline link without losing
+   the reading flow. */
+.method-source-callout {
+  margin: var(--space-8) 0 var(--space-10);
+  padding: var(--space-6) var(--space-7, var(--space-6));
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--palette-blue-2);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(
+    90deg,
+    var(--color-accent-tint) 0%,
+    var(--color-surface) 60%
+  );
+  box-shadow: var(--shadow-sm);
+}
+
+.method-source-callout .eyebrow {
+  margin: 0 0 var(--space-2);
+  color: var(--palette-blue-1);
+}
+
+.method-source-callout h4 {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-serif);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-strong);
+  letter-spacing: -0.005em;
+}
+
+.method-source-callout p {
+  margin: 0 0 var(--space-4);
+  color: var(--color-text-soft);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  max-width: none;
+}
+
+.method-source-callout__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 10px 16px;
+  background: var(--palette-blue-1);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  border-radius: 999px;
+  text-decoration: none;
+  transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
+}
+
+.method-source-callout__cta:hover {
+  transform: translateY(-1px);
+  background: #082f5b;
+  box-shadow: 0 4px 14px rgba(16, 70, 128, 0.28);
+}
+
+.method-source-callout__cta code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+}
+
 /* Explore route — needs explicit clearance from the fixed header. */
 .analytics-shell {
   padding: var(--header-clearance, 6rem) var(--page-padding) var(--space-20);

@@ -234,6 +234,38 @@ export default function MethodologyRoute() {
             a few hundred milliseconds.
           </p>
 
+          <aside className="method-source-callout">
+            <p className="eyebrow">Reproducibility</p>
+            <h4>Source code &amp; pre-computation pipeline</h4>
+            <p>
+              The full data-calculation pipeline — OSM walking-network
+              extraction, per-grid AI computation, the 543-route per-cell
+              loss matrix, and all input metadata — is open on GitHub. Every
+              number rendered on this site can be regenerated from these
+              scripts and the public source data.
+            </p>
+            <a
+              href="https://github.com/Taoo2025/CASA0029/tree/main/data_calculating"
+              target="_blank"
+              rel="noreferrer"
+              className="method-source-callout__cta"
+            >
+              <span>Open <code>Taoo2025/CASA0029 · /data_calculating</code> on GitHub</span>
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                aria-hidden="true"
+              >
+                <path d="M14 3h7v7M21 3l-9 9M19 14v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6"
+                  strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </a>
+          </aside>
+
           {/* ── 4. Discussion / Limitations ─────────────────────────────── */}
           <h2 id="discussion">4. Discussion &amp; limitations</h2>
           <p>
