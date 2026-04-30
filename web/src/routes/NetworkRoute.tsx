@@ -60,13 +60,16 @@ export default function NetworkRoute() {
     const iframe = iframeRef.current;
     if (!iframe) return;
 
-    const timers: number[] = [];
+    let pollTimer: number | null = null;
+    let stopTimer: number | null = null;
 
     const injectStyles = () => {
       try {
         const doc = iframe.contentDocument;
-        const win = iframe.contentWindow;
-        if (!doc) return;
+        const win = iframe.contentWindow as
+          | (Window & { state?: { compareMap?: unknown } })
+          | null;
+        if (!doc || !win) return;
 
         if (!doc.getElementById("ltis-embed-style")) {
           const style = doc.createElement("style");
@@ -77,24 +80,53 @@ export default function NetworkRoute() {
         }
 
         // After our CSS shrinks #map and #map-compare with right:360px, the
-        // mapbox canvases inside still hold their original full-window
-        // dimensions until window.resize fires. Siyan's HTML has a
-        // window.resize handler that re-pins the compareMap container to
-        // #map's bounding rect AND calls .resize() on both maps; we
-        // dispatch resize at staggered intervals so it re-runs whenever
-        // the iframe finishes its own async map init.
-        if (win) {
-          [60, 250, 700, 1800].forEach((delay) => {
-            const t = window.setTimeout(() => {
-              try {
-                win.dispatchEvent(new Event("resize"));
-              } catch {
-                /* iframe may have unmounted */
-              }
-            }, delay);
-            timers.push(t);
-          });
-        }
+        // mapbox canvases inside still hold their full-window dimensions
+        // until window.resize fires. Siyan's resize handler re-pins the
+        // compareMap container to #map's bounding rect — but compareMap is
+        // created asynchronously after a ~13 MB JSON fetch (5–10 s), so a
+        // single up-front resize dispatch fires too early.
+        //
+        // Strategy: poll every 800 ms, dispatch a resize each tick. Once
+        // compareMap exists in the iframe's state we dispatch one more
+        // (so its handler binds the freshly-mounted compare canvas) and
+        // stop polling. Hard cap at 30 s so we never leak the interval.
+        let tickCount = 0;
+        let compareMapSeen = false;
+        pollTimer = window.setInterval(() => {
+          tickCount++;
+          try {
+            win.dispatchEvent(new Event("resize"));
+            const present = !!win.state?.compareMap;
+            if (present && !compareMapSeen) {
+              compareMapSeen = true;
+              // Two more ticks after compareMap appears to give Mapbox
+              // time to register its window.resize handler.
+              window.setTimeout(() => {
+                try { win.dispatchEvent(new Event("resize")); } catch {}
+              }, 200);
+              window.setTimeout(() => {
+                try { win.dispatchEvent(new Event("resize")); } catch {}
+                if (pollTimer !== null) {
+                  window.clearInterval(pollTimer);
+                  pollTimer = null;
+                }
+              }, 1200);
+            }
+          } catch {
+            /* iframe unmounted — ignore */
+          }
+          if (tickCount > 38 && pollTimer !== null) {
+            window.clearInterval(pollTimer);
+            pollTimer = null;
+          }
+        }, 800);
+
+        stopTimer = window.setTimeout(() => {
+          if (pollTimer !== null) {
+            window.clearInterval(pollTimer);
+            pollTimer = null;
+          }
+        }, 30_000);
       } catch (err) {
         console.warn("[LTIS] Could not inject embed CSS into iframe:", err);
       }
@@ -105,7 +137,8 @@ export default function NetworkRoute() {
 
     return () => {
       iframe.removeEventListener("load", injectStyles);
-      timers.forEach((t) => window.clearTimeout(t));
+      if (pollTimer !== null) window.clearInterval(pollTimer);
+      if (stopTimer !== null) window.clearTimeout(stopTimer);
     };
   }, []);
 
