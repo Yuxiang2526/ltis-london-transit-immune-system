@@ -2,17 +2,14 @@ import Reveal from "../components/ui/Reveal";
 import SectionHeader from "../components/ui/SectionHeader";
 
 /**
- * About + project information page.
+ * About + project information page (rubric-required).
  *
- * Reflects the dual-track architecture of the deliverable:
- *   - LTIS narrative track (Story + Explorer + Methodology) — Yuxiang Fan
- *   - LTRS network track (Network Map iframe) — Siyan Tao
- * with a shared methodology page that documents both.
+ * Honest split per project decision (D2 2026-04-30):
+ *   - Data analysis & modelling = Siyan Tao
+ *   - Web wrapper & visualisation packaging = Yuxiang Fan
  *
- * Required by the rubric (80%+):
- *   - Contributions table
- *   - AI tool usage statement
- *   - Open data + library references
+ * The site is one project with two contributors playing distinct roles, not a
+ * "dual-team / dual-track" — that previous framing was a polite fiction.
  */
 
 const PARTS = [
@@ -20,99 +17,99 @@ const PARTS = [
     number: "01",
     title: "Story",
     summary:
-      "An editorial scrollytelling sequence that introduces baseline accessibility (PTAL), the disruption hypothesis, and the resulting fallback-mobility pattern at LSOA scale.",
+      "Editorial scrollytelling that walks through the LTRS findings using three reference routes (99, R2, 685). Backed by the same OSM-Dijkstra grid data, aggregated to LSOA scale.",
     accent: "cool" as const,
   },
   {
     number: "02",
     title: "Explorer",
     summary:
-      "An interactive scenario explorer for switching disruption line and metric, ranking neighbourhoods, and inspecting a five-dimension fallback profile per LSOA.",
+      "LSOA narrative overview — baseline accessibility choropleth, click-to-inspect local profile, Lorenz curve of city-wide concentration. Hands the user off to the Network Map for forensic detail.",
     accent: "accent" as const,
   },
   {
     number: "03",
     title: "Network Map",
     summary:
-      "The LTRS companion tool: 100 m grid resilience under multi-route disruption, computed via OSM road-network Dijkstra walking. Cancel routes and see per-cell impact.",
+      "The analytical core: cancel any combination of 543 routes, navigate by postcode or borough, inspect resilience at 100 m grid resolution. Built on OSM walking-network Dijkstra.",
     accent: "warm" as const,
   },
   {
     number: "04",
     title: "Methodology",
     summary:
-      "Dual-method documentation covering both the LSOA-scale LTIS composite and the 100 m-grid LTRS Dijkstra model, with limitations and references.",
+      "End-to-end documentation of the LTRS pipeline: data sources, AI recomputation on the OSM walking network, scenario formulation, LSOA aggregation, limitations, references.",
     accent: "warm" as const,
   },
 ];
 
 const TEAM = [
   {
-    name: "Yuxiang Fan",
-    initials: "YF",
-    role: "LTIS narrative + Explorer; design system; scrollytelling; deployment",
-  },
-  {
     name: "Siyan Tao",
     initials: "ST",
-    role: "LTRS Network Map; OSM Dijkstra walking model; 100 m grid resilience pipeline",
+    role: "Data analysis &amp; modelling — OSM Dijkstra walking-network pipeline; 543-route impact pre-computation; 100 m grid LTRS engine; Network Map UI (Mapbox GL JS).",
+  },
+  {
+    name: "Yuxiang Fan",
+    initials: "YF",
+    role: "Web wrapper &amp; visualisation packaging — React + TypeScript + Vite skeleton; design system; scrollytelling; LSOA aggregation views; methodology + about pages; deployment.",
   },
 ];
 
 const CONTRIBUTIONS = [
   { task: "Concept development", major: "Yuxiang Fan, Siyan Tao", ai: "No AI use" },
   {
-    task: "Data preparation (PTAL 2023 LSOA aggregation, NaPTAN, OSM walking network)",
+    task: "PTAL 2023 acquisition + LSOA / NaPTAN preparation",
     major: "Siyan Tao",
     ai: "No AI use",
   },
   {
-    task: "OSM Dijkstra walking-time pipeline (4,994 LSOAs × 27,553 stops)",
+    task: "OSM walking network extraction + Dijkstra pipeline (4,994 LSOAs × 27,553 stops)",
     major: "Siyan Tao",
     ai: "No AI use",
   },
   {
-    task: "100 m grid resilience model + 543-route impact pre-computation",
+    task: "100 m grid AI baseline + per-route impact pre-computation (543 routes)",
     major: "Siyan Tao",
-    ai: "ChatGPT used to debug edge cases in the route-grid loss aggregation",
+    ai: "ChatGPT used to debug edge cases in the loss aggregation",
   },
   {
-    task: "Network Map UI (Mapbox GL JS, compare mode, cancel-routes interaction)",
+    task: "Network Map UI (Mapbox GL, compare mode, route cancel + LSOA / borough panels)",
     major: "Siyan Tao",
     ai: "ChatGPT used for Mapbox style expression syntax queries",
   },
   {
-    task: "LTIS LSOA-level pipeline (Python, Shapely, scenario indicators)",
+    task: "LSOA aggregation pipeline (build_ltis_from_lsoa_summary.py)",
     major: "Yuxiang Fan",
-    ai: "Anthropic Claude (via Claude Code) used to scaffold the conversion script",
+    ai: "Anthropic Claude (via Claude Code) used to scaffold the script and Shapely fallback for MultiPolygon edge cases",
   },
   {
-    task: "LTIS website (React + TypeScript + Vite + MapLibre GL)",
+    task: "React skeleton: routing, layout, design tokens, typography",
     major: "Yuxiang Fan",
-    ai: "Anthropic Claude (via Claude Code) used for component scaffolding and MapLibre layer wiring",
+    ai: "Anthropic Claude (via Claude Code) used for component scaffolding",
   },
   {
-    task: "Editorial design system (light theme, RdBu palette, typography)",
+    task: "MapLibre LTIS choropleth + colour ramps + legend",
     major: "Yuxiang Fan",
-    ai: "Anthropic Claude (via Claude Code) used to draft CSS tokens",
+    ai: "Anthropic Claude (via Claude Code) used for MapLibre layer wiring",
   },
   {
     task: "Scrollytelling narrative (scrollama + frame data)",
     major: "Yuxiang Fan",
-    ai: "Anthropic Claude (via Claude Code) used to draft component structure",
+    ai: "Anthropic Claude (via Claude Code) used to draft component structure; frame copy refined against real data",
   },
   {
-    task: "Methodology summary writing + reference list curation",
-    major: "Yuxiang Fan, Siyan Tao",
-    ai: "ChatGPT used for copy-editing the methodology prose",
-  },
-  {
-    task: "Iframe integration of Network Map into LTIS site",
+    task: "Iframe embed of Network Map into the React site",
     major: "Yuxiang Fan",
     ai: "Anthropic Claude (via Claude Code) used to plan and execute the integration",
   },
   {
-    task: "GitHub deployment + GitHub Release for large data assets",
+    task: "Methodology + About + reference list",
+    major: "Yuxiang Fan, Siyan Tao",
+    ai: "ChatGPT used for copy-editing the methodology prose; final wording author-reviewed",
+  },
+  {
+    task: "GitHub deployment workflow + Pages configuration",
     major: "Yuxiang Fan",
     ai: "Anthropic Claude (via Claude Code) used to write the deploy.yml workflow",
   },
@@ -120,52 +117,40 @@ const CONTRIBUTIONS = [
 
 const SOURCES = [
   {
-    part: "Baseline",
-    name: "PTAL 2023 — LSOA aggregated",
+    part: "Network",
+    name: "NaPTAN (Department for Transport)",
     description:
-      "TfL's Public Transport Accessibility Level grid aggregated to 2021 LSOAs (mean accessibility index + dominant PTAL band). Provides the LTIS baseline.",
+      "27,553 transit stops across Greater London. Bus, Tube, DLR, Overground, Elizabeth, Tramlink. Each stop carries route-membership metadata. Driver of the entire LTRS engine.",
+  },
+  {
+    part: "Network",
+    name: "OSM walking network",
+    description:
+      "OpenStreetMap road and footpath graph for Greater London. Used by the Dijkstra walker (4.8 km/h, 2,400 m budget) to compute realistic walking time from any 100 m grid centroid to each NaPTAN stop.",
   },
   {
     part: "Baseline",
-    name: "PTAL 2023 — 100 m grid",
+    name: "PTAL 2023 — 100 m grid (TfL WebCAT)",
     description:
-      "TfL PTAL 2023 raw 100 m grid cells (~159k cells across Greater London). Provides the LTRS baseline AI score.",
+      "159,451 grid cells covering Greater London. Used as a sanity-check reference for the recomputed AI scores.",
+  },
+  {
+    part: "Routes",
+    name: "TfL line and route geometry",
+    description:
+      "Tube, Overground, Elizabeth, DLR, Tramlink + 540+ bus routes (route_lines.geojson). Drives both the visual route layer and the route-cancel logic.",
   },
   {
     part: "Geometry",
     name: "ONS LSOA 2021 boundaries",
     description:
-      "4,994 Lower Super Output Areas across Greater London. Spatial unit for the LTIS narrative layer.",
-  },
-  {
-    part: "Network",
-    name: "NaPTAN (Department for Transport)",
-    description:
-      "27,553 transit stops across London (bus, tube, DLR, Overground, Elizabeth, Tramlink) with route membership. Drives both layers.",
-  },
-  {
-    part: "Network",
-    name: "Underground Stations + 540+ Bus / Rail routes (TfL)",
-    description:
-      "Line and route geometry. The LTIS layer uses 3 Underground scenarios; the LTRS layer covers 543 individual routes.",
-  },
-  {
-    part: "Network",
-    name: "OpenStreetMap walking network",
-    description:
-      "OSM road / footpath graph for Greater London. Used in the LTRS pipeline for Dijkstra shortest-path walking-time computation (4.8 km/h, 2,400 m cap).",
-  },
-  {
-    part: "Population",
-    name: "ONS LSOA mid-year population",
-    description:
-      "Resident population per LSOA. Used to compute the LTIS exposure indicator (loss × population).",
+      "4,994 Lower Super Output Areas across Greater London. Spatial unit for the LSOA-scale narrative views (Story + Explorer).",
   },
   {
     part: "Context",
-    name: "OpenStreetMap basemap (CARTO Positron + Mapbox Streets)",
+    name: "OpenStreetMap basemaps (CARTO Positron + Mapbox Streets)",
     description:
-      "Light raster basemap. © OpenStreetMap contributors © CARTO (LTIS) and Mapbox (LTRS).",
+      "Light raster basemap for the LSOA Explorer (CARTO) and editorial basemap for the Network Map (Mapbox).",
   },
 ];
 
@@ -180,21 +165,21 @@ const TECH = [
   "scrollama",
   "KaTeX",
   "Python · Shapely",
-  "Python · NetworkX (Dijkstra)",
+  "Python · OSMnx / NetworkX (Dijkstra)",
   "GitHub Actions",
-  "GitHub Pages + Releases",
+  "GitHub Pages",
 ];
 
 const AI_USAGE = [
   {
     tool: "Anthropic Claude (via Claude Code)",
     purpose:
-      "Code scaffolding, MapLibre layer wiring, React component structure, ADR drafting, PTAL→LTIS conversion script, iframe integration of the Network Map. Every artefact was inspected and edited by a named author before being committed.",
+      "Code scaffolding, MapLibre layer wiring, React component structure, design-token CSS drafting, scrollytelling component shape, LSOA aggregation script, deploy.yml workflow, iframe integration of the Network Map. Every artefact was inspected and edited by the author before being committed.",
   },
   {
     tool: "OpenAI ChatGPT",
     purpose:
-      "Mapbox style expression queries during Network Map development; copy-editing of methodology prose; licence-term disambiguation. No analytical findings, methodological choices, citations or final wording were generated by an AI tool without author review.",
+      "Mapbox style-expression syntax during Network Map development; copy-editing of methodology prose; licence-term disambiguation. No analytical findings, methodological choices, citations or final wording were generated by an AI tool without author review.",
   },
 ];
 
@@ -207,23 +192,22 @@ export default function AboutRoute() {
           <p className="eyebrow">About this project</p>
           <h1>London Transit Immune System</h1>
           <p className="about-hero__lede">
-            <em>LTIS</em> is a group data-visualisation project investigating
-            how unevenly transport resilience is distributed across London
-            neighbourhoods. It ships two complementary analytical layers — an
-            LSOA-scale LTIS narrative and a 100 m-grid LTRS network explorer —
-            that read together as a single argument about spatial inequality.
-            Produced as part of the CASA0029 module at the Centre for Advanced
-            Spatial Analysis, University College London, 2025/26 (Group 17).
+            <em>LTIS</em> is a CASA0029 Group Project (Group 17, 2025/26). Its
+            analytical core is an OSM walking-network Dijkstra model that
+            covers 159,451 grid cells, 27,553 transit stops, and 543 transport
+            routes across Greater London. The Story page tells the narrative;
+            the Explorer is the LSOA-scale overview; the Network Map is the
+            forensic tool. They share one engine.
           </p>
         </header>
       </Reveal>
 
-      {/* 4-part overview */}
+      {/* 4 parts */}
       <section className="about-section">
         <SectionHeader
           eyebrow="Site structure"
-          title="Four connected views, two analytical layers"
-          description="The site moves from narrative to two interactive tools to method, with each part building on the previous one."
+          title="Four pages, one analytical engine"
+          description="The site moves from narrative to LSOA overview to 100 m forensic tool to method. Each part reads what the previous one shows."
         />
         <div className="about-parts-grid">
           {PARTS.map((p, i) => (
@@ -238,12 +222,12 @@ export default function AboutRoute() {
         </div>
       </section>
 
-      {/* Team */}
+      {/* Team — honest split */}
       <section className="about-section">
         <SectionHeader
           eyebrow="Contributors"
           title="Team"
-          description="A two-person group with clearly separated technical responsibilities."
+          description="Two contributors, two distinct roles."
         />
         <div className="about-team-grid">
           {TEAM.map((m) => (
@@ -251,7 +235,10 @@ export default function AboutRoute() {
               <div className="about-team-avatar">{m.initials}</div>
               <div>
                 <p className="about-team-card__name">{m.name}</p>
-                <p className="about-team-card__role">{m.role}</p>
+                <p
+                  className="about-team-card__role"
+                  dangerouslySetInnerHTML={{ __html: m.role }}
+                />
               </div>
             </div>
           ))}
@@ -281,12 +268,12 @@ export default function AboutRoute() {
         </div>
       </section>
 
-      {/* AI usage detail */}
+      {/* AI usage */}
       <section className="about-section">
         <SectionHeader
           eyebrow="Transparency"
           title="AI tool usage"
-          description="Every AI-assisted artefact was reviewed and edited by a named author before being committed to the repository."
+          description="Every AI-assisted artefact was reviewed and edited by the responsible author before being committed."
         />
         <div className="about-sources">
           <div className="about-sources-row about-sources-row--head">
@@ -332,7 +319,7 @@ export default function AboutRoute() {
         <SectionHeader
           eyebrow="Stack"
           title="Tools &amp; technologies"
-          description="The site is fully open-source. The LTIS layer uses open MapLibre GL; the LTRS layer uses Mapbox GL JS with a token restricted to the deployed domain."
+          description="The site is fully open-source. The Explorer uses open MapLibre GL; the Network Map uses Mapbox GL JS with a token restricted to the deployed origin."
         />
         <div className="about-tag-strip">
           {TECH.map((t) => (

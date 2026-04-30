@@ -23,49 +23,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # ── Large network-map data (git-ignored, stored in GitHub Release) ───
-      # data_chunks_osm_network (123 MB) and grid_ai_chunks_osm_network (242 MB)
-      # and the PTAL 100m grid (81 MB) are uploaded to the v1.0-data release tag
-      # and unpacked here so Vite copies them into dist/ for the iframe.
-      - name: Restore large network-map data from Release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          DATA_DIR="../web/public/network-map"
-
-          if [ ! -d "${DATA_DIR}/data_chunks_osm_network" ]; then
-            echo "Downloading data_chunks_osm_network.zip ..."
-            gh release download v1.0-data \
-              --repo "${{ github.repository }}" \
-              --pattern "data_chunks_osm_network.zip" \
-              --dir /tmp/ltis-rel
-            unzip -q /tmp/ltis-rel/data_chunks_osm_network.zip \
-              -d "${DATA_DIR}"
-          fi
-
-          if [ ! -d "${DATA_DIR}/grid_ai_chunks_osm_network" ]; then
-            echo "Downloading grid_ai_chunks_osm_network.zip ..."
-            gh release download v1.0-data \
-              --repo "${{ github.repository }}" \
-              --pattern "grid_ai_chunks_osm_network.zip" \
-              --dir /tmp/ltis-rel
-            unzip -q /tmp/ltis-rel/grid_ai_chunks_osm_network.zip \
-              -d "${DATA_DIR}"
-          fi
-
-          if [ ! -f "${DATA_DIR}/DATA/PTAL_2023_Grid_100mx100m_Data.geojson" ]; then
-            echo "Downloading PTAL_2023_Grid_100mx100m_Data.geojson ..."
-            gh release download v1.0-data \
-              --repo "${{ github.repository }}" \
-              --pattern "PTAL_2023_Grid_100mx100m_Data.geojson" \
-              --dir "${DATA_DIR}/DATA"
-          fi
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: web/package-lock.json
+
+      - name: Inject Mapbox token into Network Map HTML
+        run: |
+          if [ -n "${{ secrets.MAPBOX_TOKEN }}" ]; then
+            echo "Injecting MAPBOX_TOKEN secret into network-map HTML..."
+            sed -i 's|MAPBOX_TOKEN_PLACEHOLDER|${{ secrets.MAPBOX_TOKEN }}|g' \
+              public/network-map/London_PTAL_Accessibility_Map.html
+          else
+            echo "::warning::MAPBOX_TOKEN secret not set; Network Map will not render basemap"
+          fi
 
       - name: Install dependencies
         run: npm ci

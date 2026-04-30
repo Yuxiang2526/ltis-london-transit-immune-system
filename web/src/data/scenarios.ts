@@ -8,51 +8,47 @@ export interface ScenarioDefinition {
   description: string;
   /** Hex colour used for the line geometry overlay on the map. */
   lineColor: string;
-  /** Optional citation key into data/references.ts (e.g. TfL line page). */
+  /** Optional citation key into data/references.ts. */
   referenceKey?: string;
 }
 
 /**
- * Open registry of disruption scenarios.
- *
- * To add a new scenario:
- *   1. Append an entry below.
- *   2. Ensure the source GeoJSON contains the corresponding `{id}_*` flat keys
- *      (see schema.ts: `flatKey`).
- *   3. Add a matching entry in `scenario_summary.json`.
- *
- * The `id` should match the snake_case prefix used in the GeoJSON properties.
+ * Disruption scenarios used in the Story scrollytelling and the Explorer
+ * choropleth. The three routes were selected because they showcase three
+ * distinct spatial signatures of single-route bus disruption found in the
+ * 543-route LTRS analysis (see frames.ts and methodology). Each id matches
+ * the prefix used in `web/public/data/lsoa_ltis.geojson`.
  */
 export const SCENARIO_REGISTRY: Record<ScenarioId, ScenarioDefinition> = {
-  central: {
-    id: "central",
-    label: "Central line disruption",
-    shortLabel: "Central",
+  "99": {
+    id: "99",
+    label: "Bus Route 99 disruption",
+    shortLabel: "Route 99",
     description:
-      "An east-west corridor disruption used to inspect dependency on the Central line and the resilience of fallback mobility along its catchment.",
-    lineColor: "#ee2724",
+      "An east-London bus route. Cancellation pushes 697 grid cells into the 'critical' loss band, with Bexley LSOAs losing 18.4 % of mean accessibility. Sharp, deep punch.",
+    lineColor: "#df4b3f",
   },
-  northern: {
-    id: "northern",
-    label: "Northern line disruption",
-    shortLabel: "Northern",
+  "R2": {
+    id: "R2",
+    label: "Bus Route R2 disruption",
+    shortLabel: "Route R2",
     description:
-      "A branched north-south corridor disruption used to inspect outer-borough vulnerability where fallback alternatives thin out.",
-    lineColor: "#000000",
+      "A south-London bus route with the widest spatial spread of all 543 routes — 1,738 grid cells affected. Bromley LSOAs lose 6.3 % on average.",
+    lineColor: "#dc6d57",
   },
-  jubilee: {
-    id: "jubilee",
-    label: "Jubilee line disruption",
-    shortLabel: "Jubilee",
+  "685": {
+    id: "685",
+    label: "Bus Route 685 disruption",
+    shortLabel: "Route 685",
     description:
-      "A northwest-central-east corridor disruption used to inspect resilience along high-density employment axes.",
-    lineColor: "#a1a5a7",
+      "A northwest-London bus route. Smallest footprint (329 cells) but deepest local impact: Croydon LSOAs along its corridor lose up to 38.6 % of accessibility.",
+    lineColor: "#b72230",
   },
 };
 
 export const ALL_SCENARIO_IDS: ScenarioId[] = Object.keys(SCENARIO_REGISTRY);
 
-export const DEFAULT_SCENARIO_ID: ScenarioId = "central";
+export const DEFAULT_SCENARIO_ID: ScenarioId = "99";
 
 export function getScenarioDefinition(id: ScenarioId): ScenarioDefinition {
   const def = SCENARIO_REGISTRY[id];

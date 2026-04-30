@@ -5,7 +5,7 @@
  *
  *   1. Storage layer (LSOAFlatProperties)
  *      Flat key-value shape that lives inside GeoJSON `feature.properties`.
- *      Stays flat because MapLibre paint expressions (`["get", "central_loss"]`)
+ *      Stays flat because MapLibre paint expressions (`["get", "99_loss"]`)
  *      can only address top-level keys efficiently.
  *
  *   2. Logical layer (LSOAView, ScenarioBundle, FallbackProfile)
@@ -79,10 +79,10 @@ export interface LSOABaseline {
  * Per-scenario flat keys. Convention: `{scenarioId}_{field}`.
  * The accessor `getScenarioBundle` turns this into a nested ScenarioBundle.
  *
- * Example (scenarioId = "central"):
- *   central_ltis, central_retention, central_loss, central_exposure,
- *   central_dependency, central_redundancy, central_busFallback,
- *   central_cycleFallback, central_modalDiversity, central_dependencyRisk
+ * Example (scenarioId = "99"):
+ *   99_score, 99_retention, 99_loss, 99_exposure,
+ *   99_dependency, 99_redundancy, 99_busFallback,
+ *   99_cycleFallback, 99_modalDiversity, 99_dependencyRisk
  */
 export type LSOAScenarioFlatKey<S extends string, F extends string> = `${S}_${F}`;
 

@@ -1,5 +1,17 @@
 import type { MapMetric, ScenarioId } from "../../data/schema";
 
+/**
+ * StoryFrame — one snapshot of map state + caption shown by the scrolling
+ * narrative. Editing this file is the only thing required to add / reorder /
+ * relabel acts.
+ *
+ * Numbers used in copy are NOT placeholders — they are computed in
+ * `analysis/build_ltis_from_lsoa_summary.py` from Siyan Tao's
+ * route_grid_impacts_osm_network.json (OSM-Dijkstra pipeline) and aggregated
+ * to LSOA via grid_to_lsoa.json. The same values appear, cell-by-cell, in the
+ * Network Map iframe at /network — both views consume the same underlying
+ * computation.
+ */
 export interface StoryFrame {
   id: string;
   actLabel: string;
@@ -13,64 +25,71 @@ export interface StoryFrame {
 }
 
 export const STORY_FRAMES: StoryFrame[] = [
+  // ────── ACT I — Baseline ────────────────────────────────────────────────
   {
     id: "act1-baseline",
-    actLabel: "I — The baseline",
-    scenario: "central",
+    actLabel: "I — The uneven baseline",
+    scenario: "99",
     metric: "baseline_ltis",
     tone: "cool",
-    captionTitle: "Accessibility is radically unequal before any disruption",
+    captionTitle: "London's accessibility is radically uneven before any disruption",
     captionBody:
-      "Each polygon is a 2021 LSOA, coloured by its baseline LTIS score derived from PTAL 2023 (TfL). Deep blue = high accessibility; pale = low. The inner city glows; the outer ring fades.",
+      "Each polygon is a 2021 LSOA, coloured by its baseline accessibility index (AI) — the average AI of all 100 m grid cells inside it, computed from the OSM walking network reaching 27,553 transit stops. Inner boroughs glow at AI > 50; some outer LSOAs fall below 5.",
     paragraphs: [
-      "London's transport accessibility is not evenly distributed. 17% of outer-London LSOAs score below 0.1 on our baseline composite — barely one standard deviation above zero. Inner-city LSOAs in the City, Southwark and Islington regularly score above 0.7.",
-      "This inequality is the substrate on which any disruption lands. A city where everyone had strong alternatives would be resilient everywhere. London is not that city.",
-      "The map here shows not disruption, but health: the starting state that a shock will challenge. Notice the east-west corridor of the Central line — a bright band of accessibility from Ealing to Stratford. That concentration will matter enormously in the next act.",
+      "London's transport accessibility is not evenly distributed. The baseline AI we compute from the full OSM walking network spans more than two orders of magnitude — from 0.04 in the most isolated LSOAs to 119.7 in the City. That's the substrate any disruption lands on.",
+      "This unevenness is not a flaw of the visualisation — it is the central finding. A city where everyone had strong fallback options would be resilient everywhere. London is not that city.",
+      "The map here shows the healthy baseline. The next three acts each remove one bus route from the network and re-measure. We start with route 99.",
     ],
   },
+
+  // ────── ACT II — Route 99 ───────────────────────────────────────────────
   {
-    id: "act2-disruption",
-    actLabel: "II — Remove the Central line",
-    scenario: "central",
+    id: "act2-route-99",
+    actLabel: "II — Cancel bus route 99",
+    scenario: "99",
     metric: "loss",
     tone: "warm",
-    captionTitle: "Newham loses up to 42% of its baseline mobility",
+    captionTitle: "Route 99 fails: Bexley's accessibility drops by 18% on average",
     captionBody:
-      "Accessibility loss after removing the Central line. Red-amber zones mark where local fallback mobility drops most sharply. Newham's Stratford corridor has a dependency score of 1.0 — the Central line is its only tube service.",
+      "Mean accessibility loss after removing route 99 from the OSM walking network. The bus is not a Tube line — but its removal pushes 697 grid cells across south-east London into the 'critical' loss band. Mean affected loss: 18.4 % in Bexley, 4.8 % in Greenwich.",
     paragraphs: [
-      "We remove the Central line and re-measure. Most of London barely notices — the Northern, District, Piccadilly and Overground absorb the shock. But along the eastern corridor, a very different story emerges.",
-      "In Newham, several LSOAs achieve a Central line dependency score of 1.0: every tube station within walking distance belongs to the Central line. When it closes, tube access drops to zero. Those LSOAs lose between 36% and 42% of their baseline LTIS score.",
-      "This is the spatial signature of single-line dependency: high baseline accessibility (the area is well-served in normal conditions) combined with catastrophic fragility (all of that service is one line). Stratford is not a poorly-served edge — it is a well-served but brittle node.",
+      "We remove route 99 — a single London bus — and recompute accessibility for every 100 m grid cell on its catchment. Then we average back up to LSOAs. The loss map you see is real: Siyan's pipeline ran the OSM-Dijkstra walker on every cell.",
+      "Most of London is white. That is not a rendering glitch — it is the finding. Bus 99's impact is highly localised. But where it lands, it lands hard: Bexley LSOAs lose 18.4 % of accessibility on average, with individual cells dropping above 30 %.",
+      "This is the spatial signature of single-route dependency. A neighbourhood doesn't have to be remote to be brittle — it has to be served by routes that don't have parallel substitutes. Bexley's eastern corridor is exactly that.",
     ],
   },
+
+  // ────── ACT III — Route R2 ──────────────────────────────────────────────
   {
-    id: "act3-northern",
-    actLabel: "III — Switch to the Northern line",
-    scenario: "northern",
+    id: "act3-route-R2",
+    actLabel: "III — Cancel bus route R2",
+    scenario: "R2",
     metric: "loss",
     tone: "warm",
-    captionTitle: "Southwark and Islington: the Northern line's most exposed corridor",
+    captionTitle: "Route R2: 1,738 affected grid cells, Bromley loses 6.3%",
     captionBody:
-      "Northern line disruption shifts the vulnerability map south and north. Southwark's Borough/Elephant corridor and Islington's Angel/Highbury belt see losses of 39–45%. The Northern line is London's highest-exposure scenario: 191,000 person-equivalents affected.",
+      "Route R2 has the widest spatial spread of all 543 routes — 1,738 grid cells affected. The geometry shifts south. Where route 99 punched a hole in the east, R2 carves a shallow corridor across south London.",
     paragraphs: [
-      "Switch to the Northern line and the map changes shape entirely. The eastern exposure disappears; instead, two new clusters emerge — one in south London along the Borough/Elephant & Castle corridor, and one in north London through Islington and Camden.",
-      "The Northern line is the most damaging scenario by total exposure: 191,000 person-equivalent units, compared to 120,000 for the Central line and 119,000 for the Jubilee. The branching geometry of the Northern line (running through both the City and the West End) means its corridor touches more high-density areas simultaneously.",
-      "In Southwark, the loss Gini coefficient is particularly high — disruption is not spread across the borough but concentrated in specific LSOAs where the Northern line is the dominant connection. This is precisely the spatial inequality pattern the LTIS framework is designed to surface.",
+      "Switch the disruption to bus R2 and the map rotates south. Bromley LSOAs absorb the largest borough-level loss (6.3 %), but the affected area is much wider than route 99's footprint.",
+      "This is the trade-off between depth and spread. R2 affects more grids but each grid loses less, on average. From a planner's perspective, R2 is a 'broad fragility' route; route 99 is a 'sharp fragility' route. Both demand attention but require different responses.",
+      "The same 543-route engine that lets us swap from 99 to R2 in this narrative powers the Network Map tool. There, you can cancel any combination of routes and watch the whole map recompute live.",
     ],
   },
+
+  // ────── ACT IV — Route 685 ──────────────────────────────────────────────
   {
-    id: "act4-exposure",
-    actLabel: "IV — Who is actually affected?",
-    scenario: "northern",
-    metric: "exposure",
+    id: "act4-route-685",
+    actLabel: "IV — Cancel bus route 685",
+    scenario: "685",
+    metric: "loss",
     tone: "warm",
-    captionTitle: "Loss × population: the equity question",
+    captionTitle: "Route 685: smaller footprint, deepest local punch",
     captionBody:
-      "Exposure = accessibility loss × resident population. Even moderate loss in a dense LSOA produces more exposure than catastrophic loss in a sparse one. This is where resilience becomes an equity issue.",
+      "Route 685 affects only 329 grid cells — the smallest footprint of our three scenarios. But where it touches, it dominates. Croydon LSOAs along its corridor lose up to 38.6 % of mean AI. This is single-line dependency in its purest form.",
     paragraphs: [
-      "The loss map shows severity. The exposure map shows consequence. The same 30% loss in an LSOA of 1,000 residents and an LSOA of 3,000 residents is not the same social event.",
-      "Across all three scenarios, the Gini coefficient of exposure distribution ranges from 0.67 to 0.73. That means this is not a diffuse, city-wide risk — it is highly concentrated. The top 1% of LSOAs absorb between 14% and 19% of total system exposure.",
-      "The implication is that targeted resilience interventions — bus frequency uplift, micro-mobility provision, emergency routing — could have outsized impact if directed at a small number of specific corridors. The spatial pattern here is actionable, not just descriptive.",
+      "Route 685 is the third archetype: small footprint, deep punch. Only Croydon shows up in the borough rankings (1.7 % mean), but the LSOAs that depend on it lose almost 40 % of their accessibility when it's cancelled.",
+      "These are the LSOAs where 685 is essentially the only viable bus route. There is no parallel service to absorb the shock. The OSM-Dijkstra walker can't find alternative stops within the 2,400 m walking budget.",
+      "Three routes. Three spatial signatures. Wide-shallow, medium-medium, narrow-deep. The full data has 540 more routes — and many of them follow these three patterns. That is the structural vulnerability map of London's surface transport.",
     ],
   },
 ];

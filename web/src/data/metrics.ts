@@ -74,7 +74,7 @@ export const METRIC_REGISTRY: Record<MapMetric, MetricDefinition> = {
 
 export const ALL_MAP_METRICS: MapMetric[] = Object.keys(METRIC_REGISTRY) as MapMetric[];
 
-export const DEFAULT_MAP_METRIC: MapMetric = "loss";
+export const DEFAULT_MAP_METRIC: MapMetric = "baseline_ltis";
 
 export function getMetricDefinition(id: MapMetric): MetricDefinition {
   const def = METRIC_REGISTRY[id];

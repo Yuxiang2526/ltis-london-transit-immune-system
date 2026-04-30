@@ -3,23 +3,23 @@ import Reveal from "../ui/Reveal";
 const CARDS = [
   {
     index: "01",
-    title: "An unequal baseline",
+    title: "543 routes, one engine",
     text:
-      "Before any disruption, London's transport accessibility is already deeply unequal. Inner boroughs achieve LTIS scores above 0.7; 17% of outer-London LSOAs score below 0.1. The same disruption does not land on a flat surface.",
+      "The full LTRS analysis covers every Tube line, every Overground branch, the Elizabeth Line, DLR, Tramlink, and 540+ bus routes. Cancel any one — or any combination — and the impact is recomputed live, cell by cell, for the whole catchment.",
     accent: "cool",
   },
   {
     index: "02",
-    title: "Single-line dependency creates fragility",
+    title: "OSM Dijkstra walking, not Euclidean circles",
     text:
-      "When a line fails, the places hardest hit are not always the least served — they are those that depend on one corridor with no alternative. In Newham, Central line stations account for 100% of nearby tube access.",
+      "Walking accessibility isn't a straight-line distance. We compute it on the actual OpenStreetMap road and footpath network using Dijkstra shortest-path, with a 4.8 km/h walking speed and a 2,400 m budget. Buildings, dead-ends, river crossings — they all matter.",
     accent: "warm",
   },
   {
     index: "03",
-    title: "Loss is highly concentrated",
+    title: "Cancel-and-recompute, not pre-baked scenarios",
     text:
-      "Across all three disruption scenarios, the Gini coefficient of accessibility loss ranges from 0.67 to 0.73. The top 1% of LSOAs absorb 14–19% of total system loss. Disruption risk is not shared equally.",
+      "The Network Map tool lets you remove any route or set of routes and see the AI score for every grid cell update in real time. The 'before' and 'after' maps sit side-by-side under a draggable splitter. This is forensic resilience analysis.",
     accent: "warm",
   },
 ];
@@ -28,8 +28,8 @@ export default function ConceptCards() {
   return (
     <section className="concept-section" id="concept">
       <div className="section-heading">
-        <p className="eyebrow">What we find</p>
-        <h2>Three things the data reveals about London's transport resilience</h2>
+        <p className="eyebrow">What the project actually does</p>
+        <h2>Three things that make LTRS a real resilience tool, not a status map</h2>
       </div>
 
       <div className="concept-grid">

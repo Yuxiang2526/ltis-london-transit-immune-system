@@ -2,18 +2,25 @@
 .claude/
 .vscode/
 .idea/
+.tmp-chrome-dump/
+docs/screenshots/
 
-# Local/legacy copy of Siyan's PTAL map source — not used by the LTIS Vite deploy.
-# The active copy lives in web/public/network-map/ (with large data git-ignored below).
+# Local/legacy source copies of Siyan's PTAL map — the active copy lives in
+# web/public/network-map/ and IS committed (so GitHub Pages serves it as-is).
 London_PTAL_Accessibility_Map(1)/
 London_PTAL_Accessibility_Map/
 
-# Large network-map data: shipped via GitHub Release v1.0-data, NOT committed.
-# Local dev keeps these in web/public/network-map/ for npm run dev.
-# At deploy time, an action downloads them from the release tag into the same path.
-web/public/network-map/data_chunks_osm_network/
-web/public/network-map/grid_ai_chunks_osm_network/
-web/public/network-map/DATA/PTAL_2023_Grid_100mx100m_Data.geojson
+# Build output (Vite generates this from web/src/ + web/public/)
+web/dist/
+
+# Node modules
+node_modules/
+web/node_modules/
+analysis/node_modules/
+
+# Zips and intermediate dumps that we don't want in the repo
+*.zip
+!web/public/network-map/route_lines.geojson  # safety: never accidentally ignore the route geojson
 
 # OS files
 .DS_Store

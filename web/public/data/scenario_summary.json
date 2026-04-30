@@ -1,88 +1,88 @@
 {
-  "central": {
-    "label": "Central line disruption",
-    "description": "Scenario derived from real PTAL 2023 accessibility and proximity to Central line stations. Loss is proportional to local dependency on the disrupted line within a ~1.3 km walking catchment.",
-    "meanRetention": 0.9858,
-    "meanLoss": 0.0142,
-    "totalExposedPopulation": 120422,
+  "99": {
+    "label": "Bus Route 99 disruption",
+    "description": "Loss derived from Siyan Tao's OSM-Dijkstra walking-network model. When bus route 99 is removed, the AI score for every affected 100m grid cell is recomputed; values shown here are averaged from grid cells back up to the LSOA.",
+    "meanRetention": 0.9932,
+    "meanLoss": 0.0068,
+    "totalExposedPopulation": 57850,
     "mostAffectedBoroughs": [
       {
-        "borough": "Redbridge",
-        "meanLoss": 0.0473
+        "borough": "Bexley",
+        "meanLoss": 0.1841
       },
       {
-        "borough": "Tower Hamlets",
-        "meanLoss": 0.0468
-      },
-      {
-        "borough": "Westminster",
-        "meanLoss": 0.0395
-      },
-      {
-        "borough": "Ealing",
-        "meanLoss": 0.0391
-      },
-      {
-        "borough": "Kensington & Chelsea",
-        "meanLoss": 0.034
-      }
-    ]
-  },
-  "northern": {
-    "label": "Northern line disruption",
-    "description": "Scenario derived from real PTAL 2023 accessibility and proximity to Northern line stations. Loss is proportional to local dependency on the disrupted line within a ~1.3 km walking catchment.",
-    "meanRetention": 0.9774,
-    "meanLoss": 0.0226,
-    "totalExposedPopulation": 191955,
-    "mostAffectedBoroughs": [
-      {
-        "borough": "Camden",
-        "meanLoss": 0.1312
-      },
-      {
-        "borough": "Lambeth",
-        "meanLoss": 0.0905
-      },
-      {
-        "borough": "Islington",
-        "meanLoss": 0.0876
-      },
-      {
-        "borough": "Barnet",
-        "meanLoss": 0.0737
-      },
-      {
-        "borough": "Southwark",
-        "meanLoss": 0.0715
-      }
-    ]
-  },
-  "jubilee": {
-    "label": "Jubilee line disruption",
-    "description": "Scenario derived from real PTAL 2023 accessibility and proximity to Jubilee line stations. Loss is proportional to local dependency on the disrupted line within a ~1.3 km walking catchment.",
-    "meanRetention": 0.9859,
-    "meanLoss": 0.0141,
-    "totalExposedPopulation": 119376,
-    "mostAffectedBoroughs": [
-      {
-        "borough": "Camden",
-        "meanLoss": 0.0709
-      },
-      {
-        "borough": "Brent",
-        "meanLoss": 0.0573
-      },
-      {
-        "borough": "Southwark",
-        "meanLoss": 0.0512
-      },
-      {
-        "borough": "Tower Hamlets",
-        "meanLoss": 0.0417
+        "borough": "Greenwich",
+        "meanLoss": 0.0481
       },
       {
         "borough": "Newham",
-        "meanLoss": 0.0411
+        "meanLoss": 0.0036
+      },
+      {
+        "borough": "Islington",
+        "meanLoss": 0.0
+      },
+      {
+        "borough": "Tower Hamlets",
+        "meanLoss": 0.0
+      }
+    ]
+  },
+  "R2": {
+    "label": "Bus Route R2 disruption",
+    "description": "Loss derived from Siyan Tao's OSM-Dijkstra walking-network model. When bus route R2 is removed, the AI score for every affected 100m grid cell is recomputed; values shown here are averaged from grid cells back up to the LSOA.",
+    "meanRetention": 0.9978,
+    "meanLoss": 0.0022,
+    "totalExposedPopulation": 19092,
+    "mostAffectedBoroughs": [
+      {
+        "borough": "Bromley",
+        "meanLoss": 0.0627
+      },
+      {
+        "borough": "Islington",
+        "meanLoss": 0.0
+      },
+      {
+        "borough": "Tower Hamlets",
+        "meanLoss": 0.0
+      },
+      {
+        "borough": "Barking & Dagenham",
+        "meanLoss": 0.0
+      },
+      {
+        "borough": "Newham",
+        "meanLoss": 0.0
+      }
+    ]
+  },
+  "685": {
+    "label": "Bus Route 685 disruption",
+    "description": "Loss derived from Siyan Tao's OSM-Dijkstra walking-network model. When bus route 685 is removed, the AI score for every affected 100m grid cell is recomputed; values shown here are averaged from grid cells back up to the LSOA.",
+    "meanRetention": 0.9992,
+    "meanLoss": 0.0008,
+    "totalExposedPopulation": 6757,
+    "mostAffectedBoroughs": [
+      {
+        "borough": "Croydon",
+        "meanLoss": 0.0173
+      },
+      {
+        "borough": "Islington",
+        "meanLoss": 0.0
+      },
+      {
+        "borough": "Tower Hamlets",
+        "meanLoss": 0.0
+      },
+      {
+        "borough": "Barking & Dagenham",
+        "meanLoss": 0.0
+      },
+      {
+        "borough": "Newham",
+        "meanLoss": 0.0
       }
     ]
   }

@@ -91,8 +91,10 @@ export default function LorenzCurve({
         <p className="eyebrow">Distributional concentration</p>
         <h3>How concentrated is the {metricDef.shortLabel.toLowerCase()}?</h3>
         <p className="muted">
-          {scenarioDef.shortLabel} line · Gini ={" "}
-          <strong className="num">{gini.toFixed(2)}</strong>
+          {metric === "baseline_ltis"
+            ? "Across all 4,994 London LSOAs"
+            : `${scenarioDef.shortLabel} disruption`}{" "}
+          · Gini = <strong className="num">{gini.toFixed(2)}</strong>
         </p>
       </div>
 

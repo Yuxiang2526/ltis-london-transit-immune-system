@@ -83,8 +83,9 @@ export default function LTISMap({
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
+    const container = containerRef.current;
     const map = new maplibregl.Map({
-      container: containerRef.current,
+      container,
       style: BASEMAP_STYLE,
       center: INITIAL_VIEW.center,
       zoom: INITIAL_VIEW.zoom,
@@ -95,7 +96,15 @@ export default function LTISMap({
       "top-right",
     );
 
-    map.on("load", () => {
+    const resizeMap = () => map.resize();
+    const resizeFrame = window.requestAnimationFrame(resizeMap);
+    const resizeObserver = new ResizeObserver(resizeMap);
+    resizeObserver.observe(container);
+
+    const setupLayers = () => {
+      if (map.getSource(SOURCE_ID)) return;
+
+      map.resize();
       map.addSource(SOURCE_ID, { type: "geojson", data: data as never });
 
       map.addLayer({
@@ -174,11 +183,19 @@ export default function LTISMap({
         .catch(() => {
           // Non-fatal: map still works without tube line overlay.
         });
-    });
+    };
+
+    if (map.isStyleLoaded()) {
+      setupLayers();
+    } else {
+      map.once("load", setupLayers);
+    }
 
     mapRef.current = map;
 
     return () => {
+      window.cancelAnimationFrame(resizeFrame);
+      resizeObserver.disconnect();
       map.remove();
       mapRef.current = null;
     };

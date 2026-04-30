@@ -610,6 +610,10 @@ select {
   height: 100%;
 }
 
+.story-stage .map-wrapper {
+  height: 100%;
+}
+
 .story-stage-caption {
   position: absolute;
   left: var(--space-4);

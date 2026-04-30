@@ -119,7 +119,7 @@ export function buildFillColorExpression(config: PaintConfig): unknown[] {
   const interpolate: unknown[] = [
     "interpolate",
     ["linear"],
-    ["coalesce", ["get", config.propertyName], 0],
+    ["to-number", ["get", config.propertyName], 0],
   ];
   for (const [value, color] of config.stops) {
     interpolate.push(value, color);

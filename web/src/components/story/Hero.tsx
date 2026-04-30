@@ -1,26 +1,16 @@
 import { Link } from "react-router-dom";
 import MetricCard from "../ui/MetricCard";
-import { useLTISDataContext } from "../../data/dataContext";
-import { ALL_SCENARIO_IDS } from "../../data/scenarios";
 
 /**
- * Editorial hero. Big serif headline + lede + animated headline metrics
- * (count-up on scroll-in) + scroll indicator. The metrics are derived from
- * the live dataset so they reflect whatever pipeline output is loaded.
+ * Editorial hero. The headline metrics are the *real* size of the underlying
+ * LTRS analysis (Siyan Tao's pipeline) — every number traces back to either
+ * the OSM-Dijkstra walking model or the route impact pre-computation.
+ *
+ *   543    — routes covered (Tube + Overground + Elizabeth + DLR + Tramlink + 540+ buses)
+ *   159,451 — 100 m grid cells covered by the AI baseline
+ *   27,553  — public transport stops in the NaPTAN walking-network model
  */
 export default function Hero() {
-  const { lsoaData, scenarioSummary } = useLTISDataContext();
-
-  const lsoaCount = lsoaData?.features.length ?? 0;
-  const scenarioCount = ALL_SCENARIO_IDS.length;
-  const totalExposed = scenarioSummary
-    ? Math.max(
-        ...ALL_SCENARIO_IDS.map(
-          (id) => scenarioSummary[id]?.totalExposedPopulation ?? 0,
-        ),
-      )
-    : 0;
-
   return (
     <section className="hero">
       <div className="hero-content">
@@ -29,36 +19,36 @@ export default function Hero() {
           When London's transport network is disrupted, who still has a way out?
         </h1>
         <p className="hero-subtitle">
-          LTIS maps fallback mobility across London neighbourhoods by comparing
-          baseline accessibility (PTAL 2023) with three Underground line
-          disruption scenarios — and asks how unevenly resilience is
-          distributed.
+          A neighbourhood-scale resilience analysis of London's surface
+          transport. We remove one route at a time from the OSM walking
+          network, recompute accessibility for every 100 m cell, and ask
+          where the loss concentrates — and where alternatives still hold.
         </p>
 
         <div className="hero-stats">
           <MetricCard
-            label="London LSOAs covered"
-            value={lsoaCount}
+            label="Routes modelled"
+            value={543}
             decimals={0}
-            note="2021 ONS boundaries"
+            note="Tube, Overground, Elizabeth, DLR, Tramlink + 540+ buses"
             highlight
           />
           <MetricCard
-            label="Disruption scenarios"
-            value={scenarioCount}
+            label="100 m grid cells"
+            value={159451}
             decimals={0}
-            note="Central · Northern · Jubilee"
+            note="Greater London at 100 m × 100 m resolution"
           />
           <MetricCard
-            label="Peak exposed residents"
-            value={totalExposed}
+            label="Transit stops indexed"
+            value={27553}
             decimals={0}
-            note="Worst-case scenario, person-equivalent"
+            note="NaPTAN points walked via OSM Dijkstra"
           />
         </div>
 
-        <Link to="/explore" className="hero-cta" style={{ marginTop: "var(--space-8)" }}>
-          Explore disruption scenarios →
+        <Link to="/network" className="hero-cta" style={{ marginTop: "var(--space-8)" }}>
+          Open the LTRS Network Map →
         </Link>
         <span className="hero-scroll-indicator">Scroll for the story</span>
       </div>
