@@ -25,6 +25,7 @@ const EMBED_CSS = `
   body #map-compare,
   body #split-divider {
     right: 360px !important;
+    transition: right 0.18s ease-out;
   }
 
   /* --- Controls panel: full-height right column, not an overlay --- */
@@ -47,6 +48,18 @@ const EMBED_CSS = `
     max-height: calc(100vh - 64px) !important;
   }
 
+  /* When the user closes the controls panel via its × button, Siyan's HTML
+     adds .panel-collapsed to <body>. The controls slide out via existing CSS;
+     here we extend the map and compare-map to fill the freed-up area. */
+  body.panel-collapsed #map,
+  body.panel-collapsed #map-compare,
+  body.panel-collapsed #split-divider {
+    right: 0 !important;
+  }
+  body.panel-collapsed #compare-label-right {
+    right: 18px !important;
+  }
+
   /* Compare label adjustments so they sit above the map area, not the panel. */
   body #compare-label-right { right: calc(360px + 18px) !important; }
 `;
@@ -62,6 +75,7 @@ export default function NetworkRoute() {
 
     let pollTimer: number | null = null;
     let stopTimer: number | null = null;
+    let bodyClassObserver: MutationObserver | null = null;
 
     const injectStyles = () => {
       try {
@@ -77,6 +91,25 @@ export default function NetworkRoute() {
           style.textContent = EMBED_CSS;
           doc.head.appendChild(style);
           doc.body.classList.add("ltis-embed-mode");
+        }
+
+        // Watch <body> for class changes. When user closes the Scenario
+        // Builder via its × button, Siyan toggles `panel-collapsed` on
+        // body — our CSS expands the map to right:0, but mapbox needs a
+        // resize() to repaint the canvas to the new container width.
+        if (!bodyClassObserver) {
+          bodyClassObserver = new MutationObserver(() => {
+            // Stagger 2 dispatches so the CSS transition has settled by
+            // the second one.
+            try { win.dispatchEvent(new Event("resize")); } catch {}
+            window.setTimeout(() => {
+              try { win.dispatchEvent(new Event("resize")); } catch {}
+            }, 220);
+          });
+          bodyClassObserver.observe(doc.body, {
+            attributes: true,
+            attributeFilter: ["class"],
+          });
         }
 
         // After our CSS shrinks #map and #map-compare with right:360px, the
@@ -139,6 +172,7 @@ export default function NetworkRoute() {
       iframe.removeEventListener("load", injectStyles);
       if (pollTimer !== null) window.clearInterval(pollTimer);
       if (stopTimer !== null) window.clearTimeout(stopTimer);
+      if (bodyClassObserver) bodyClassObserver.disconnect();
     };
   }, []);
 

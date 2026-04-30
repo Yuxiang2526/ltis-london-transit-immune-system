@@ -682,19 +682,27 @@
   font-size: var(--text-xs);
 }
 
-/* Horizontal info grid below the map */
+/* Horizontal info grid below the map — uniform card heights via stretch */
 .network-route__info-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--space-4);
-  align-items: start;
+  align-items: stretch;
 }
 
-/* Stop the panels stretching to match the tallest card — every card now
-   takes its natural height. */
+/* Cards stretch to match the tallest one. Inner content is top-aligned so
+   shorter cards have padding at the bottom rather than centred whitespace. */
 .network-route__info-grid > .network-route__panel {
-  align-self: start;
-  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: 100%;
+}
+
+/* Inside each card, force everything (eyebrow, heading, list) to start at
+   the top — bottom whitespace is acceptable, mid-card whitespace is not. */
+.network-route__info-grid > .network-route__panel > * {
+  flex: 0 0 auto;
 }
 
 .network-route__panel {
