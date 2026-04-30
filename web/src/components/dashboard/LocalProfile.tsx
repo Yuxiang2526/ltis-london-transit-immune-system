@@ -1,27 +1,110 @@
+import { useMemo } from "react";
 import type { LTISFeature, ScenarioId } from "../../types/data";
 import {
   getScenarioDependency,
   getScenarioExposure,
   getScenarioLoss,
   getScenarioRetention,
-  makeInsightSentence
+  makeInsightSentence,
 } from "../../lib/analytics";
 import { formatPercent, formatPopulation, formatScore } from "../../lib/format";
+import { useLTISDataContext } from "../../data/dataContext";
 
 interface LocalProfileProps {
   feature: LTISFeature | null;
   scenario: ScenarioId;
+  /** Optional callback so the empty-state suggestion cards can drive the map. */
+  onSelectFeature?: (feature: LTISFeature) => void;
 }
 
-export default function LocalProfile({ feature, scenario }: LocalProfileProps) {
+interface SuggestionPick {
+  feature: LTISFeature;
+  label: string;
+  hint: string;
+  tone: "cool" | "warm" | "neutral";
+}
+
+/**
+ * Local profile panel.
+ *
+ *  - empty state (nothing hovered/selected): show 6 curated quick-inspect
+ *    LSOAs spanning the percentile range, so the panel is never just a
+ *    placeholder paragraph
+ *  - active state: detailed metrics + insight sentence for the focus LSOA
+ */
+export default function LocalProfile({
+  feature,
+  scenario,
+  onSelectFeature,
+}: LocalProfileProps) {
+  const { lsoaData } = useLTISDataContext();
+
+  const suggestions = useMemo<SuggestionPick[]>(() => {
+    if (!lsoaData?.features?.length) return [];
+    // Sort by baseline_ltis ascending and pick representative percentile picks.
+    const sorted = [...lsoaData.features].sort(
+      (a, b) =>
+        (a.properties.baseline_ltis as number) -
+        (b.properties.baseline_ltis as number),
+    );
+    const n = sorted.length;
+    if (n === 0) return [];
+
+    const pickAt = (
+      pct: number,
+      label: string,
+      hint: string,
+      tone: SuggestionPick["tone"],
+    ): SuggestionPick => {
+      const idx = Math.min(n - 1, Math.max(0, Math.round(pct * (n - 1))));
+      return { feature: sorted[idx] as LTISFeature, label, hint, tone };
+    };
+
+    return [
+      pickAt(0.99, "Top 1%", "Most accessible LSOA", "cool"),
+      pickAt(0.85, "Top 15%", "High accessibility", "cool"),
+      pickAt(0.6, "Median+", "Just above the middle", "neutral"),
+      pickAt(0.4, "Median−", "Just below the middle", "neutral"),
+      pickAt(0.15, "Bottom 15%", "Limited accessibility", "warm"),
+      pickAt(0.01, "Bottom 1%", "Most isolated LSOA", "warm"),
+    ];
+  }, [lsoaData]);
+
   if (!feature) {
     return (
-      <section className="local-profile empty">
-        <h3>Local immune profile</h3>
-        <p>
-          Hover or click a neighbourhood to inspect its fallback mobility,
-          disruption sensitivity and dependency.
+      <section className="local-profile local-profile--empty">
+        <p className="eyebrow">Local immune profile</p>
+        <h3>Pick any LSOA — or start with one of these.</h3>
+        <p className="muted">
+          Six representative neighbourhoods spanning London's accessibility
+          range. Click one to see its profile in this panel and on the map.
         </p>
+
+        <div className="local-suggestions">
+          {suggestions.map((s) => {
+            const p = s.feature.properties;
+            const baselineAi = (p as { baseline_ai?: number }).baseline_ai ?? 0;
+            return (
+              <button
+                key={p.lsoa_code}
+                type="button"
+                className={`local-suggestions__card local-suggestions__card--${s.tone}`}
+                onClick={() => onSelectFeature?.(s.feature)}
+                title={`Inspect ${p.lsoa_name}`}
+              >
+                <span className={`local-suggestions__pip local-suggestions__pip--${s.tone}`} />
+                <div>
+                  <p className="local-suggestions__pct num-mono">{s.label}</p>
+                  <p className="local-suggestions__name">{p.lsoa_name}</p>
+                  <p className="local-suggestions__hint muted">{s.hint}</p>
+                  <p className="local-suggestions__metric num-mono">
+                    AI {Number(baselineAi).toFixed(1)}
+                  </p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </section>
     );
   }

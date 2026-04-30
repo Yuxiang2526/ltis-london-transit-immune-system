@@ -11,6 +11,7 @@ import Reveal from "../components/ui/Reveal";
 
 import RouteRankCards from "../features/rankings/RouteRankCards";
 import ImpactMatrix from "../features/rankings/ImpactMatrix";
+import HeadlineStrip from "../features/rankings/HeadlineStrip";
 
 import type { LSOAFeature } from "../data/schema";
 import { DEFAULT_SCENARIO_ID } from "../data/scenarios";
@@ -40,25 +41,32 @@ export default function ExploreRoute() {
 
   return (
     <section className="analytics-shell" id="explore">
-      {/* ───── Page heading ───── */}
+      {/* ───── Headline numbers strip ───── */}
       <Reveal>
-        <SectionHeader
-          eyebrow="LSOA narrative overview"
-          title="Five routes that matter most — and why."
-          description="Across 418 regular London routes, these five strip the most neighbourhoods of their 12-minute walking access when cancelled. Notice how every winner is an outer-London route — places where alternatives are scarce."
-        />
+        <HeadlineStrip />
       </Reveal>
 
-      {/* ───── Findings: rank cards ───── */}
-      <Reveal delay={0.05}>
-        <RouteRankCards />
-      </Reveal>
-
-      {/* ───── Findings: impact matrix ───── */}
-      <Reveal delay={0.08}>
+      {/* ───── Section: rank cards ───── */}
+      <Reveal delay={0.04}>
         <div style={{ marginTop: "var(--space-12)" }}>
           <SectionHeader
-            eyebrow="Impact matrix · top 10 routes × four metrics"
+            badge="01"
+            tone="warm"
+            eyebrow="Routes ranking · top 5"
+            title="Five routes that matter most — and why."
+            description="Across 418 regular London routes, these five strip the most neighbourhoods of their 12-minute walking access when cancelled. Every winner is an outer-London route — places where alternatives are scarce."
+          />
+          <RouteRankCards />
+        </div>
+      </Reveal>
+
+      {/* ───── Section: impact matrix ───── */}
+      <Reveal delay={0.08}>
+        <div style={{ marginTop: "var(--space-16)" }}>
+          <SectionHeader
+            badge="02"
+            tone="warm"
+            eyebrow="Impact matrix · top 10 × four metrics"
             title="One row, one route. Four ways the city loses."
             description="Each cell is normalised across all 418 regular London routes — darker terracotta means a larger relative impact on that metric. Reading horizontally tells you a route's signature; reading vertically tells you which routes dominate that dimension."
           />
@@ -66,13 +74,15 @@ export default function ExploreRoute() {
         </div>
       </Reveal>
 
-      {/* ───── Map + Local profile ───── */}
+      {/* ───── Section: Map + Local profile (cool palette) ───── */}
       <Reveal delay={0.1}>
         <div style={{ marginTop: "var(--space-16)" }}>
           <SectionHeader
+            badge="03"
+            tone="cool"
             eyebrow="LSOA baseline accessibility"
             title="Hover any neighbourhood, inspect its profile."
-            description="The choropleth shows the percentile rank of each LSOA's baseline accessibility. Click any LSOA to see its name, borough and baseline AI; the panel on the right unfolds the five-dimension fallback profile."
+            description="The choropleth shows the percentile rank of each LSOA's baseline accessibility. Hover or click any LSOA to drill into its profile."
           />
 
           <div className="dashboard-grid">
@@ -87,19 +97,25 @@ export default function ExploreRoute() {
               />
             </div>
             <aside className="side-panel">
-              <LocalProfile feature={focusFeature} scenario={DEFAULT_SCENARIO_ID} />
+              <LocalProfile
+                feature={focusFeature}
+                scenario={DEFAULT_SCENARIO_ID}
+                onSelectFeature={setSelectedFeature}
+              />
             </aside>
           </div>
         </div>
       </Reveal>
 
-      {/* ───── Distribution ───── */}
+      {/* ───── Section: Distribution (cool palette) ───── */}
       <Reveal delay={0.12}>
         <div style={{ marginTop: "var(--space-16)" }}>
           <SectionHeader
+            badge="04"
+            tone="cool"
             eyebrow="Distributional concentration"
             title="Where loss accumulates — quantified."
-            description="The Lorenz curve plots cumulative LSOA share against cumulative accessibility share. The further the curve bows from the equality diagonal, the more concentrated the distribution. Gini = 0.34 means moderate concentration."
+            description="The Lorenz curve plots cumulative LSOA share against cumulative accessibility share. Gini = 0.34 means moderate concentration."
           />
           <LorenzCurve
             data={lsoaData}

@@ -11,13 +11,21 @@ interface StoryScrollerProps {
  * The full three-act narrative. Reads frames from `frames.ts`, keeps the map
  * sticky on the left, lets the editorial paragraphs scroll on the right, and
  * swaps the map's scenario / metric in lockstep with the active step.
+ *
+ * Each step content now carries a `data-tone` so the caption box can pick up
+ * a cool / warm accent rule that matches the choropleth on the left.
  */
 export default function StoryScroller({ data }: StoryScrollerProps) {
-  const steps = STORY_FRAMES.map((frame) => ({
+  const steps = STORY_FRAMES.map((frame, idx) => ({
     id: frame.id,
     content: (
-      <article>
-        <span className="step-eyebrow">{frame.actLabel}</span>
+      <article className={`scroll-step__inner scroll-step__inner--${frame.tone}`}>
+        <header className="scroll-step__head">
+          <span className="scroll-step__act-num num-mono">
+            {String(idx + 1).padStart(2, "0")}
+          </span>
+          <span className="step-eyebrow">{frame.actLabel}</span>
+        </header>
         <h3>{frame.captionTitle}</h3>
         {frame.paragraphs.map((p, i) => (
           <p key={i}>{p}</p>
