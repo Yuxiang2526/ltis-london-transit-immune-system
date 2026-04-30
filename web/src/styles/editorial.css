@@ -307,46 +307,91 @@
   line-height: var(--leading-relaxed);
 }
 
-.about-team-grid {
+/* Team portraits — 2-up large-photo layout. */
+.about-team-portraits {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: var(--space-5);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6);
+  max-width: var(--container-medium);
+  margin: 0 auto;
 }
 
-.about-team-card {
+@media (max-width: 720px) {
+  .about-team-portraits {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+}
+
+.about-portrait-card {
   display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-4) var(--space-5);
+  flex-direction: column;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
-.about-team-avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
+.about-portrait-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md, 0 6px 18px rgba(23, 32, 38, 0.08));
+}
+
+.about-portrait-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   background: var(--color-accent-tint);
+  overflow: hidden;
+}
+
+.about-portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  display: block;
+}
+
+.about-portrait-initials {
+  position: absolute;
+  left: var(--space-3);
+  bottom: var(--space-3);
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
   color: var(--color-accent);
   font-family: var(--font-serif);
-  font-size: var(--text-xl);
+  font-size: var(--text-base);
   font-weight: var(--weight-bold);
-  flex-shrink: 0;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(23, 32, 38, 0.18);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
-.about-team-card__name {
-  font-weight: var(--weight-semibold);
+.about-portrait-body {
+  padding: var(--space-5) var(--space-5) var(--space-6);
+}
+
+.about-portrait-name {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-serif);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
   color: var(--color-text-strong);
-  margin: 0;
+  letter-spacing: -0.005em;
 }
 
-.about-team-card__role {
-  margin: 2px 0 0;
+.about-portrait-role {
+  margin: 0;
   font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
   color: var(--color-text-muted);
 }
 

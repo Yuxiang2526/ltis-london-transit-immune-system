@@ -23,7 +23,8 @@ export type ColorStop = readonly [value: number, color: string];
 
 /**
  * Cool sequential ramp — pale → deep navy.
- * Mirrors the project palette's blue arm. Used for higher-is-better metrics.
+ * Mirrors the project palette's blue arm. Used for higher-is-better metrics
+ * that should NOT use the diverging treatment (e.g. retention).
  */
 const RAMP_RESILIENT_COOL: readonly ColorStop[] = [
   [0.0,  "#e9f1f4"], // palette-blue-5
@@ -31,6 +32,24 @@ const RAMP_RESILIENT_COOL: readonly ColorStop[] = [
   [0.55, "#6dadd1"], // palette-blue-3
   [0.7,  "#317cb7"], // palette-blue-2
   [0.85, "#104680"], // palette-blue-1
+];
+
+/**
+ * Diverging RdBu ramp for the baseline LTIS percentile rank in [0, 1].
+ * Low percentile (least-accessible LSOAs) → cool deep blue;
+ * Median (0.5)                            → neutral pale;
+ * High percentile (most-accessible LSOAs) → warm burgundy.
+ *
+ * Matches the 10-step project palette used by the Impact Matrix and the
+ * Decile Bars, so the Story / Explorer choropleth, the matrix heatmap,
+ * and the decile bar chart all read as the SAME colour language.
+ */
+const RAMP_BASELINE_DIVERGING: readonly ColorStop[] = [
+  [0.0,  "#104680"], // palette-blue-1   — least accessible
+  [0.25, "#6dade1"], // palette-blue-3
+  [0.5,  "#e9f1f4"], // palette-blue-5   — neutral midpoint
+  [0.75, "#dc6d57"], // palette-red-3
+  [1.0,  "#6d011f"], // palette-red-5   — most accessible
 ];
 
 /**
@@ -74,6 +93,7 @@ export interface PaintConfig {
 function chooseRamp(metric: MapMetric): readonly ColorStop[] {
   switch (metric) {
     case "baseline_ltis":
+      return RAMP_BASELINE_DIVERGING;
     case "retention":
       return RAMP_RESILIENT_COOL;
     case "loss":

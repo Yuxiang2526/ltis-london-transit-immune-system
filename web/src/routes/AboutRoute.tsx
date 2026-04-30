@@ -43,75 +43,20 @@ const PARTS = [
   },
 ];
 
+const TEAM_PHOTO_BASE = `${import.meta.env.BASE_URL}team/`;
+
 const TEAM = [
-  {
-    name: "Siyan Tao",
-    initials: "ST",
-    role: "Data analysis &amp; modelling — OSM Dijkstra walking-network pipeline; 543-route impact pre-computation; 100 m grid LTRS engine; Network Map UI (Mapbox GL JS).",
-  },
   {
     name: "Yuxiang Fan",
     initials: "YF",
+    photo: `${TEAM_PHOTO_BASE}yuxiang-fan.jpg`,
     role: "Web wrapper &amp; visualisation packaging — React + TypeScript + Vite skeleton; design system; scrollytelling; LSOA aggregation views; methodology + about pages; deployment.",
   },
-];
-
-const CONTRIBUTIONS = [
-  { task: "Concept development", major: "Yuxiang Fan, Siyan Tao", ai: "No AI use" },
   {
-    task: "PTAL 2023 acquisition + LSOA / NaPTAN preparation",
-    major: "Siyan Tao",
-    ai: "No AI use",
-  },
-  {
-    task: "OSM walking network extraction + Dijkstra pipeline (4,994 LSOAs × 27,553 stops)",
-    major: "Siyan Tao",
-    ai: "No AI use",
-  },
-  {
-    task: "100 m grid AI baseline + per-route impact pre-computation (543 routes)",
-    major: "Siyan Tao",
-    ai: "ChatGPT used to debug edge cases in the loss aggregation",
-  },
-  {
-    task: "Network Map UI (Mapbox GL, compare mode, route cancel + LSOA / borough panels)",
-    major: "Siyan Tao",
-    ai: "ChatGPT used for Mapbox style expression syntax queries",
-  },
-  {
-    task: "LSOA aggregation pipeline (build_ltis_from_lsoa_summary.py)",
-    major: "Yuxiang Fan",
-    ai: "Anthropic Claude (via Claude Code) used to scaffold the script and Shapely fallback for MultiPolygon edge cases",
-  },
-  {
-    task: "React skeleton: routing, layout, design tokens, typography",
-    major: "Yuxiang Fan",
-    ai: "Anthropic Claude (via Claude Code) used for component scaffolding",
-  },
-  {
-    task: "MapLibre LTIS choropleth + colour ramps + legend",
-    major: "Yuxiang Fan",
-    ai: "Anthropic Claude (via Claude Code) used for MapLibre layer wiring",
-  },
-  {
-    task: "Scrollytelling narrative (scrollama + frame data)",
-    major: "Yuxiang Fan",
-    ai: "Anthropic Claude (via Claude Code) used to draft component structure; frame copy refined against real data",
-  },
-  {
-    task: "Iframe embed of Network Map into the React site",
-    major: "Yuxiang Fan",
-    ai: "Anthropic Claude (via Claude Code) used to plan and execute the integration",
-  },
-  {
-    task: "Methodology + About + reference list",
-    major: "Yuxiang Fan, Siyan Tao",
-    ai: "ChatGPT used for copy-editing the methodology prose; final wording author-reviewed",
-  },
-  {
-    task: "GitHub deployment workflow + Pages configuration",
-    major: "Yuxiang Fan",
-    ai: "Anthropic Claude (via Claude Code) used to write the deploy.yml workflow",
+    name: "Siyan Tao",
+    initials: "ST",
+    photo: `${TEAM_PHOTO_BASE}siyan-tao.jpg`,
+    role: "Data analysis &amp; modelling — OSM Dijkstra walking-network pipeline; 543-route impact pre-computation; 100 m grid LTRS engine; Network Map UI (Mapbox GL JS).",
   },
 ];
 
@@ -222,48 +167,37 @@ export default function AboutRoute() {
         </div>
       </section>
 
-      {/* Team — honest split */}
+      {/* Team — honest split, side-by-side portraits */}
       <section className="about-section">
         <SectionHeader
           eyebrow="Contributors"
           title="Team"
           description="Two contributors, two distinct roles."
         />
-        <div className="about-team-grid">
+        <div className="about-team-portraits">
           {TEAM.map((m) => (
-            <div key={m.name} className="about-team-card">
-              <div className="about-team-avatar">{m.initials}</div>
-              <div>
-                <p className="about-team-card__name">{m.name}</p>
-                <p
-                  className="about-team-card__role"
-                  dangerouslySetInnerHTML={{ __html: m.role }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Contributions table */}
-      <section className="about-section">
-        <SectionHeader
-          eyebrow="Contributions table"
-          title="Task-by-task ownership"
-          description="Per CASA0029 marking guidance, each project task is attributed to its major contributor and any AI-tool involvement is itemised."
-        />
-        <div className="about-sources">
-          <div className="about-sources-row about-sources-row--head">
-            <span>Task</span>
-            <span>Major contributors</span>
-            <span>AI tool usage in this task</span>
-          </div>
-          {CONTRIBUTIONS.map((c) => (
-            <div className="about-sources-row" key={c.task}>
-              <strong>{c.task}</strong>
-              <span>{c.major}</span>
-              <span>{c.ai}</span>
-            </div>
+            <Reveal key={m.name} delay={0.04}>
+              <article className="about-portrait-card">
+                <div className="about-portrait-frame">
+                  <img
+                    src={m.photo}
+                    alt={`${m.name} portrait`}
+                    className="about-portrait-img"
+                    loading="lazy"
+                  />
+                  <span className="about-portrait-initials" aria-hidden="true">
+                    {m.initials}
+                  </span>
+                </div>
+                <div className="about-portrait-body">
+                  <p className="about-portrait-name">{m.name}</p>
+                  <p
+                    className="about-portrait-role"
+                    dangerouslySetInnerHTML={{ __html: m.role }}
+                  />
+                </div>
+              </article>
+            </Reveal>
           ))}
         </div>
       </section>
