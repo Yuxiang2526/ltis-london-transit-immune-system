@@ -11,8 +11,8 @@ authors:
     affiliation: "UCL Centre for Advanced Spatial Analysis"
 date-released: 2026-04-30
 license: MIT
-repository-code: "https://github.com/Yuxiang2526/ltrs-london-transit-resilience-system"
-url: "https://yuxiang2526.github.io/ltrs-london-transit-resilience-system/"
+repository-code: "https://github.com/Yuxiang2526/ltis-london-transit-immune-system"
+url: "https://yuxiang2526.github.io/ltis-london-transit-immune-system/"
 abstract: >
   LTRS is an interactive resilience visualisation built for the CASA0029
   Urban Data Visualisation module. It treats single bus-route disruption

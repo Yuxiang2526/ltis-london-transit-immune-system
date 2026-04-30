@@ -12,8 +12,8 @@
 
 | Resource | Link |
 |---|---|
-| **Final Assignment URL (live website)** | <https://yuxiang2526.github.io/ltrs-london-transit-resilience-system/> |
-| **Project code files (web frontend)** | <https://github.com/Yuxiang2526/ltrs-london-transit-resilience-system> |
+| **Final Assignment URL (live website)** | <https://yuxiang2526.github.io/ltis-london-transit-immune-system/> |
+| **Project code files (web frontend)** | <https://github.com/Yuxiang2526/ltis-london-transit-immune-system> |
 | **Interactive Map · code repository** | <https://github.com/Taoo2025/CASA0029> |
 | **Data and Data-Processing Code Files** | <https://github.com/Taoo2025/CASA0029/tree/main/data_calculating> |
 
