@@ -135,9 +135,9 @@ export default function AboutRoute() {
       <Reveal>
         <header className="about-hero">
           <p className="eyebrow">About this project</p>
-          <h1>London Transit Immune System</h1>
+          <h1>London Transit Resilience System</h1>
           <p className="about-hero__lede">
-            <em>LTIS</em> is a CASA0029 Group Project (Group 17, 2025/26). Its
+            <em>LTRS</em> is a CASA0029 Group Project (Group 17, 2025/26). Its
             analytical core is an OSM walking-network Dijkstra model that
             covers 159,451 grid cells, 27,553 transit stops, and 543 transport
             routes across Greater London. The Story page tells the narrative;

@@ -42,7 +42,7 @@ export default function StoryScroller({ data }: StoryScrollerProps) {
 
   return (
     <ScrollStage
-      ariaLabel="LTIS three-act narrative"
+      ariaLabel="LTRS three-act narrative"
       steps={steps}
       renderStage={(activeStep) => {
         const safeIndex = Math.max(0, Math.min(activeStep, STORY_FRAMES.length - 1));

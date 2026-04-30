@@ -46,7 +46,7 @@ function AppLoadingSkeleton() {
     <div className="app-loading-skeleton" aria-busy="true" aria-live="polite">
       <div className="hero" style={{ minHeight: "70vh" }}>
         <div className="hero-content">
-          <p className="eyebrow">London Transit Immune System</p>
+          <p className="eyebrow">London Transit Resilience System</p>
           <div className="skeleton skeleton--title" />
           <div className="skeleton skeleton--paragraph" />
           <div className="skeleton skeleton--paragraph short" />

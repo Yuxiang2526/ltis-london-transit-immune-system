@@ -14,7 +14,7 @@ export default function Hero() {
   return (
     <section className="hero">
       <div className="hero-content">
-        <p className="eyebrow">London Transit Immune System</p>
+        <p className="eyebrow">London Transit Resilience System</p>
         <h1>
           When London's transport network is disrupted, who still has a way out?
         </h1>

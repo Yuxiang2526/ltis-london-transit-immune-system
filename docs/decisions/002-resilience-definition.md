@@ -35,7 +35,7 @@ where `i` indexes LSOAs and `l` indexes the disrupted line.
 
 ## Consequences
 
-- We **explicitly forgo the temporal component**. We are measuring *vulnerability* in the strict literature sense, not *resilience*. The website and methodology page must state this — the metaphor "immune system" is editorial framing, not the technical claim.
+- We **explicitly forgo the temporal component**. We are measuring *vulnerability* in the strict literature sense, not *resilience*. The website and methodology page must state this — the project name "London Transit Resilience System" is the editorial framing for the same single-step impact-based measure, not the strict time-domain definition.
 - The **dependency** indicator is approximate. We compute it as the share of baseline accessibility lost when the line is removed (Jenelius 2010-style impact), not via path-redundancy graph metrics (Derrible & Kennedy 2010). The methodology page documents the approximation.
 - Equity-weighted variants (`exposure × IMD_inverse`) are reported as a secondary metric, not the headline.
 

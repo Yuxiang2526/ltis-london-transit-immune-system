@@ -1,7 +1,7 @@
 [project]
 name = "ltis-analysis"
 version = "0.1.0"
-description = "London Transit Immune System data pipeline (CASA0029 Group 17)"
+description = "London Transit Resilience System data pipeline (CASA0029 Group 17)"
 authors = [
     { name = "Yuxiang Fan" },
     { name = "Siyan Tao" },

@@ -73,7 +73,7 @@ export default function LocalProfile({
   if (!feature) {
     return (
       <section className="local-profile local-profile--empty">
-        <p className="eyebrow">Local immune profile</p>
+        <p className="eyebrow">Local resilience profile</p>
         <h3>Pick any LSOA — or start with one of these.</h3>
         <p className="muted">
           Six representative neighbourhoods spanning London's accessibility
@@ -123,7 +123,7 @@ export default function LocalProfile({
 
       <div className="profile-metrics">
         <div>
-          <span>Baseline LTIS rank</span>
+          <span>Baseline LTRS rank</span>
           <strong>{formatScore(p.baseline_ltis)}</strong>
         </div>
 

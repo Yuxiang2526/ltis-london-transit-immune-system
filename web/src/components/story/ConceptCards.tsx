@@ -14,7 +14,7 @@ const CARDS: ConceptCard[] = [
     index: "01",
     title: "An unequal baseline",
     text:
-      "Before any disruption, London's transport accessibility is already deeply unequal. Inner boroughs achieve LTIS scores above 0.7; 17% of outer-London LSOAs score below 0.1. The same disruption does not land on a flat surface.",
+      "Before any disruption, London's transport accessibility is already deeply unequal. Inner boroughs achieve LTRS scores above 0.7; 17% of outer-London LSOAs score below 0.1. The same disruption does not land on a flat surface.",
     accent: "cool",
     // Concentric rings — accessibility "field"
     icon: (

@@ -1,4 +1,4 @@
-# London Transit Immune System (LTIS)
+# London Transit Resilience System (LTRS)
 
 > *Exploring resilience and fallback mobility under public transport disruption in London.*
 >
@@ -8,7 +8,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)  &nbsp;
 [![Methodology](https://img.shields.io/badge/methodology-summary-informational)](docs/methodology.md)
 
-LTIS treats line disruption as a **stress test**: when a Tube line fails, which neighbourhoods still have alternatives, and which ones quickly become vulnerable? The project visualises **retained mobility, accessibility loss, population exposure and line dependency** at LSOA scale across Greater London, comparing a healthy baseline against a small set of pre-defined disruption scenarios.
+LTRS treats line disruption as a **stress test**: when a Tube line fails, which neighbourhoods still have alternatives, and which ones quickly become vulnerable? The project visualises **retained mobility, accessibility loss, population exposure and line dependency** at LSOA scale across Greater London, comparing a healthy baseline against a small set of pre-defined disruption scenarios.
 
 The project deliverable is a website built with React + MapLibre, backed by a reproducible Python data pipeline.
 

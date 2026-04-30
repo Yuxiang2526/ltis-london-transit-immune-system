@@ -22,7 +22,7 @@ export default function Header() {
   return (
     <header className={`site-header${scrolled ? " site-header--scrolled" : ""}`}>
       <NavLink to="/" className="site-logo" end>
-        LTIS
+        LTRS
       </NavLink>
 
       <nav className="site-nav" aria-label="Primary">

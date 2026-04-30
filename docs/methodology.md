@@ -1,4 +1,4 @@
-# LTIS — Project Methodology Summary
+# LTRS — Project Methodology Summary
 
 > CASA0029 Urban Data Visualisation, Group 17 (Yuxiang Fan, Siyan Tao)
 > Target length: ~1,000 words. **Status: skeleton — sections marked _[draft]_ are placeholders that the data-pipeline phase will tighten.**
@@ -7,17 +7,17 @@
 
 How unevenly is transport resilience distributed across London, and how do disruptions expose differences in local transport substitutability?
 
-LTIS treats line disruption as a stress test on the transport network. It asks not just *where* disruption happens, but *which neighbourhoods still have alternatives* — and which become sharply more vulnerable. The unit of analysis is the **2021 LSOA** (Lower-layer Super Output Area), and the spatial extent is Greater London.
+LTRS treats line disruption as a stress test on the transport network. It asks not just *where* disruption happens, but *which neighbourhoods still have alternatives* — and which become sharply more vulnerable. The unit of analysis is the **2021 LSOA** (Lower-layer Super Output Area), and the spatial extent is Greater London.
 
 ## 2. Conceptual framework
 
-We adopt a **single-step impact-based** definition of resilience: the share of baseline accessibility a place retains when a specific corridor fails (Jenelius 2010; D'Lima & Medda 2016). This narrows the broader resilience literature — which spans temporal recovery (Bruneau et al. 2003; Henry & Ramirez-Marquez 2012) and topological robustness (Derrible & Kennedy 2010; Cats 2016) — to a measure that is computable from open static data and decomposes naturally to neighbourhoods. The trade-off is documented in [ADR 002](decisions/002-resilience-definition.md): we measure spatial *vulnerability under disruption*, not full time-domain *resilience*. The "immune system" framing is editorial.
+We adopt a **single-step impact-based** definition of resilience: the share of baseline accessibility a place retains when a specific corridor fails (Jenelius 2010; D'Lima & Medda 2016). This narrows the broader resilience literature — which spans temporal recovery (Bruneau et al. 2003; Henry & Ramirez-Marquez 2012) and topological robustness (Derrible & Kennedy 2010; Cats 2016) — to a measure that is computable from open static data and decomposes naturally to neighbourhoods. The trade-off is documented in [ADR 002](decisions/002-resilience-definition.md): we measure spatial *vulnerability under disruption*, not full time-domain *resilience*.
 
 The framework runs in three stages:
 
-1. **Healthy baseline** — a per-LSOA Local Transit Immune Score (LTIS) combining PTAL, NaPTAN-derived stop supply, modal diversity and a small micro-mobility component.
+1. **Healthy baseline** — a per-LSOA Local Transport Resilience Score (LTRS) combining PTAL, NaPTAN-derived stop supply, modal diversity and a small micro-mobility component.
 2. **Inject disruption** — for each pre-defined scenario (Central, Northern, Jubilee line failures), we recompute accessibility with the affected line removed.
-3. **Immune response** — we compare baseline against disrupted state, producing four indicators per LSOA per scenario: **retention**, **loss**, **dependency** and **population exposure**.
+3. **Resilience response** — we compare baseline against disrupted state, producing four indicators per LSOA per scenario: **retention**, **loss**, **dependency** and **population exposure**.
 
 ## 3. Data sources
 
@@ -36,12 +36,12 @@ The full data manifest, including URLs, vintages and licences, is in [`data/DATA
 
 LSOA over PTAL grid or hex — full reasoning in [ADR 001](decisions/001-spatial-unit.md). PTAL grid values are area-weighted to LSOA; NaPTAN points are aggregated to LSOA via point-in-polygon.
 
-### 4.2 Baseline LTIS
+### 4.2 Baseline LTRS
 
 For each LSOA *i*:
 
 ```
-LTIS_baseline(i) = w₁ · ptal_norm(i)
+LTRS_baseline(i) = w₁ · ptal_norm(i)
                  + w₂ · stop_supply_norm(i)
                  + w₃ · mode_diversity(i)
                  + w₄ · micro_mobility(i)
@@ -59,11 +59,11 @@ with weights `w₁..w₄` summing to 1. Initial weights are equal (0.25 each); a
 For each scenario *s* (a single Tube line `l_s`):
 
 1. Identify the **catchment** of the line — LSOAs that contain or are within walking distance (default 800 m) of any station served by `l_s`.
-2. Recompute the modal-diversity and stop-supply terms with `l_s` stations removed; recompute LTIS.
+2. Recompute the modal-diversity and stop-supply terms with `l_s` stations removed; recompute LTRS.
 3. Derive per-LSOA indicators:
-   - `retention(i, s) = LTIS_disrupted(i, s) / LTIS_baseline(i)`
+   - `retention(i, s) = LTRS_disrupted(i, s) / LTRS_baseline(i)`
    - `loss(i, s) = max(0, 1 − retention(i, s))`
-   - `dependency(i, s)` — the fraction of `LTIS_baseline(i)` attributable to `l_s`, measured by the impact of its removal (Jenelius 2010).
+   - `dependency(i, s)` — the fraction of `LTRS_baseline(i)` attributable to `l_s`, measured by the impact of its removal (Jenelius 2010).
    - `exposure(i, s) = loss(i, s) × population(i)`
 
 ### 4.4 Local fallback profile
@@ -82,7 +82,7 @@ The website is structured as a **scrollytelling story** (Hero → Healthy Baseli
 
 ## 6. Limitations and caveats
 
-- **PTAL vintage (2015)** systematically under-represents post-2015 step changes (Elizabeth line corridor; Northern line Battersea extension). LTIS treats these areas as less-served than they really are.
+- **PTAL vintage (2015)** systematically under-represents post-2015 step changes (Elizabeth line corridor; Northern line Battersea extension). LTRS treats these areas as less-served than they really are.
 - **PTAL only counts public transport** — areas where commuting is dominated by cycling, walking or motoring will appear less resilient than residents would report.
 - **Static, single-step.** We do not model recovery time, cascading effects, or capacity-constrained crowding on substitute lines.
 - **Population exposure is unweighted** in the headline metric. An equity-weighted secondary metric (loss × population × IMD-inverse) is reported separately so the metric trade-off is visible.

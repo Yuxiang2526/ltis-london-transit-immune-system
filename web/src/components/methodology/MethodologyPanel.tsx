@@ -3,7 +3,7 @@ export default function MethodologyPanel() {
     <section className="methodology-panel" id="methodology">
       <div className="section-heading">
         <p className="eyebrow">Methodology</p>
-        <h2>How LTIS is constructed</h2>
+        <h2>How LTRS is constructed</h2>
       </div>
 
       <div className="method-grid">
@@ -26,7 +26,7 @@ export default function MethodologyPanel() {
         </article>
 
         <article>
-          <h3>Step 3 — Immune response</h3>
+          <h3>Step 3 — Resilience response</h3>
           <p>
             We calculate retained mobility, accessibility loss, population
             exposure and line dependency to estimate how well different places
@@ -37,7 +37,7 @@ export default function MethodologyPanel() {
         <article>
           <h3>Important boundary</h3>
           <p>
-            LTIS is a scenario-based proxy rather than an official TfL PTAL
+            LTRS is a scenario-based proxy rather than an official TfL PTAL
             recalculation. Its purpose is comparative urban analysis and
             storytelling, not operational transport planning.
           </p>

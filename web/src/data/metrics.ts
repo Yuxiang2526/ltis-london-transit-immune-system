@@ -22,10 +22,10 @@ export interface MetricDefinition {
 export const METRIC_REGISTRY: Record<MapMetric, MetricDefinition> = {
   baseline_ltis: {
     id: "baseline_ltis",
-    label: "Baseline LTIS",
+    label: "Baseline LTRS",
     shortLabel: "Baseline",
     description: "Healthy-condition local mobility score derived from PTAL, stop supply and modal diversity.",
-    legendTitle: "Baseline LTIS score",
+    legendTitle: "Baseline LTRS score",
     direction: "higherBetter",
     unit: "score",
     rampRole: "sequential",

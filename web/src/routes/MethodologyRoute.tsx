@@ -92,9 +92,9 @@ export default function MethodologyRoute() {
             temporal recovery (Bruneau et al., 2003; Henry &amp; Ramirez-Marquez,
             2012) and topological robustness (Derrible &amp; Kennedy, 2010;
             Cats, 2016), to a measure that is computable from open static data
-            and decomposes naturally to neighbourhoods. The "immune system"
-            framing in the project name is editorial; the technical claim is
-            spatial vulnerability under disruption.
+            and decomposes naturally to neighbourhoods. The technical claim
+            is spatial vulnerability under disruption — the project name
+            reflects the same framing in editorial form.
           </p>
 
           {/* ── 3. Data sources ──────────────────────────────────────────── */}

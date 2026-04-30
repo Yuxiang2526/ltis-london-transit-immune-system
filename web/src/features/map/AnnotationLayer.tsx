@@ -13,9 +13,9 @@ interface AnnotationLayerProps {
 
 /**
  * Auto-generated MapLibre popups that pin call-out labels onto the top-N
- * LSOAs for the current view. Used by the scrollytelling Act III ("immune
- * response") to spotlight the most-affected neighbourhoods, and by the
- * exploratory ranking chart hover to mirror selection on the map.
+ * LSOAs for the current view. Used by the scrollytelling Act III
+ * ("resilience response") to spotlight the most-affected neighbourhoods,
+ * and by the exploratory ranking chart hover to mirror selection on the map.
  */
 export default function AnnotationLayer({
   map,

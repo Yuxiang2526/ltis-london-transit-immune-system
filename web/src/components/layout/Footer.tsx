@@ -9,11 +9,11 @@ export default function Footer() {
     <footer className="site-footer">
       <div className="site-footer-grid">
         <section>
-          <h4>London Transit Immune System</h4>
+          <h4>London Transit Resilience System</h4>
           <p>
             A neighbourhood-scale resilience explorer for London, built around
-            two complementary analytical layers: the LSOA-level LTIS composite
-            and the 100 m-grid LTRS Dijkstra network model. Built for CASA0029
+            two complementary analytical layers: the LSOA-level LTRS composite
+            and the 100 m-grid Dijkstra network model. Built for CASA0029
             Urban Data Visualisation, 2025/26 (Group 17). Open source and
             reproducible from public data only.
           </p>

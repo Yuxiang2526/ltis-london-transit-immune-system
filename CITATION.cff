@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: "London Transit Immune System (LTIS): Visualising fallback mobility under public transport disruption"
+title: "London Transit Resilience System (LTRS): Visualising fallback mobility under public transport disruption"
 message: "If you use this software, please cite it using the metadata in this file."
 type: software
 authors:
@@ -14,7 +14,7 @@ license: MIT
 repository-code: "https://github.com/<group17>/ltis-london-transit-immune-system"
 url: "https://<group17>.github.io/ltis-london-transit-immune-system/"
 abstract: >
-  LTIS is a resilience-aware urban mobility visualisation built for the
+  LTRS is a resilience-aware urban mobility visualisation built for the
   CASA0029 Urban Data Visualisation module. It treats Tube line disruption as
   a stress test on London's transport network, and visualises retained
   mobility, accessibility loss, population exposure and line dependency at
