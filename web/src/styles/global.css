@@ -346,6 +346,9 @@ select {
 .map-container {
   position: absolute;
   inset: 0;
+  /* Last-line-of-defence min-height — guarantees the canvas always has
+     pixels even if the entire wrapper / sticky height chain breaks. */
+  min-height: 500px;
 }
 
 /* ─── Map legend ───────────────────────────────────────────────────────── */
@@ -611,20 +614,23 @@ select {
 }
 
 .story-stage {
-  /* Absolute-fill the .scroll-stage-sticky parent. Avoids relying on
-     `width:100%; height:100%` inside a flex centred parent (see
-     ScrollStage.css for the rationale). */
-  position: absolute;
-  inset: 0;
+  /* Plain block layout. Absolute positioning inside the sticky parent was
+     making clientHeight read as 0 at +1s on Chrome. Width / height: 100%
+     in a normal block context is the most boring, most reliable option.
+     min-height is a hard floor in case the parent's height calc fails. */
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 600px;
 }
 
 .story-stage .map-wrapper {
-  /* Inherit absolute fill via inset:0 from .map-container; here we just need
-     to override the global .map-wrapper { height: 720px } so the wrapper
-     fills the sticky stage instead. */
-  position: absolute;
-  inset: 0;
-  height: auto;
+  /* Override the global .map-wrapper { height: 720px } so the wrapper fills
+     the sticky stage. Same defensive sizing as .story-stage. */
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 600px;
 }
 
 .story-stage-caption {

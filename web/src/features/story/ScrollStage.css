@@ -10,11 +10,10 @@
 .scroll-stage-sticky {
   position: sticky;
   top: var(--space-12);
+  /* Explicit pixel min-height as a hard floor — the calc() above sometimes
+     resolves to 0 in Chrome on first paint inside a sticky grid item. */
   height: calc(100vh - var(--space-16));
-  /* No flex centering. The single child (StoryStage > .story-stage) uses
-     position:absolute;inset:0 to fill this box exactly. Flex + align-items:
-     center + a sized child triggers a known Chrome layout-timing race that
-     leaves the MapLibre canvas at 0×0 until first scroll. */
+  min-height: 600px;
   border-radius: var(--radius-lg);
   background: var(--color-surface);
   border: 1px solid var(--color-border);

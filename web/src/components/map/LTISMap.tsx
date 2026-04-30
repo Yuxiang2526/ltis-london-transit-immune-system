@@ -290,8 +290,14 @@ export default function LTISMap({
   }, [selectedFeature]);
 
   return (
-    <div className="map-wrapper">
-      <div ref={containerRef} className="map-container" />
+    <div className="map-wrapper" style={{ minHeight: 500 }}>
+      <div
+        ref={containerRef}
+        className="map-container"
+        // Inline width/height/minHeight as a hard guarantee — overrides any
+        // CSS chain failure and prevents MapLibre from creating a 0×0 canvas.
+        style={{ width: "100%", height: "100%", minHeight: 500 }}
+      />
       <MapLegend scenario={scenario} metric={metric} />
     </div>
   );
