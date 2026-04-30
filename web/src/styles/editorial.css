@@ -307,6 +307,98 @@
   line-height: var(--leading-relaxed);
 }
 
+/* About · honest caveats list */
+.about-limitations {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-6) 0 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.about-limitations li {
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--palette-red-3);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-soft);
+}
+
+.about-limitations li strong {
+  color: var(--color-text-strong);
+}
+
+/* Explorer · Key findings cards */
+.findings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-5);
+  margin-top: var(--space-6);
+}
+
+.finding-card {
+  padding: var(--space-5) var(--space-5) var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+.finding-card--warm { border-top: 4px solid var(--palette-red-3); }
+.finding-card--cool { border-top: 4px solid var(--palette-blue-2); }
+
+.finding-card__num {
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-2);
+}
+
+.finding-card h3 {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-strong);
+  line-height: var(--leading-tight);
+}
+
+.finding-card p {
+  margin: 0;
+  color: var(--color-text-soft);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+}
+
+/* Explorer · Planning implications list */
+.implications-list {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-6) 0 0;
+  display: grid;
+  gap: var(--space-4);
+}
+
+.implications-list li {
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--palette-blue-2);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-soft);
+}
+
+.implications-list li strong {
+  color: var(--color-text-strong);
+}
+
 /* Team portraits — 2-up squircle layout. Each card is capped at ~330 px
    wide (≈60 % of the previous large-photo size) and the photo frame uses
    a soft squircle radius — clearly rounded, not a circle, not a hard

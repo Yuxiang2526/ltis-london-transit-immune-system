@@ -45,9 +45,13 @@ export default function Reveal({
     if (!el) return;
     const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     if (reduce) {
-      setVisible(true);
-      setAnimationFinished(true);
-      return;
+      // Defer to next frame so the state update doesn't fire synchronously
+      // inside the effect body (react-hooks/set-state-in-effect rule).
+      const handle = window.requestAnimationFrame(() => {
+        setVisible(true);
+        setAnimationFinished(true);
+      });
+      return () => window.cancelAnimationFrame(handle);
     }
     const obs = new IntersectionObserver(
       ([entry]) => {

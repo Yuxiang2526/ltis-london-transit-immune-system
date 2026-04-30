@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useLTISDataContext } from "../../data/dataContext";
 import { useRouteRankings } from "./useRouteRankings";
 
@@ -13,6 +14,31 @@ export default function HeadlineStrip() {
   const lsoaCount = lsoaData?.features.length ?? 4994;
   const routesCount = rankings?.generatedFromRegularRoutes ?? 418;
   const top1 = rankings?.top5[0];
+
+  /** Live Gini on baseline AI — the same distribution the Lorenz/Decile/
+   *  DistributionPanel components render. Computed once per dataset so the
+   *  headline number is always in sync with the chart on screen. */
+  const baselineGini = useMemo(() => {
+    if (!lsoaData?.features?.length) return null;
+    const values = lsoaData.features
+      .map((f) => Number((f.properties as { baseline_ai?: number }).baseline_ai ?? 0))
+      .filter((v) => Number.isFinite(v) && v > 0)
+      .sort((a, b) => a - b);
+    const n = values.length;
+    if (n < 2) return null;
+    const total = values.reduce((s, v) => s + v, 0);
+    if (total === 0) return null;
+    let cum = 0;
+    let areaUnder = 0;
+    let prev = 0;
+    for (let i = 0; i < n; i++) {
+      cum += values[i];
+      const y = cum / total;
+      areaUnder += ((prev + y) / 2) * (1 / n);
+      prev = y;
+    }
+    return 1 - 2 * areaUnder;
+  }, [lsoaData]);
 
   return (
     <section className="headline-strip" aria-label="Key project numbers">
@@ -62,8 +88,10 @@ export default function HeadlineStrip() {
           </svg>
         </span>
         <p className="headline-strip__label">Baseline Gini</p>
-        <h3 className="headline-strip__value num-mono">0.34</h3>
-        <p className="headline-strip__note">Moderate accessibility concentration</p>
+        <h3 className="headline-strip__value num-mono">
+          {baselineGini !== null ? baselineGini.toFixed(2) : "—"}
+        </h3>
+        <p className="headline-strip__note">Live AI inequality across {lsoaCount.toLocaleString()} LSOAs</p>
       </article>
     </section>
   );

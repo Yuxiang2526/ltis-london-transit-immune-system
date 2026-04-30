@@ -19,7 +19,7 @@ export default function SummaryCards({ summary }: SummaryCardsProps) {
       </article>
 
       <article className="summary-card">
-        <span className="summary-label">Population exposure</span>
+        <span className="summary-label">Indicative exposure (proxy)</span>
         <strong>{formatPopulation(summary.totalExposedPopulation)}</strong>
       </article>
 

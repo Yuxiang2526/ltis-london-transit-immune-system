@@ -101,9 +101,9 @@ export default function NetworkRoute() {
           bodyClassObserver = new MutationObserver(() => {
             // Stagger 2 dispatches so the CSS transition has settled by
             // the second one.
-            try { win.dispatchEvent(new Event("resize")); } catch {}
+            try { win.dispatchEvent(new Event("resize")); } catch { /* iframe unmounted */ }
             window.setTimeout(() => {
-              try { win.dispatchEvent(new Event("resize")); } catch {}
+              try { win.dispatchEvent(new Event("resize")); } catch { /* iframe unmounted */ }
             }, 220);
           });
           bodyClassObserver.observe(doc.body, {
@@ -135,10 +135,10 @@ export default function NetworkRoute() {
               // Two more ticks after compareMap appears to give Mapbox
               // time to register its window.resize handler.
               window.setTimeout(() => {
-                try { win.dispatchEvent(new Event("resize")); } catch {}
+                try { win.dispatchEvent(new Event("resize")); } catch { /* iframe unmounted */ }
               }, 200);
               window.setTimeout(() => {
-                try { win.dispatchEvent(new Event("resize")); } catch {}
+                try { win.dispatchEvent(new Event("resize")); } catch { /* iframe unmounted */ }
                 if (pollTimer !== null) {
                   window.clearInterval(pollTimer);
                   pollTimer = null;

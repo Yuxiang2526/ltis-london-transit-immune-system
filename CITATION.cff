@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: "London Transit Resilience System (LTRS): Visualising fallback mobility under public transport disruption"
+title: "London Transit Resilience System (LTRS): Visualising bus-route disruption and accessibility retention in London"
 message: "If you use this software, please cite it using the metadata in this file."
 type: software
 authors:
@@ -11,22 +11,26 @@ authors:
     affiliation: "UCL Centre for Advanced Spatial Analysis"
 date-released: 2026-04-30
 license: MIT
-repository-code: "https://github.com/<group17>/ltis-london-transit-immune-system"
-url: "https://<group17>.github.io/ltis-london-transit-immune-system/"
+repository-code: "https://github.com/Yuxiang2526/ltrs-london-transit-resilience-system"
+url: "https://yuxiang2526.github.io/ltrs-london-transit-resilience-system/"
 abstract: >
-  LTRS is a resilience-aware urban mobility visualisation built for the
-  CASA0029 Urban Data Visualisation module. It treats Tube line disruption as
-  a stress test on London's transport network, and visualises retained
-  mobility, accessibility loss, population exposure and line dependency at
-  LSOA scale. The project combines an interactive web frontend (React +
-  MapLibre + D3 + Visx) with a reproducible Python data pipeline (PTAL,
-  NaPTAN, ONS LSOA population, IMD).
+  LTRS is an interactive resilience visualisation built for the CASA0029
+  Urban Data Visualisation module. It treats single bus-route disruption
+  as a stress test on London's surface transport network, recomputing
+  per-grid accessibility on the OSM walking network and visualising
+  baseline accessibility, accessibility loss, retention and indicative
+  exposure at both 100 m grid and LSOA scale across Greater London. The
+  deliverable combines a React + TypeScript + MapLibre frontend with an
+  embedded Mapbox GL JS scenario engine driven by a 543-route
+  pre-computed loss matrix.
 keywords:
   - urban-data-visualisation
   - transport-resilience
   - public-transport
+  - bus-network
   - london
   - PTAL
   - LSOA
+  - osm-walking-network
   - choropleth
   - scrollytelling

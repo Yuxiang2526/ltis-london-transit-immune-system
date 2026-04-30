@@ -14,6 +14,12 @@ import { getScenarioDefinition } from "../data/scenarios";
  * Resolve the numeric value for a given (scenario, metric) pair as displayed
  * on the map / charts. Centralised so the colour ramp, legend, ranking and
  * tooltip all read through the same accessor.
+ *
+ * Retention semantics: SHARE of baseline accessibility retained = 1 − loss.
+ * The flat `*_retention` field in the demo geojson currently stores the
+ * absolute disrupted score (mislabel), so we derive retention from loss to
+ * keep the methodology page (LTRS = AI_disrupted / AI_baseline = 1 − loss)
+ * consistent with what the choropleth/legend/charts actually render.
  */
 export function getMetricValue(
   properties: LSOAFlatProperties,
@@ -23,6 +29,10 @@ export function getMetricValue(
   if (metric === "baseline_ltis") {
     return getBaselineBundle(properties).ltis;
   }
+  if (metric === "retention") {
+    const loss = getScenarioMetric(properties, scenario, "loss");
+    return Math.max(0, Math.min(1, 1 - loss));
+  }
   return getScenarioMetric(properties, scenario, metric satisfies ResilienceMetric);
 }
 
@@ -30,8 +40,9 @@ export function getMetricValue(
 // individually in many places. They are thin and free.
 export const getScenarioLoss = (p: LSOAFlatProperties, s: ScenarioId): number =>
   getScenarioMetric(p, s, "loss");
+/** Share of baseline retained = 1 − loss. Derived, not from the flat field. */
 export const getScenarioRetention = (p: LSOAFlatProperties, s: ScenarioId): number =>
-  getScenarioMetric(p, s, "retention");
+  Math.max(0, Math.min(1, 1 - getScenarioMetric(p, s, "loss")));
 export const getScenarioDependency = (p: LSOAFlatProperties, s: ScenarioId): number =>
   getScenarioMetric(p, s, "dependency");
 export const getScenarioExposure = (p: LSOAFlatProperties, s: ScenarioId): number =>

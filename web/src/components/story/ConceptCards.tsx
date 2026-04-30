@@ -28,7 +28,7 @@ const CARDS: ConceptCard[] = [
   },
   {
     index: "02",
-    title: "Single-line dependency creates fragility",
+    title: "Single-route dependency creates fragility",
     text:
       "When a route fails, the places hardest hit are not always the least served — they are those that depend on one corridor with no parallel substitute. Five outer-London bus routes alone strip 12-minute access from 47 distinct LSOAs.",
     accent: "warm",

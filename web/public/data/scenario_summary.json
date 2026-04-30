@@ -1,7 +1,7 @@
 {
   "99": {
     "label": "Bus Route 99 disruption",
-    "description": "Loss derived from Siyan Tao's OSM-Dijkstra walking-network model. When bus route 99 is removed, the AI score for every affected 100m grid cell is recomputed; values shown here are averaged from grid cells back up to the LSOA.",
+    "description": "Loss derived from Siyan Tao's OSM-Dijkstra walking-network model. When bus route 99 is removed, the AI score for every affected 100 m grid cell is recomputed; values shown here are averaged from grid cells back up to the LSOA.",
     "meanRetention": 0.9932,
     "meanLoss": 0.0068,
     "totalExposedPopulation": 57850,
@@ -17,20 +17,12 @@
       {
         "borough": "Newham",
         "meanLoss": 0.0036
-      },
-      {
-        "borough": "Islington",
-        "meanLoss": 0.0
-      },
-      {
-        "borough": "Tower Hamlets",
-        "meanLoss": 0.0
       }
     ]
   },
   "R2": {
     "label": "Bus Route R2 disruption",
-    "description": "Loss derived from Siyan Tao's OSM-Dijkstra walking-network model. When bus route R2 is removed, the AI score for every affected 100m grid cell is recomputed; values shown here are averaged from grid cells back up to the LSOA.",
+    "description": "Loss derived from Siyan Tao's OSM-Dijkstra walking-network model. When bus route R2 is removed, the AI score for every affected 100 m grid cell is recomputed; values shown here are averaged from grid cells back up to the LSOA.",
     "meanRetention": 0.9978,
     "meanLoss": 0.0022,
     "totalExposedPopulation": 19092,
@@ -38,28 +30,12 @@
       {
         "borough": "Bromley",
         "meanLoss": 0.0627
-      },
-      {
-        "borough": "Islington",
-        "meanLoss": 0.0
-      },
-      {
-        "borough": "Tower Hamlets",
-        "meanLoss": 0.0
-      },
-      {
-        "borough": "Barking & Dagenham",
-        "meanLoss": 0.0
-      },
-      {
-        "borough": "Newham",
-        "meanLoss": 0.0
       }
     ]
   },
   "685": {
     "label": "Bus Route 685 disruption",
-    "description": "Loss derived from Siyan Tao's OSM-Dijkstra walking-network model. When bus route 685 is removed, the AI score for every affected 100m grid cell is recomputed; values shown here are averaged from grid cells back up to the LSOA.",
+    "description": "Loss derived from Siyan Tao's OSM-Dijkstra walking-network model. When bus route 685 is removed, the AI score for every affected 100 m grid cell is recomputed; values shown here are averaged from grid cells back up to the LSOA.",
     "meanRetention": 0.9992,
     "meanLoss": 0.0008,
     "totalExposedPopulation": 6757,
@@ -67,22 +43,6 @@
       {
         "borough": "Croydon",
         "meanLoss": 0.0173
-      },
-      {
-        "borough": "Islington",
-        "meanLoss": 0.0
-      },
-      {
-        "borough": "Tower Hamlets",
-        "meanLoss": 0.0
-      },
-      {
-        "borough": "Barking & Dagenham",
-        "meanLoss": 0.0
-      },
-      {
-        "borough": "Newham",
-        "meanLoss": 0.0
       }
     ]
   }

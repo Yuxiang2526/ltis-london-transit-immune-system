@@ -209,15 +209,23 @@ export function getScenarioBundle(
   scenario: ScenarioId,
 ): ScenarioBundle {
   // The `*_score` flat key is the convention used by the demo pipeline for
-  // the disrupted LTIS score; future pipelines may emit `*_ltis` directly.
+  // the disrupted absolute score; future pipelines may emit `*_ltis` directly.
   const ltis = num(
     properties[flatKey(scenario, "score")] ?? properties[flatKey(scenario, "ltis")],
   );
+  const loss = getScenarioMetric(properties, scenario, "loss");
+  // Retention semantics: SHARE of baseline accessibility retained = 1 - loss.
+  // The flat `*_retention` field in lsoa_ltis.geojson currently stores the
+  // absolute disrupted score (mislabel from the demo pipeline) — we derive
+  // the correct retention value from `*_loss` instead so every page agrees
+  // with the methodology page's LTRS definition (LTRS = AI_disrupted /
+  // AI_baseline = 1 − loss-share).
+  const retention = Math.max(0, Math.min(1, 1 - loss));
   return {
     scenarioId: scenario,
     ltis,
-    retention: getScenarioMetric(properties, scenario, "retention"),
-    loss: getScenarioMetric(properties, scenario, "loss"),
+    retention,
+    loss,
     exposure: getScenarioMetric(properties, scenario, "exposure"),
     dependency: getScenarioMetric(properties, scenario, "dependency"),
     profile: getFallbackProfile(properties, scenario),

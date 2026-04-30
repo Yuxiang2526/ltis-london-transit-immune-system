@@ -379,13 +379,11 @@ export default function LTISMap({
   // -------------------------------------------------------------------------
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) {
-      setSpotlightPx(null);
-      return;
-    }
-    if (!spotlight) {
-      setSpotlightPx(null);
-      return;
+    if (!map || !spotlight) {
+      // Clearing on next tick avoids the "calling setState synchronously
+      // inside an effect" cascade-render lint rule.
+      const handle = window.requestAnimationFrame(() => setSpotlightPx(null));
+      return () => window.cancelAnimationFrame(handle);
     }
     const project = () => {
       const { x, y } = map.project(spotlight.center);

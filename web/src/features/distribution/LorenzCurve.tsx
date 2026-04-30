@@ -38,9 +38,17 @@ export default function LorenzCurve({
   const innerH = height - padding.top - padding.bottom;
 
   const { points, gini } = useMemo(() => {
+    // For the baseline view, compute the Lorenz on the absolute baseline_ai
+    // (the raw AI score). Matches DecileBars, DistributionPanel and the
+    // HeadlineStrip Gini so all four "distribution" views read the same
+    // distribution and the same Gini coefficient.
+    const readValue = (f: (typeof data.features)[number]) =>
+      metric === "baseline_ltis"
+        ? Number((f.properties as { baseline_ai?: number }).baseline_ai ?? 0)
+        : getMetricValue(f.properties, scenario, metric);
     const values = data.features
-      .map((f) => getMetricValue(f.properties, scenario, metric))
-      .filter((v) => Number.isFinite(v) && v >= 0)
+      .map(readValue)
+      .filter((v) => Number.isFinite(v) && v > 0)
       .sort((a, b) => a - b);
 
     if (values.length === 0) {

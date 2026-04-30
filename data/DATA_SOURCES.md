@@ -1,27 +1,53 @@
 # Data sources
 
-All datasets used by the LTIS pipeline are openly licensed. Raw files are **not** committed to the repository — the `analysis/00_fetch_raw.ipynb` notebook downloads them on first run.
+All datasets used by LTRS are openly licensed. The full per-grid AI and
+per-route loss matrix is computed in the companion repo
+<https://github.com/Taoo2025/CASA0029/tree/main/data_calculating>; this
+file documents the upstream public datasets that feed that pipeline plus
+the JSON / GeoJSON consumed directly by `web/`.
 
-| ID | Dataset | Provider | Vintage | License | Used for |
+## Upstream public datasets
+
+| ID | Dataset | Provider | Vintage | Licence | Used for |
 |----|---------|----------|---------|---------|----------|
-| `lsoa_pop` | LSOA population estimates | ONS via [data.london.gov.uk](https://data.london.gov.uk/dataset/super-output-area-population-lsoa-msoa-london-2g1zq/) | 2021 (mid-year) | OGL v3 | Population exposure, spatial unit |
-| `lsoa_geom` | LSOA 2021 boundaries (BFE clipped to coast) | ONS Geography via [geoportal.statistics.gov.uk](https://geoportal.statistics.gov.uk/) | 2021 | OGL v3 | LSOA polygons for the choropleth |
-| `ptal_2015` | PTAL grid (100 m) | TfL via [WebCAT](https://tfl.gov.uk/info-for/urban-planning-and-construction/planning-applications/planning-with-webcat) | 2015 | TfL Open Data licence | Baseline accessibility component |
-| `naptan` | National Public Transport Access Nodes | DfT via [data.gov.uk](https://www.data.gov.uk/dataset/ff93ffc1-6656-47d8-9155-85ea0b8f2251/naptan) | 2026 (snapshot) | OGL v3 | Stop / station locations, mode diversity |
-| `tfl_lines` | TfL station and line geometry (Tube, Overground, DLR, Elizabeth) | TfL via [api.tfl.gov.uk](https://api.tfl.gov.uk/) | 2026 (live snapshot) | TfL Open Data licence | Disrupted-line geometry overlay |
-| `imd_2019` | English Indices of Multiple Deprivation | MHCLG via [gov.uk](https://www.gov.uk/government/statistics/english-indices-of-deprivation-2019) | 2019 | OGL v3 | Equity-weighted exposure |
-| `os_open_roads` | OS Open Roads | Ordnance Survey via [osdatahub.os.uk](https://osdatahub.os.uk/downloads/open/OpenRoads) | 2026 | OGL v3 | Walking / cycling fallback estimation |
+| `ptal_2023` | PTAL 100 m grid | TfL via [WebCAT](https://tfl.gov.uk/info-for/urban-planning-and-construction/planning-applications/planning-with-webcat) | 2023 | TfL Open Data licence | Baseline accessibility reference |
+| `naptan` | National Public Transport Access Nodes | DfT via [data.gov.uk](https://www.data.gov.uk/dataset/ff93ffc1-6656-47d8-9155-85ea0b8f2251/naptan) | 2026 (snapshot) | OGL v3 | 27,553 transit access points |
+| `osm_walking` | OpenStreetMap walking network for Greater London | OpenStreetMap contributors | 2026 (snapshot) | ODbL | Routable graph for grid → stop walks |
+| `gla_boundary` | Statistical GIS Boundary Files for London | Greater London Authority via [data.london.gov.uk](https://data.london.gov.uk/dataset/statistical-gis-boundary-files-london) | 2021 | OGL v3 | London administrative spatial mask |
+| `tfl_routes` | TfL line and route geometry (Tube, Overground, Elizabeth, DLR, Tramlink + 540+ buses) | TfL via [api.tfl.gov.uk](https://api.tfl.gov.uk/) | 2026 (live snapshot) | TfL Open Data licence | Visual route layer + cancellation logic |
+| `lsoa_geom` | LSOA 2021 boundaries (BFE clipped to coast) | ONS Geography via [geoportal.statistics.gov.uk](https://geoportal.statistics.gov.uk/) | 2021 | OGL v3 | 4,994 LSOA polygons (Story + Explorer) |
+
+Night buses and temporary bus routes are excluded from the route set so
+that irregular service does not distort the resilience signal.
+
+## Files consumed by `web/public/data/`
+
+| File | Source | Description |
+|------|--------|-------------|
+| `lsoa_ltis.geojson` | `analysis/build_ltis_from_lsoa_summary.py` | 4,994 LSOA polygons + per-scenario loss/score for routes 99, R2 and 685 |
+| `route_rankings.json` | Companion `data_calculating` repo | Top-routes ranking by lost 12-min access |
+| `scenario_summary.json` | This repo (manually curated) | Borough-level summary of each pre-baked scenario |
+| `rail_lines.geojson` | TfL + Mapbox styling | Rail / Tube / Overground / DLR overlay on the LSOA choropleth |
+| `network-map/` | Companion `data_calculating` repo | Mapbox tiles + 543-route loss matrix consumed by the embedded Network Map |
 
 ## Caveats
 
-- **PTAL 2015** is the most recent published grid release (TfL has since shifted to per-request WebCAT calculations). The 11-year vintage means new high-PTAL areas (Elizabeth line corridor, Battersea Power Station extension) are systematically underrepresented. The methodology page documents this and where it biases the conclusions.
-- **NaPTAN** snapshots reflect *known* stop locations, not real-time service levels.
-- **IMD 2019** is the latest published edition at time of writing (2026-04). A 2025 release was promised but has not been published.
-
-## Provenance
-
-Each raw file lands in `data/raw/<dataset_id>/` along with a `_meta.json` capturing the download URL, fetched timestamp, and SHA-256 hash. The `analysis/00_fetch_raw.ipynb` notebook is the single source of truth for these downloads.
+- **Indicative population.** Every LSOA carries a default of 1,700 in the
+  current data — a proxy, not the ONS mid-year estimate. The exposure
+  metric should therefore be read as a relative ranking, not an absolute
+  people-affected count, until the ONS join is wired in.
+- **Walking-only fallback.** Cycling, micro-mobility and motorised modes
+  are not in the AI calculation.
+- **Static service.** Off-peak / weekend / late-night service is not
+  modelled. Frequency attenuation is intentionally omitted (see
+  Methodology §4).
+- **No multi-modal transfers.** Bus → Underground transfers are not
+  modelled; each grid's AI is the sum of contributions of all reachable
+  stops independently.
 
 ## Licence statement on derived data
 
-Processed outputs in `data/processed/` are derivative works of the upstream Open Government Licence and TfL Open Data licence sources. Both licences require attribution; the live website carries the required attribution string in its footer and methodology page.
+Processed outputs derived from the upstream sources above are derivative
+works of the Open Government Licence v3, the TfL Open Data licence and the
+Open Database Licence. All three require attribution; the live site
+carries the required attribution string in the footer and About page.

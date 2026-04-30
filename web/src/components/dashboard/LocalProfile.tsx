@@ -143,12 +143,12 @@ export default function LocalProfile({
         </div>
 
         <div>
-          <span>Population exposure</span>
+          <span>Indicative exposure</span>
           <strong>{formatPopulation(exposure)}</strong>
         </div>
 
         <div>
-          <span>Line dependency</span>
+          <span>Route dependency</span>
           <strong>{formatPercent(dependency)}</strong>
         </div>
       </div>

@@ -1,109 +1,146 @@
-# LTRS — Project Methodology Summary
+# LTRS — Methodology Summary
 
 > CASA0029 Urban Data Visualisation, Group 17 (Yuxiang Fan, Siyan Tao)
-> Target length: ~1,000 words. **Status: skeleton — sections marked _[draft]_ are placeholders that the data-pipeline phase will tighten.**
+> Word count: ~955 words. The same content is rendered on the live site at
+> `/methodology`; this file is the static mirror.
 
-## 1. Research question
+## 1. Introduction
 
-How unevenly is transport resilience distributed across London, and how do disruptions expose differences in local transport substitutability?
+In complex urban systems, the stability of public transport networks affects
+not only daily commuting efficiency, but also residents' access to jobs,
+education, healthcare and public services. Previous studies have shown that
+transport resilience is an important foundation for the functioning of urban
+society (Chopra et al., 2016). At the same time, transport equity research
+has gradually moved beyond simple measures of transport supply or passenger
+capacity. It now pays more attention to whether different areas and social
+groups can access travel opportunities fairly (Li et al., 2025). Recent
+studies have also compared accessibility differences across education
+groups, transport modes and job opportunities, showing that urban transport
+systems can produce both spatial and social inequalities (Liu and Yu, 2025).
 
-LTRS treats line disruption as a stress test on the transport network. It asks not just *where* disruption happens, but *which neighbourhoods still have alternatives* — and which become sharply more vulnerable. The unit of analysis is the **2021 LSOA** (Lower-layer Super Output Area), and the spatial extent is Greater London.
+However, most existing studies focus on accessibility under normal
+operating conditions. Less attention has been paid to whether different
+areas can maintain their original accessibility when the transport network
+is disrupted. For cities with complex public transport systems, high
+accessibility in normal conditions does not necessarily mean strong
+transport resilience. If an area depends heavily on a small number of key
+routes or stations, its accessibility may drop quickly when these links are
+disrupted. Therefore, transport equity should not only ask *who has better
+accessibility in normal conditions*. It should also ask *who is more likely
+to lose accessibility after a disruption*. Based on this research gap, this
+project extends the focus from static accessibility distribution to
+accessibility retention under route disruption scenarios. In this project,
+this retention capacity is defined as **transport resilience**.
 
-## 2. Conceptual framework
+## 2. Data
 
-We adopt a **single-step impact-based** definition of resilience: the share of baseline accessibility a place retains when a specific corridor fails (Jenelius 2010; D'Lima & Medda 2016). This narrows the broader resilience literature — which spans temporal recovery (Bruneau et al. 2003; Henry & Ramirez-Marquez 2012) and topological robustness (Derrible & Kennedy 2010; Cats 2016) — to a measure that is computable from open static data and decomposes naturally to neighbourhoods. The trade-off is documented in [ADR 002](decisions/002-resilience-definition.md): we measure spatial *vulnerability under disruption*, not full time-domain *resilience*.
+This project uses multi-source open datasets to assess London's public
+transport resilience at two spatial scales: 100 m grids and LSOAs.
 
-The framework runs in three stages:
+1. **2023 PTAL dataset** — informs the baseline accessibility layer and
+   measures the quality of public transport connectivity in London.
+2. **Public transport access points** — derived from Great Britain's
+   national NaPTAN dataset; London transport station and route data are
+   used to represent local services. Night buses and temporary bus routes
+   are excluded to mitigate the impact of irregular bus services on travel
+   resilience. The GLA's Statistical GIS Boundary Files are used as a
+   spatial mask to retain only transit data falling within the London
+   administrative area.
+3. **London network topology data** — supports the modelling of route
+   disruption scenarios and accessibility change.
 
-1. **Healthy baseline** — a per-LSOA Local Transport Resilience Score (LTRS) combining PTAL, NaPTAN-derived stop supply, modal diversity and a small micro-mobility component.
-2. **Inject disruption** — for each pre-defined scenario (Central, Northern, Jubilee line failures), we recompute accessibility with the affected line removed.
-3. **Resilience response** — we compare baseline against disrupted state, producing four indicators per LSOA per scenario: **retention**, **loss**, **dependency** and **population exposure**.
+## 3. Methodology
 
-## 3. Data sources
+The core contribution of this model lies in the development of an
+interactive platform supporting *scenario analysis*. Diverging from the
+static PTAL data provided by TfL's official WebCAT, this model implements
+real-time re-computation within the web browser. Three steps:
 
-The full data manifest, including URLs, vintages and licences, is in [`data/DATA_SOURCES.md`](../data/DATA_SOURCES.md). Headline sources:
+### 3.1 Baseline map
 
-- **LSOA 2021 boundaries + mid-year population** (ONS, OGL v3) — spatial unit and exposure denominator.
-- **PTAL grid 2015** (TfL via WebCAT, TfL Open Data licence) — baseline accessibility component. The 11-year vintage is the most significant data limitation; we discuss its bias in §6.
-- **NaPTAN** (DfT, OGL v3) — locations of every Tube station, bus stop, DLR / Elizabeth line / Overground access node. Drives stop supply and modal diversity.
-- **TfL line and station geometry** (TfL Open Data licence) — used both for the "disrupted line" overlay on the map and for identifying which LSOAs sit within a line's catchment.
-- **English Indices of Multiple Deprivation 2019** (MHCLG, OGL v3) — used for the equity-weighted exposure secondary metric.
-- **OS Open Roads** (OS, OGL v3) — supports walking and cycling fallback estimation.
+The baseline map is built on the 2023 PTAL values. It visualises the current
+inequality in public transport connectivity shown by the official PTAL data.
+The Story page and the Explorer use this layer aggregated to LSOA scale; the
+Network Map preserves it at native 100 m resolution.
 
-## 4. Methods
+### 3.2 Per-grid Accessibility Index
 
-### 4.1 Spatial unit
+Following TfL's PTAL calculation logic, the map estimates accessibility for
+each 100 m × 100 m grid using the real OSM walking network and open public
+transport stop data. For each grid centroid, reachable stops are identified
+within PTAL walking catchments: **640 m** for bus stops and **960 m** for
+rail-based stops. These catchments are measured along the OSM walking
+network with a walking speed of 4.8 km/h. The Accessibility Index is then
+calculated by summing the contributions of all reachable routes:
 
-LSOA over PTAL grid or hex — full reasoning in [ADR 001](decisions/001-spatial-unit.md). PTAL grid values are area-weighted to LSOA; NaPTAN points are aggregated to LSOA via point-in-polygon.
+$$\text{AI}_i = \sum_{s \in S_i} \sum_{r \in R_s} C_{i s r}$$
 
-### 4.2 Baseline LTRS
+where $S_i$ is the set of reachable stops from grid $i$, $R_s$ is the set
+of routes serving stop $s$, and $C_{isr}$ is the accessibility contribution
+of route $r$ at stop $s$. The route contribution uses a distance-decay
+function:
 
-For each LSOA *i*:
+$$C_{i s r} = w_{i s r} \cdot \max\!\left(0,\; 1 - \frac{d_{i s}}{D_m}\right) \cdot 10$$
 
-```
-LTRS_baseline(i) = w₁ · ptal_norm(i)
-                 + w₂ · stop_supply_norm(i)
-                 + w₃ · mode_diversity(i)
-                 + w₄ · micro_mobility(i)
-```
+where $w_{isr}$ is the route weight, $d_{is}$ is the OSM-network walking
+distance from grid $i$ to stop $s$, and $D_m$ is the mode-specific
+catchment distance (640 m bus / 960 m rail). A closer stop gives a higher
+contribution; a stop outside the catchment gives zero. Average reachability
+is then aggregated to LSOA polygons for the macro-level Story and Explorer
+views.
 
-with weights `w₁..w₄` summing to 1. Initial weights are equal (0.25 each); a sensitivity sweep over the weight simplex is reported in `analysis/04_validate_sensitivity.ipynb`.
+### 3.3 Disruption scenarios & the LTRS score
 
-- `ptal_norm` is the LSOA-level PTAL aggregate normalised to [0,1].
-- `stop_supply_norm` is NaPTAN stops per km² per LSOA, log-transformed and normalised.
-- `mode_diversity` is Shannon diversity over NaPTAN stop modes (Tube, bus, rail, DLR, light rail, tram).
-- `micro_mobility` is a supplementary factor combining cycle network density (OS Open Roads) and Santander Cycles dock proximity.
+When the user cancels selected routes in the Network Map, the map
+recalculates grid-level accessibility by removing the AI contributions of
+those routes. The accessibility loss is:
 
-### 4.3 Disruption simulation
+$$\text{AI}_{\text{loss},\,i} = \text{AI}_{\text{baseline},\,i} - \text{AI}_{\text{disrupted},\,i}$$
 
-For each scenario *s* (a single Tube line `l_s`):
+and the **Local Transit Resilience Score** is:
 
-1. Identify the **catchment** of the line — LSOAs that contain or are within walking distance (default 800 m) of any station served by `l_s`.
-2. Recompute the modal-diversity and stop-supply terms with `l_s` stations removed; recompute LTRS.
-3. Derive per-LSOA indicators:
-   - `retention(i, s) = LTRS_disrupted(i, s) / LTRS_baseline(i)`
-   - `loss(i, s) = max(0, 1 − retention(i, s))`
-   - `dependency(i, s)` — the fraction of `LTRS_baseline(i)` attributable to `l_s`, measured by the impact of its removal (Jenelius 2010).
-   - `exposure(i, s) = loss(i, s) × population(i)`
+$$\text{LTRS}_i = \frac{\text{AI}_{\text{disrupted},\,i}}{\text{AI}_{\text{baseline},\,i}} \in [0, 1]$$
 
-### 4.4 Local fallback profile
+A larger accessibility drop indicates weaker resilience. The lower the
+LTRS value, the more vulnerable the grid is under the selected route
+disruption scenario. The Network Map's split-screen renders baseline AI on
+the left and the AI-loss percentage $(1 - \text{LTRS}_i)$ on the right,
+with a six-step white→burgundy ramp.
 
-For each LSOA + scenario, the website also exposes a **5-dimension fallback profile** (cf. presentation slide 11):
+The per-route, per-grid loss matrix is **pre-computed once** across all 543
+routes (`route_grid_impacts_osm_network.json`, ~13 MB). At interaction time
+the tool just sums losses, which is how cancelling several routes
+simultaneously updates 159,000 cells in a few hundred milliseconds.
 
-- *Redundancy* — count of alternative non-`l_s` lines / modes serving the LSOA's catchment.
-- *Bus fallback* — share of trips covered by bus given `l_s` removal (NaPTAN bus density × catchment overlap).
-- *Cycle fallback* — supplementary, derived from OS Open Roads and Santander dock density.
-- *Modal diversity* — Shannon diversity of remaining modes.
-- *Dependency risk* — `1 − retention(i, s)`, included on the radar so dependency is visible in profile context.
+The full data-calculation pipeline (OSM walking-network extraction, per-grid
+AI computation, the 543-route per-cell loss matrix and all input metadata)
+is open source at
+<https://github.com/Taoo2025/CASA0029/tree/main/data_calculating>.
 
-## 5. Visualisation strategy
+## 4. Discussion & limitations
 
-The website is structured as a **scrollytelling story** (Hero → Healthy Baseline → Inject Disruption → Immune Response) followed by an **explorer dashboard** (interactive choropleth + side-by-side small-multiples comparison + ranking + local profile). Visualisation types are matched to data types: choropleth for spatial intensity, small multiples for cross-scenario comparison, radar for the 5-dimension fallback profile, beeswarm/Lorenz for distributional inequality, and a sensitivity strip for robustness. The colour strategy is documented in [ADR 003](decisions/003-color-strategy.md).
+Despite its effectiveness, this study has several limitations due to
+computational constraints. First, our model does not fully replicate the
+official TfL PTAL methodology. Specifically, we did not include **frequency
+attenuation** or **multi-modal transfers**, such as moving from a bus to
+the Underground. Furthermore, our analysis assumes a static environment and
+does not account for service changes during weekends or peak hours.
 
-## 6. Limitations and caveats
+Future research could improve these calculation methods to provide a more
+realistic simulation. It is also important to integrate more
+socio-demographic factors, such as the **Index of Multiple Deprivation
+(IMD)**. By performing an IMD overlay analysis, researchers can better
+identify which vulnerable groups are most affected by transport
+disruptions. This would help planners understand how transport resilience
+contributes to wider social inequality in London.
 
-- **PTAL vintage (2015)** systematically under-represents post-2015 step changes (Elizabeth line corridor; Northern line Battersea extension). LTRS treats these areas as less-served than they really are.
-- **PTAL only counts public transport** — areas where commuting is dominated by cycling, walking or motoring will appear less resilient than residents would report.
-- **Static, single-step.** We do not model recovery time, cascading effects, or capacity-constrained crowding on substitute lines.
-- **Population exposure is unweighted** in the headline metric. An equity-weighted secondary metric (loss × population × IMD-inverse) is reported separately so the metric trade-off is visible.
-- **Modifiable Areal Unit Problem (MAUP)** — LSOAs are statistical, not behavioural. Conclusions are sensitive to the boundary geometry.
+## 5. References
 
-## 7. Reproducibility
-
-All code is in this repository under MIT licence. The Python pipeline (`analysis/`) downloads raw data, produces processed GeoJSON / JSON, and is fully re-runnable from a clean environment via `uv sync && jupyter lab`. The frontend (`web/`) is a static build; deployed to GitHub Pages from the `main` branch via the workflow at `.github/workflows/deploy.yml`.
-
-## 8. AI-tool usage
-
-AI assistance was used during development as itemised in [`submission/Group17_Project_Info.md`](../submission/Group17_Project_Info.md). All conceptual framing, data interpretation, methodology decisions and final wording are the authors'; AI assistance was used for code scaffolding and copy editing.
-
-## References
-
-- Bruneau, M. et al. (2003). *A framework to quantitatively assess and enhance the seismic resilience of communities.* Earthquake Spectra 19(4): 733–752.
-- Cats, O. (2016). *The robustness value of public transport development plans.* Journal of Transport Geography 51: 236–246.
-- Chopra, S. S. et al. (2016). *A network-based framework for assessing infrastructure resilience: a case study of the London metro system.* Journal of the Royal Society Interface 13(118).
-- Cox, A., Prager, F., & Rose, A. (2011). *Transportation security and the role of resilience: a foundation for operational metrics.* Transport Policy 18(2): 307–317.
-- Derrible, S. & Kennedy, C. (2010). *The complexity and robustness of metro networks.* Physica A 389: 3678–3691.
-- D'Lima, M. & Medda, F. (2016). *A new measure of resilience: an application to the London Underground.* Transportation Research Part A 81: 35–46.
-- Henry, D. & Ramirez-Marquez, J. E. (2012). *Generic metrics and quantitative approaches for system resilience as a function of time.* Reliability Engineering & System Safety 99: 114–122.
-- Jenelius, E. (2010). *Redundancy importance: links as rerouting alternatives during road network disruptions.* Procedia Engineering 3: 129–137.
-- Sharma, D., Zhong, C., & Wong, H. (2024). *Lockdown lifted: measuring spatial resilience from London's public transport demand recovery.* Regional Studies, Regional Science 11.
+- Chopra, S. S. et al. (2016). A network-based framework for assessing
+  infrastructure resilience: a case study of the London metro system.
+  *Journal of The Royal Society Interface*, 13(118), p. 20160113.
+- Li, A. et al. (2025). Ease and Equity of Point of Interest Accessibility
+  via Public Transit in the U.S. *arXiv*.
+- Liu, Z. and Yu, Z. (2025). Transport equity assessment based on
+  accessibility disparities in terms of multi-job opportunities across
+  Beijing. *Scientific Reports*, 15(1), p. 30878.

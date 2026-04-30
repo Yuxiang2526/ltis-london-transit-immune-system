@@ -137,8 +137,93 @@ export default function ExploreRoute() {
         </div>
       </Reveal>
 
-      {/* ───── CTA to Network Map ───── */}
+      {/* ───── Section: Key findings ───── */}
+      <Reveal delay={0.13}>
+        <div style={{ marginTop: "var(--space-16)" }}>
+          <SectionHeader
+            badge="05"
+            tone="warm"
+            eyebrow="What the data tells us"
+            title="Three findings the maps converge on."
+            description="Reading the rankings, the choropleth and the Lorenz curve together, the same story repeats."
+          />
+          <div className="findings-grid">
+            <article className="finding-card finding-card--warm">
+              <p className="finding-card__num num-mono">01</p>
+              <h3>The most disruptive routes are buses, not the Tube.</h3>
+              <p>
+                The top-5 routes by lost 12-min access are <strong>all
+                outer-London bus routes</strong>. Tube and rail lines have
+                parallel substitutes — a single bus route in Bexley or
+                Croydon does not.
+              </p>
+            </article>
+            <article className="finding-card finding-card--warm">
+              <p className="finding-card__num num-mono">02</p>
+              <h3>Loss is sharp, not spread.</h3>
+              <p>
+                Of all 4,994 LSOAs, only <strong>87</strong> register any loss
+                at all when route 99 fails — and just <strong>~3 boroughs</strong>{" "}
+                absorb the entire impact. Vulnerability is geographically
+                concentrated, not city-wide.
+              </p>
+            </article>
+            <article className="finding-card finding-card--cool">
+              <p className="finding-card__num num-mono">03</p>
+              <h3>Inequality precedes disruption.</h3>
+              <p>
+                Even before any route is cancelled, accessibility ranges from
+                AI ≈ 0.04 in the most isolated LSOAs to AI ≈ 119.7 in the
+                City — a <strong>~3,000× spread</strong>. Disruption lands on
+                an already-uneven surface.
+              </p>
+            </article>
+          </div>
+        </div>
+      </Reveal>
+
+      {/* ───── Section: Planning implications ───── */}
       <Reveal delay={0.14}>
+        <div style={{ marginTop: "var(--space-16)" }}>
+          <SectionHeader
+            badge="06"
+            tone="warm"
+            eyebrow="Planning implications"
+            title="What this means for TfL and borough planners."
+            description="Resilience is not equally distributed; targeted interventions matter more than uniform service uplifts."
+          />
+          <ul className="implications-list">
+            <li>
+              <strong>Outer-London corridors need redundancy, not frequency.</strong>{" "}
+              Routes 99 (Bexley), R2 (Bromley) and 685 (Croydon) absorb almost
+              all the LSOA-level loss in our top scenarios. Adding a parallel
+              service — even a low-frequency one — would convert each from a
+              single point of failure into a pair.
+            </li>
+            <li>
+              <strong>The Tube is the wrong lens.</strong> Resilience analysis
+              focused on Tube line failures misses where the real fragility
+              sits. Bus-network depth, not rail topology, drives outer-London
+              accessibility.
+            </li>
+            <li>
+              <strong>Equity-aware route ranking is feasible from open data.</strong>{" "}
+              Every number in this Explorer comes from public datasets (PTAL,
+              NaPTAN, OSM, ONS LSOA). Boroughs can run the same scenario for
+              their own corridor without commissioning a bespoke study.
+            </li>
+            <li>
+              <strong>Indicative exposure is a starting point, not the headline.</strong>{" "}
+              Joining ONS mid-year LSOA population (a single CSV) sharpens the
+              "how many people" answer. The methodology and code are ready
+              for that join.
+            </li>
+          </ul>
+        </div>
+      </Reveal>
+
+      {/* ───── CTA to Network Map ───── */}
+      <Reveal delay={0.16}>
         <div className="story-cta" style={{ marginTop: "var(--space-16)" }}>
           <div>
             <p className="eyebrow">Want full control?</p>

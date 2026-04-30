@@ -138,7 +138,7 @@ export const STORY_FRAMES: StoryFrame[] = [
     tone: "warm",
     captionTitle: "Route 685: smaller footprint, deepest local punch",
     captionBody:
-      "Route 685 affects only 329 grid cells — the smallest footprint of our three scenarios. But where it touches, it dominates. Croydon LSOAs along its corridor lose up to 38.6 % of mean AI. This is single-line dependency in its purest form.",
+      "Route 685 affects only 329 grid cells — the smallest footprint of our three scenarios. But where it touches, it dominates. Croydon LSOAs along its corridor lose up to 38.6 % of mean AI. This is single-route dependency in its purest form.",
     paragraphs: [
       'Route <strong>685</strong> is the third archetype: <strong>small footprint, deep punch</strong>. Only Croydon shows up in the borough rankings (<strong class="story-num">1.7 %</strong> mean), but the LSOAs that depend on it lose <strong class="story-num">almost 40 %</strong> of their accessibility when it\'s cancelled.',
       'These are the LSOAs where 685 is essentially the only viable bus route. There is no parallel service to absorb the shock. The OSM-Dijkstra walker can\'t find alternative stops within the <strong class="story-num">2,400 m</strong> walking budget.',
