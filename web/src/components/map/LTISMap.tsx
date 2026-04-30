@@ -32,37 +32,12 @@ const TUBE_LINES_URL = `${import.meta.env.BASE_URL}data/tube_lines.geojson`;
 
 const INITIAL_VIEW = { center: [-0.1, 51.515] as [number, number], zoom: 9.2 };
 
-// OpenStreetMap raster basemap. Switched from CARTO Positron because CARTO's
-// CDN occasionally rate-limits or blocks third-party domain referrers, which
-// silently breaks the basemap with no console error. OSM is the universal
-// fallback: low-traffic academic use is within their usage policy and there
-// is no API key, no referrer check, no rate-limit surprise.
-const BASEMAP_STYLE: maplibregl.StyleSpecification = {
-  version: 8,
-  sources: {
-    "osm-raster": {
-      type: "raster",
-      tiles: [
-        "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      ],
-      tileSize: 256,
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxzoom: 19,
-    },
-  },
-  layers: [
-    {
-      id: "osm-raster-layer",
-      type: "raster",
-      source: "osm-raster",
-      minzoom: 0,
-      maxzoom: 22,
-    },
-  ],
-};
+// MapLibre demo style — sanity-check baseline maintained by MapLibre itself.
+// If this still produces a blank map, the issue is downstream of the basemap
+// (container sizing, WebGL context, etc.) and not the tile provider. Once the
+// blank-map root cause is confirmed, we can swap to a richer style (e.g.
+// OpenFreeMap Positron) without touching the rest of the file.
+const BASEMAP_STYLE_URL = "https://demotiles.maplibre.org/style.json";
 
 export default function LTISMap({
   data,
@@ -91,21 +66,22 @@ export default function LTISMap({
 
     const container = containerRef.current;
 
-    // Diagnostic — exposes map init context to the browser console so we can
-    // tell from a screenshot whether the container has dimensions, whether
-    // the data prop is populated, and whether MapLibre actually initialised.
-    // Safe in production; small log message at info level.
-    console.info("[LTIS] map init", {
-      containerSize: { w: container.clientWidth, h: container.clientHeight },
-      dataFeatures: data?.features?.length ?? null,
+    // Diagnostic — flat keys so console doesn't collapse them into {...}.
+    // The container/canvas sizes here are the single most useful signal for
+    // debugging "map initialised but renders nothing" cases.
+    console.info(
+      "[LTIS] map init  containerW=%d  containerH=%d  features=%d  scenario=%s  metric=%s  base=%s",
+      container.clientWidth,
+      container.clientHeight,
+      data?.features?.length ?? -1,
       scenario,
       metric,
-      basePath: import.meta.env.BASE_URL,
-    });
+      import.meta.env.BASE_URL,
+    );
 
     const map = new maplibregl.Map({
       container,
-      style: BASEMAP_STYLE,
+      style: BASEMAP_STYLE_URL,
       center: INITIAL_VIEW.center,
       zoom: INITIAL_VIEW.zoom,
     });
@@ -129,11 +105,16 @@ export default function LTISMap({
       if (map.getSource(SOURCE_ID)) return;
 
       map.resize();
-      console.info("[LTIS] setupLayers fired", {
-        containerSize: { w: container.clientWidth, h: container.clientHeight },
-        styleLoaded: map.isStyleLoaded(),
-        dataFeatures: data?.features?.length ?? null,
-      });
+      const canvas = map.getCanvas();
+      console.info(
+        "[LTIS] setupLayers  containerW=%d  containerH=%d  canvasW=%d  canvasH=%d  styleLoaded=%s  features=%d",
+        container.clientWidth,
+        container.clientHeight,
+        canvas.width,
+        canvas.height,
+        map.isStyleLoaded(),
+        data?.features?.length ?? -1,
+      );
       map.addSource(SOURCE_ID, { type: "geojson", data: data as never });
 
       map.addLayer({
@@ -220,10 +201,41 @@ export default function LTISMap({
       map.once("load", setupLayers);
     }
 
+    // Safety net — call resize() every 200 ms for 3 s. Defends against the
+    // common "container is 0×0 at init then settles to real size after CSS
+    // layout completes" race that produces a silent blank-map.
+    const resizeTicks: number[] = [];
+    for (let i = 1; i <= 15; i++) {
+      resizeTicks.push(
+        window.setTimeout(() => {
+          if (!mapRef.current) return;
+          mapRef.current.resize();
+        }, i * 200),
+      );
+    }
+
+    // Status snapshot at +1 s — captures the post-layout truth in console.
+    const statusTimer = window.setTimeout(() => {
+      if (!mapRef.current) return;
+      const m = mapRef.current;
+      const c = m.getCanvas();
+      console.info(
+        "[LTIS] +1s  containerW=%d  containerH=%d  canvasW=%d  canvasH=%d  loaded=%s  styleLoaded=%s",
+        container.clientWidth,
+        container.clientHeight,
+        c.width,
+        c.height,
+        m.loaded(),
+        m.isStyleLoaded(),
+      );
+    }, 1000);
+
     mapRef.current = map;
 
     return () => {
       window.cancelAnimationFrame(resizeFrame);
+      resizeTicks.forEach((id) => window.clearTimeout(id));
+      window.clearTimeout(statusTimer);
       resizeObserver.disconnect();
       map.remove();
       mapRef.current = null;

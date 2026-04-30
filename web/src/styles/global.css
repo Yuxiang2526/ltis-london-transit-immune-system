@@ -611,13 +611,20 @@ select {
 }
 
 .story-stage {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  /* Absolute-fill the .scroll-stage-sticky parent. Avoids relying on
+     `width:100%; height:100%` inside a flex centred parent (see
+     ScrollStage.css for the rationale). */
+  position: absolute;
+  inset: 0;
 }
 
 .story-stage .map-wrapper {
-  height: 100%;
+  /* Inherit absolute fill via inset:0 from .map-container; here we just need
+     to override the global .map-wrapper { height: 720px } so the wrapper
+     fills the sticky stage instead. */
+  position: absolute;
+  inset: 0;
+  height: auto;
 }
 
 .story-stage-caption {

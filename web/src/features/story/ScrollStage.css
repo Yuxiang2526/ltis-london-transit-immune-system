@@ -11,9 +11,10 @@
   position: sticky;
   top: var(--space-12);
   height: calc(100vh - var(--space-16));
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  /* No flex centering. The single child (StoryStage > .story-stage) uses
+     position:absolute;inset:0 to fill this box exactly. Flex + align-items:
+     center + a sized child triggers a known Chrome layout-timing race that
+     leaves the MapLibre canvas at 0×0 until first scroll. */
   border-radius: var(--radius-lg);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
