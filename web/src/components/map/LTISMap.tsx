@@ -8,7 +8,6 @@ import type {
   ScenarioId,
 } from "../../data/schema";
 import { buildFillColorExpression, getPaintConfig } from "../../lib/mapExpressions";
-import { SCENARIO_REGISTRY } from "../../data/scenarios";
 import MapLegend from "./MapLegend";
 
 interface LTISMapProps {
@@ -28,7 +27,6 @@ const TUBE_SOURCE_ID = "ltis-tube-lines";
 const TUBE_LAYER_ID = "ltis-tube-lines-fill";
 const TUBE_DISRUPTED_LAYER_ID = "ltis-tube-line-disrupted";
 
-const TUBE_LINES_URL = `${import.meta.env.BASE_URL}data/tube_lines.geojson`;
 const RAIL_LINES_URL = `${import.meta.env.BASE_URL}data/rail_lines.geojson`;
 
 const INITIAL_VIEW = { center: [-0.1, 51.515] as [number, number], zoom: 9.2 };
