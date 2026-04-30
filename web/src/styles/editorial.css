@@ -603,24 +603,21 @@
   box-shadow: var(--shadow-md);
 }
 
-/* Iframe ↔ sidebar split */
-.network-route__split {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
-  gap: var(--space-5);
-  align-items: stretch;
-}
-
+/* Full-width iframe frame (Scenario Builder lives inside, on the right) */
 .network-route__frame {
   position: relative;
   width: 100%;
-  height: calc(100vh - 240px);
+  height: calc(100vh - 200px);
   min-height: 640px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   overflow: hidden;
+}
+
+.network-route__frame--full {
+  /* Reserved for future layout variants. */
 }
 
 .network-iframe {
@@ -631,17 +628,65 @@
   background: #e8edf1;
 }
 
-.network-route__sidebar {
+/* Action bar — replicates the iframe's hidden map-toolbar */
+.network-route__actionbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xs);
+}
+
+.network-route__action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-strong);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  cursor: pointer;
+  transition:
+    border-color var(--motion-fast) var(--ease-standard),
+    box-shadow var(--motion-fast) var(--ease-standard),
+    transform var(--motion-fast) var(--ease-standard);
+}
+
+.network-route__action-btn:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.network-route__action-btn--danger {
+  color: var(--palette-red-4);
+  border-color: var(--palette-red-2);
+  background: var(--palette-red-1);
+}
+
+.network-route__action-btn--danger:hover {
+  border-color: var(--palette-red-3);
+  background: #ffe9dd;
+}
+
+.network-route__action-hint {
+  margin-left: auto;
+  font-size: var(--text-xs);
+}
+
+/* Horizontal info grid below the map */
+.network-route__info-grid {
   display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--space-4);
-  align-content: start;
-  /* sticky in tall layouts so the panels track the viewport while user
-     scrolls the iframe */
-  position: sticky;
-  top: var(--header-clearance);
-  align-self: start;
-  max-height: calc(100vh - 200px);
-  overflow-y: auto;
 }
 
 .network-route__panel {
@@ -709,6 +754,11 @@
   text-transform: uppercase;
   letter-spacing: var(--tracking-wide);
   font-weight: var(--weight-bold);
+}
+
+/* Bigger numbers when stats card sits in the horizontal grid */
+.network-route__stats--big strong {
+  font-size: clamp(var(--text-2xl), 2.4vw, var(--text-3xl));
 }
 
 .network-route__top-list {
@@ -791,17 +841,8 @@
 }
 
 @media (max-width: 1100px) {
-  .network-route__split {
-    grid-template-columns: 1fr;
-  }
-  .network-route__sidebar {
-    position: static;
-    max-height: none;
-    grid-template-columns: 1fr 1fr;
-    display: grid;
-  }
-  .network-route__panel {
-    margin: 0;
+  .network-route__info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -813,8 +854,12 @@
     height: calc(100vh - 280px);
     min-height: 480px;
   }
-  .network-route__sidebar {
+  .network-route__info-grid {
     grid-template-columns: 1fr;
+  }
+  .network-route__action-hint {
+    margin-left: 0;
+    width: 100%;
   }
 }
 
