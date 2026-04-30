@@ -166,31 +166,36 @@ export default function NetworkRoute() {
       <div className="network-route__info-grid">
         <section className="network-route__panel network-route__panel--legend">
           <p className="eyebrow">Map legend</p>
-          <h3>PTAL accessibility band</h3>
-          <ul className="ptal-legend-list">
-            {PTAL_BANDS.map((b) => (
-              <li key={b.label}>
-                <span className="ptal-swatch" style={{ background: b.color }} />
-                <span>{b.label}</span>
-              </li>
-            ))}
-          </ul>
-          <hr className="network-route__panel-divider" />
-          <p className="eyebrow">Disrupted side</p>
-          <ul className="ptal-legend-list">
-            {AI_DROP_BANDS.map((b) => (
-              <li key={b.label}>
-                <span
-                  className="ptal-swatch"
-                  style={{
-                    background: b.color,
-                    border: b.color === "#ffffff" ? "1px solid #ccc" : "",
-                  }}
-                />
-                <span>{b.label}</span>
-              </li>
-            ))}
-          </ul>
+          <div className="ptal-legend-cols">
+            <div>
+              <h4 className="ptal-legend-col-title">PTAL band</h4>
+              <ul className="ptal-legend-list">
+                {PTAL_BANDS.map((b) => (
+                  <li key={b.label}>
+                    <span className="ptal-swatch" style={{ background: b.color }} />
+                    <span>{b.label}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 className="ptal-legend-col-title">Disrupted side</h4>
+              <ul className="ptal-legend-list">
+                {AI_DROP_BANDS.map((b) => (
+                  <li key={b.label}>
+                    <span
+                      className="ptal-swatch"
+                      style={{
+                        background: b.color,
+                        border: b.color === "#ffffff" ? "1px solid #ccc" : "",
+                      }}
+                    />
+                    <span>{b.label}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </section>
 
         <section className="network-route__panel network-route__panel--accent">
