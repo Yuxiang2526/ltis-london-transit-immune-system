@@ -60,16 +60,41 @@ export default function NetworkRoute() {
     const iframe = iframeRef.current;
     if (!iframe) return;
 
+    const timers: number[] = [];
+
     const injectStyles = () => {
       try {
         const doc = iframe.contentDocument;
+        const win = iframe.contentWindow;
         if (!doc) return;
-        if (doc.getElementById("ltis-embed-style")) return;
-        const style = doc.createElement("style");
-        style.id = "ltis-embed-style";
-        style.textContent = EMBED_CSS;
-        doc.head.appendChild(style);
-        doc.body.classList.add("ltis-embed-mode");
+
+        if (!doc.getElementById("ltis-embed-style")) {
+          const style = doc.createElement("style");
+          style.id = "ltis-embed-style";
+          style.textContent = EMBED_CSS;
+          doc.head.appendChild(style);
+          doc.body.classList.add("ltis-embed-mode");
+        }
+
+        // After our CSS shrinks #map and #map-compare with right:360px, the
+        // mapbox canvases inside still hold their original full-window
+        // dimensions until window.resize fires. Siyan's HTML has a
+        // window.resize handler that re-pins the compareMap container to
+        // #map's bounding rect AND calls .resize() on both maps; we
+        // dispatch resize at staggered intervals so it re-runs whenever
+        // the iframe finishes its own async map init.
+        if (win) {
+          [60, 250, 700, 1800].forEach((delay) => {
+            const t = window.setTimeout(() => {
+              try {
+                win.dispatchEvent(new Event("resize"));
+              } catch {
+                /* iframe may have unmounted */
+              }
+            }, delay);
+            timers.push(t);
+          });
+        }
       } catch (err) {
         console.warn("[LTIS] Could not inject embed CSS into iframe:", err);
       }
@@ -78,7 +103,10 @@ export default function NetworkRoute() {
     iframe.addEventListener("load", injectStyles);
     if (iframe.contentDocument?.readyState === "complete") injectStyles();
 
-    return () => iframe.removeEventListener("load", injectStyles);
+    return () => {
+      iframe.removeEventListener("load", injectStyles);
+      timers.forEach((t) => window.clearTimeout(t));
+    };
   }, []);
 
   /**
